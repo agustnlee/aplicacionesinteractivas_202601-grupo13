@@ -13,10 +13,10 @@
     </parent>
 
     <groupId>com.uade</groupId>
-    <artifactId>tpejemplo</artifactId>
+    <artifactId>tp13</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>tpejemplo</name>
-    <description>TP Ejemplo - Aplicaciones Interactivas UADE</description>
+    <name>TP GRUPO 13</name>
+    <description>TP GRUPO 13 - Aplicaciones Interactivas UADE</description>
 
     <properties>
         <java.version>21</java.version>
@@ -78,6 +78,13 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <!-- Devtools -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Tests -->
