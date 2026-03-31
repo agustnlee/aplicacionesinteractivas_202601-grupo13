@@ -1,29 +1,38 @@
 package com.uade.tp13.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "cuotas")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@Builder
 public class Cuota {
 
-    @EmbeddedId
-    private CuotaId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("idCredito")
-    @JoinColumn(name = "id_credito")
+    @ManyToOne(optional = false) // fk credito
     private Credito credito;
 
-    @NotNull
-    @Column(name = "fecha_vencimiento", nullable = false)
+    private Integer numeroCuota;
+
     private LocalDate fechaVencimiento;
+
+    private BigDecimal monto;
+
+    private BigDecimal montoRecargo;
+
+     // private Boolean pagada = false;
+
+    // TODO liberar cuando este pago
+
+    //@OneToMany(mappedBy = "cuota", cascade = CascadeType.ALL)
+    //private List<Pago> pagos;
 }
