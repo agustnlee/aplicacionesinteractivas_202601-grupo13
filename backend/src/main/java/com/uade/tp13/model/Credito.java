@@ -1,48 +1,55 @@
 package com.uade.tp13.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.uade.tp13.enums.EstadoCredito;;
+
 @Entity
 @Table(name = "creditos")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@Builder
 public class Credito {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dni_cliente", nullable = false)
-    private Cliente cliente;
+    // TODO liberar para cuando esten las demas entidades
 
-    @NotNull
-    @Column(name = "deuda_original", nullable = false, precision = 12, scale = 2)
-    private BigDecimal deudaOriginal;
+    //@ManyToOne(optional = false) 
+    //private Cliente cliente;
 
-    @NotNull
-    @Column(name = "fecha", nullable = false)
-    private LocalDate fecha;
+    //@ManyToOne(optional = false)
+    //@JoinColumn(name = "cobrador_id")
+    //private Usuario cobrador;
 
-    @NotNull
-    @Column(name = "importe_cuota", nullable = false, precision = 12, scale = 2)
-    private BigDecimal importeCuota;
+    //@ManyToOne(optional = false)
+    //@JoinColumn(name = "creado_por_id")
+    //private Usuario creadoPor;
 
-    @Min(1)
-    @Column(name = "cantidad_cuotas", nullable = false)
+    private BigDecimal monto;
+
     private Integer cantidadCuotas;
 
-    @OneToMany(mappedBy = "credito", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private BigDecimal interes;
+
+    @Enumerated(EnumType.STRING)
+    private EstadoCredito estado;
+
+    private LocalDate fechaCreacion;
+
+    @OneToMany(mappedBy = "credito", cascade = CascadeType.ALL, orphanRemoval = true) // cuota va a tener FK credito, cascade para propagar eventos a hijos
     private List<Cuota> cuotas;
+
+    @PrePersist // anotacion para hacer que el metodo se ejecute antes de insertar en h2
+    public void prePersist() {
+        this.fechaCreacion = LocalDate.now();
+        if (estado == null) estado = EstadoCredito.ACTIVO;
+    }
 }
