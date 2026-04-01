@@ -1,0 +1,36 @@
+package com.uade.tp13.model;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "etiquetas")
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@Builder
+
+public class Etiqueta {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+
+    private String nombre;
+    private String color;
+    private LocalDate fechaCreacion;
+    private LocalDate fechaModificacion;
+
+
+    @OneToMany(mappedBy = "etiqueta", cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @PrePersist
+    public void prePersist() {
+        this.fechaCreacion = LocalDate.now();
+        this.fechaModificacion = LocalDate.now();
+
+
+    }
+}
