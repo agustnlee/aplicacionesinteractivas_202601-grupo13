@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Table(name = "cuotas")
@@ -19,20 +18,23 @@ public class Cuota {
     private Long id;
 
     @ManyToOne(optional = false) // fk credito
+    @JoinColumn(name = "credito_id")
     private Credito credito;
 
     private Integer numeroCuota;
-
     private LocalDate fechaVencimiento;
-
     private BigDecimal monto;
-
     private BigDecimal montoRecargo;
 
-     // private Boolean pagada = false;
+    private Boolean pagada;
 
-    // TODO liberar cuando este pago
+    /*TODO: Liberar cuando este pago
+    @OneToOne(mappedBy = "cuota", cascade = CascadeType.ALL)
+    private Pago pago;*/
 
-    //@OneToMany(mappedBy = "cuota", cascade = CascadeType.ALL)
-    //private List<Pago> pagos;
+    @PrePersist
+    public void prePersist() {
+        if (pagada == null) pagada = false;
+        if (montoRecargo == null) montoRecargo = BigDecimal.ZERO;
+    }
 }
