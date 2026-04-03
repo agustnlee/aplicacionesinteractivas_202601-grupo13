@@ -28,6 +28,7 @@ public class Cuota {
     private BigDecimal monto;
     private BigDecimal montoRecargo;
 
+    @Enumerated(EnumType.STRING)
     private EstadoCuota pagada;
 
     /*TODO: Liberar cuando este pago
