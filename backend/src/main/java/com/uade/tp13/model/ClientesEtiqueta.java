@@ -6,16 +6,16 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity 
-@Table(name = "ClienteEtiquetas", uniqueConstraints={@UniqueConstraint(columnNames={"Cliente.cliente", "Etiqueta.etiqueta"})})
+@Table(name = "clientesEtiqueta", uniqueConstraints={@UniqueConstraint(columnNames={"Cliente.cliente", "Etiqueta.etiqueta"})})
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
 
-public class EtiquetaClientes {
+public class ClientesEtiqueta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+  
     
     //@ManyToOne( optional = false)
     //private Cliente cliente;
