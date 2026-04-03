@@ -19,6 +19,7 @@ public interface CreditoRepository extends JpaRepository<Credito, Long> {
     Page<Credito> findByCliente_Id(Long clienteId, Pageable pageable);
     Page<Credito> findByCobrador_Id(Long cobradorId, Pageable pageable);
     Page<Credito> findByCobrador_IdAndEstado(Long cobradorId, EstadoCredito estado, Pageable pageable);
+    Page<Credito> findByCreadoPor_Id(Long creadoPorId, Pageable pageable);
 
     // Para Validaciones Internas (principalmente mora)
     List<Credito> findByEstado(EstadoCredito estado);

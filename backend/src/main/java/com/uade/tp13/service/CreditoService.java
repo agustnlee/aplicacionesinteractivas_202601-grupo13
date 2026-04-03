@@ -66,6 +66,11 @@ public class CreditoService {
         return mapToPageResponse(creditoRepository.findByCobrador_Id(cobradorId, pageable));
     }
 
+    public PaginatedResponse<CreditoResponse> listarPorCreadoPor(Long creadoPorId, int pagina, int tamanio) {
+        Pageable pageable = buildPageable(pagina, tamanio);
+        return mapToPageResponse(creditoRepository.findByCreadoPor_Id(creadoPorId, pageable));
+    }
+
     // Crear
 
     public PlanCuotasResponse calcularPlanPreview(CrearCreditoRequest request) {

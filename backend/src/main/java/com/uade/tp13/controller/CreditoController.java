@@ -57,6 +57,15 @@ public class CreditoController {
         return ResponseEntity.ok(creditoService.listarPorCobrador(cobradorId, pagina, tamanio));
     }
 
+    // GET /api/creditos/mis-creditos/{creadoPorId}?pagina=0&tamanio=10
+        @GetMapping("/mis-creditos/{creadoPorId}")
+        public ResponseEntity<PaginatedResponse<CreditoResponse>> listarPorCreadoPor(
+                @PathVariable Long creadoPorId,
+                @RequestParam(defaultValue = "0")  int pagina,
+                @RequestParam(defaultValue = "10") int tamanio) {
+            return ResponseEntity.ok(creditoService.listarPorCreadoPor(creadoPorId, pagina, tamanio));
+        }
+
     // POST /api/creditos/preview
     @PostMapping("/preview")
     public ResponseEntity<PlanCuotasResponse> preview(
