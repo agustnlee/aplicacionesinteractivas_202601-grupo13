@@ -5,9 +5,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "ClienteEtiquetas")
-@Table(UniqueConstraints={@UniqueConstraint(columnNames={cliente,etiqueta})})
+@Entity 
+@Table(name = "ClienteEtiquetas", uniqueConstraints={@UniqueConstraint(columnNames={"Cliente.cliente", "Etiqueta.etiqueta"})})
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
@@ -18,11 +17,11 @@ public class EtiquetaClientes {
     private Long id;
 
     
-    //@ManyToOne(unique = true optional = false)
+    //@ManyToOne( optional = false)
     //private Cliente cliente;
 
    
-    @ManyToOne(unique = true optional = false)
+    @ManyToOne( optional = false)
     private Etiqueta etiqueta; //fk etiqueta
 
     //@ManyToOne(optional = false)
