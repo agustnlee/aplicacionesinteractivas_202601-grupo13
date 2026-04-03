@@ -10,6 +10,10 @@ import com.uade.tp13.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -40,6 +44,26 @@ public class CreditoService {
 
     public CreditoResponse obtenerCredito(Long creditoId) {
         return mapToResponse(getOrThrow(creditoId));
+    }
+
+    public PaginatedResponse<CreditoResponse> listarCreditos(int pagina, int tamanio) {
+        Pageable pageable = buildPageable(pagina, tamanio);
+        return mapToPageResponse(creditoRepository.findAll(pageable));
+    }
+
+    public PaginatedResponse<CreditoResponse> listarPorEstado(EstadoCredito estado, int pagina, int tamanio) {
+        Pageable pageable = buildPageable(pagina, tamanio);
+        return mapToPageResponse(creditoRepository.findByEstado(estado, pageable));
+    }
+
+    public PaginatedResponse<CreditoResponse> listarPorCliente(Long clienteId, int pagina, int tamanio) {
+        Pageable pageable = buildPageable(pagina, tamanio);
+        return mapToPageResponse(creditoRepository.findByCliente_Id(clienteId, pageable));
+    }
+
+    public PaginatedResponse<CreditoResponse> listarPorCobrador(Long cobradorId, int pagina, int tamanio) {
+        Pageable pageable = buildPageable(pagina, tamanio);
+        return mapToPageResponse(creditoRepository.findByCobrador_Id(cobradorId, pageable));
     }
 
     // Crear
@@ -149,6 +173,8 @@ public class CreditoService {
                 .orElseThrow(() -> new ResourceNotFoundException( "Crédito no encontrado con id: " + id));
     }
 
+    // mappers
+
     CuotaResponse mapCuotaToResponse(Cuota cuota) {
         BigDecimal recargo = cuota.getMontoRecargo() != null ? cuota.getMontoRecargo() : BigDecimal.ZERO;
 
@@ -193,6 +219,19 @@ public class CreditoService {
                 .build();
     }
 
+    private PaginatedResponse<CreditoResponse> mapToPageResponse(Page<Credito> page) {
+        return PaginatedResponse.<CreditoResponse>builder()
+            .contenido(page.getContent().stream()
+                    .map(this::mapToResponse)
+                    .toList())
+            .paginaActual(page.getNumber())
+            .totalPaginas(page.getTotalPages())
+            .totalElementos(page.getTotalElements())
+            .tamanioPagina(page.getSize())
+            .esUltima(page.isLast())
+            .build();
+    }
+
     // Builders internos
 
     private List<Cuota> buildCuotas(Credito credito, BigDecimal monto, BigDecimal interes, int cantidad) {
@@ -227,6 +266,13 @@ public class CreditoService {
         }
         return cuotas;
     }
+
+    private Pageable buildPageable(int pagina, int tamanio) {
+        int tamanioSeguro = Math.min(tamanio, 50);
+        return PageRequest.of(pagina, tamanioSeguro, Sort.by("fechaCreacion").descending());
+    }
+
+
 
     // Calculos Interes simple: cuota = monto * (1 + tasa/100) / n
     private BigDecimal calcularMontoCuota(BigDecimal monto, BigDecimal interes, int n) {
