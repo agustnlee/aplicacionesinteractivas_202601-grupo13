@@ -6,6 +6,8 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.uade.tp13.enums.EstadoCuota;
+
 @Entity
 @Table(name = "cuotas")
 @Getter @Setter
@@ -26,7 +28,8 @@ public class Cuota {
     private BigDecimal monto;
     private BigDecimal montoRecargo;
 
-    private Boolean pagada;
+    @Enumerated(EnumType.STRING)
+    private EstadoCuota pagada;
 
     /*TODO: Liberar cuando este pago
     @OneToOne(mappedBy = "cuota", cascade = CascadeType.ALL)
@@ -34,7 +37,7 @@ public class Cuota {
 
     @PrePersist
     public void prePersist() {
-        if (pagada == null) pagada = false;
+        if (pagada == null) pagada = EstadoCuota.PENDIENTE;
         if (montoRecargo == null) montoRecargo = BigDecimal.ZERO;
     }
 }

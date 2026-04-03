@@ -1,16 +1,20 @@
 package com.uade.tp13.dto.response;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Data
-@AllArgsConstructor
-public class CuotaResponse {
+import com.uade.tp13.enums.EstadoCuota;
 
-    private Long idCredito;
-    private Integer idCuota;
+@Data
+@Builder
+public class CuotaResponse {
+    private Long id;
+    private Integer numeroCuota;
     private LocalDate fechaVencimiento;
-    private boolean pagada;
+    private BigDecimal monto;
+    private BigDecimal montoRecargo;
+    private BigDecimal montoTotal;
+    private EstadoCuota estado; 
 }
