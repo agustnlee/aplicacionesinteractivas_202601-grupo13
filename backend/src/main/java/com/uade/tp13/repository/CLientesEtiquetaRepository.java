@@ -8,9 +8,6 @@ import org.springframework.data.domain.Pageable;
 
 import com.uade.tp13.model.ClientesEtiqueta;
 
-import java.time.LocalDate;
-import java.util.List;
-
 @Repository
 public interface ClientesEtiquetaRepository extends JpaRepository<ClientesEtiqueta, Long> {
 
@@ -24,20 +21,7 @@ public interface ClientesEtiquetaRepository extends JpaRepository<ClientesEtique
     Page<ClientesEtiqueta> findByAsignadoPorId(long asignado_por_id, Pageable pageable);
     //Hu48
  
-
-    
-
-    
-
     boolean existsById(long id);
-
-
-
-
-
-
-
-
 }
 
 
