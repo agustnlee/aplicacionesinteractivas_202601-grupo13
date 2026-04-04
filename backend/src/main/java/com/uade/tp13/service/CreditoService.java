@@ -58,17 +58,17 @@ public class CreditoService {
 
     public PaginatedResponse<CreditoResponse> listarPorCliente(Long clienteId, int pagina, int tamanio) {
         Pageable pageable = buildPageable(pagina, tamanio);
-        return mapToPageResponse(creditoRepository.findByCliente_Id(clienteId, pageable));
+        return mapToPageResponse(creditoRepository.findByClienteId(clienteId, pageable));
     }
 
     public PaginatedResponse<CreditoResponse> listarPorCobrador(Long cobradorId, int pagina, int tamanio) {
         Pageable pageable = buildPageable(pagina, tamanio);
-        return mapToPageResponse(creditoRepository.findByCobrador_Id(cobradorId, pageable));
+        return mapToPageResponse(creditoRepository.findByCobradorId(cobradorId, pageable));
     }
 
     public PaginatedResponse<CreditoResponse> listarPorCreadoPor(Long creadoPorId, int pagina, int tamanio) {
         Pageable pageable = buildPageable(pagina, tamanio);
-        return mapToPageResponse(creditoRepository.findByCreadoPor_Id(creadoPorId, pageable));
+        return mapToPageResponse(creditoRepository.findByCreadoPorId(creadoPorId, pageable));
     }
 
     // Crear
@@ -164,7 +164,7 @@ public class CreditoService {
     @Transactional
     public void cerrarSiCorresponde(Credito credito) {
         boolean quedanImpagas = cuotaRepository
-                .existsByCredito_IdAndPagada(credito.getId(), EstadoCuota.PENDIENTE);
+                .existsByCreditoIdAndEstado(credito.getId(), EstadoCuota.PENDIENTE);
         if (!quedanImpagas) {
             credito.setEstado(EstadoCredito.CERRADO);
             creditoRepository.save(credito);
@@ -185,7 +185,7 @@ public class CreditoService {
 
         // VENCIDA derivada
         EstadoCuota estadoDerivado;
-        if (cuota.getPagada() == EstadoCuota.PAGADA) {
+        if (cuota.getEstado() == EstadoCuota.PAGADA) {
             estadoDerivado = EstadoCuota.PAGADA;
         } else if (LocalDate.now().isAfter(cuota.getFechaVencimiento())) {
             estadoDerivado = EstadoCuota.VENCIDA;
@@ -250,7 +250,7 @@ public class CreditoService {
                     .fechaVencimiento(LocalDate.now().plusDays(7L * i))
                     .monto(montoCuota)
                     .montoRecargo(BigDecimal.ZERO)
-                    .pagada(EstadoCuota.PENDIENTE)
+                    .estado(EstadoCuota.PENDIENTE)
                     .build());
         }
         return cuotas;

@@ -24,7 +24,7 @@ public class CuotaService {
     @Transactional(readOnly = true)
     public List<CuotaResponse> obtenerTodas(Long creditoId) {
         creditoService.getOrThrow(creditoId);
-        return cuotaRepository.findByCredito_Id(creditoId)
+        return cuotaRepository.findByCreditoId(creditoId)
                 .stream()
                 .map(creditoService::mapCuotaToResponse)
                 .toList();
@@ -35,7 +35,7 @@ public class CuotaService {
     public List<CuotaResponse> obtenerPendientes(Long creditoId) {
         creditoService.getOrThrow(creditoId);
         return cuotaRepository
-                .findByCredito_IdAndPagada(creditoId, EstadoCuota.PENDIENTE)
+                .findByCreditoIdAndEstado(creditoId, EstadoCuota.PENDIENTE)
                 .stream()
                 .filter(c -> !LocalDate.now().isAfter(c.getFechaVencimiento()))
                 .map(creditoService::mapCuotaToResponse)
@@ -48,7 +48,7 @@ public class CuotaService {
     public List<CuotaResponse> obtenerVencidas(Long creditoId) {
         creditoService.getOrThrow(creditoId);
         return cuotaRepository
-                .findByCredito_IdAndPagada(creditoId, EstadoCuota.PENDIENTE)
+                .findByCreditoIdAndEstado(creditoId, EstadoCuota.PENDIENTE)
                 .stream()
                 .filter(c -> LocalDate.now().isAfter(c.getFechaVencimiento()))
                 .map(creditoService::mapCuotaToResponse)
