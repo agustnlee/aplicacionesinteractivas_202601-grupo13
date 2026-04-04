@@ -11,10 +11,10 @@ import java.util.List;
 @Repository
 public interface CuotaRepository extends JpaRepository<Cuota, Long> {
 
-    List<Cuota> findByCredito_Id(Long creditoId);
-    List<Cuota> findByCredito_IdAndPagada(Long creditoId, EstadoCuota pagada);
-     List<Cuota> findByPagada(EstadoCuota pagada);
+    List<Cuota> findByCreditoId(Long creditoId);
+    List<Cuota> findByCreditoIdAndPagada(Long creditoId, EstadoCuota pagada);
+    List<Cuota> findByPagada(EstadoCuota pagada);
 
-    boolean existsByCredito_IdAndPagada(Long creditoId, EstadoCuota pagada); // para chequear si quedan impagas
+    boolean existsByCreditoIdAndPagada(Long creditoId, EstadoCuota pagada); // para chequear si quedan impagas
 }   
 

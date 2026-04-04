@@ -58,17 +58,17 @@ public class CreditoService {
 
     public PaginatedResponse<CreditoResponse> listarPorCliente(Long clienteId, int pagina, int tamanio) {
         Pageable pageable = buildPageable(pagina, tamanio);
-        return mapToPageResponse(creditoRepository.findByCliente_Id(clienteId, pageable));
+        return mapToPageResponse(creditoRepository.findByClienteId(clienteId, pageable));
     }
 
     public PaginatedResponse<CreditoResponse> listarPorCobrador(Long cobradorId, int pagina, int tamanio) {
         Pageable pageable = buildPageable(pagina, tamanio);
-        return mapToPageResponse(creditoRepository.findByCobrador_Id(cobradorId, pageable));
+        return mapToPageResponse(creditoRepository.findByCobradorId(cobradorId, pageable));
     }
 
     public PaginatedResponse<CreditoResponse> listarPorCreadoPor(Long creadoPorId, int pagina, int tamanio) {
         Pageable pageable = buildPageable(pagina, tamanio);
-        return mapToPageResponse(creditoRepository.findByCreadoPor_Id(creadoPorId, pageable));
+        return mapToPageResponse(creditoRepository.findByCreadoPorId(creadoPorId, pageable));
     }
 
     // Crear
@@ -164,7 +164,7 @@ public class CreditoService {
     @Transactional
     public void cerrarSiCorresponde(Credito credito) {
         boolean quedanImpagas = cuotaRepository
-                .existsByCredito_IdAndPagada(credito.getId(), EstadoCuota.PENDIENTE);
+                .existsByCreditoIdAndPagada(credito.getId(), EstadoCuota.PENDIENTE);
         if (!quedanImpagas) {
             credito.setEstado(EstadoCredito.CERRADO);
             creditoRepository.save(credito);

@@ -16,17 +16,17 @@ public interface CreditoRepository extends JpaRepository<Credito, Long> {
     // Para endpoints HTTP (Paginados)
     // + findAll Heredado
     Page<Credito> findByEstado(EstadoCredito estado, Pageable pageable);
-    Page<Credito> findByCliente_Id(Long clienteId, Pageable pageable);
-    Page<Credito> findByCobrador_Id(Long cobradorId, Pageable pageable);
-    Page<Credito> findByCobrador_IdAndEstado(Long cobradorId, EstadoCredito estado, Pageable pageable);
-    Page<Credito> findByCreadoPor_Id(Long creadoPorId, Pageable pageable);
+    Page<Credito> findByClienteId(Long clienteId, Pageable pageable);
+    Page<Credito> findByCobradorId(Long cobradorId, Pageable pageable);
+    Page<Credito> findByCobradorIdAndEstado(Long cobradorId, EstadoCredito estado, Pageable pageable);
+    Page<Credito> findByCreadoPorId(Long creadoPorId, Pageable pageable);
 
     // Para Validaciones Internas (principalmente mora)
     List<Credito> findByEstado(EstadoCredito estado);
-    List<Credito> findByCliente_Id(Long clienteId);
-    List<Credito> findByCobrador_Id(Long cobradorId);
-    List<Credito> findByCobrador_IdAndEstado(Long cobradorId, EstadoCredito estado);
+    List<Credito> findByClienteId(Long clienteId);
+    List<Credito> findByCobradorId(Long cobradorId);
+    List<Credito> findByCobradorIdAndEstado(Long cobradorId, EstadoCredito estado);
     List<Credito> findByCreadoPorId(Long creadoPorId);
     
-    boolean existsByCliente_IdAndEstadoIn(Long clienteId, List<EstadoCredito> estados); // Busqueda con id cliente y estado, para validar soft delete de cliente (con activos)
+    boolean existsByClienteIdAndEstadoIn(Long clienteId, List<EstadoCredito> estados); // Busqueda con id cliente y estado, para validar soft delete de cliente (con activos)
 }
