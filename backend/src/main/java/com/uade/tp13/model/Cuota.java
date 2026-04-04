@@ -29,7 +29,7 @@ public class Cuota {
     private BigDecimal montoRecargo;
 
     @Enumerated(EnumType.STRING)
-    private EstadoCuota pagada;
+    private EstadoCuota estado;
 
     /*TODO: Liberar cuando este pago
     @OneToOne(mappedBy = "cuota", cascade = CascadeType.ALL)
@@ -37,7 +37,7 @@ public class Cuota {
 
     @PrePersist
     public void prePersist() {
-        if (pagada == null) pagada = EstadoCuota.PENDIENTE;
+        if (estado == null) estado = EstadoCuota.PENDIENTE;
         if (montoRecargo == null) montoRecargo = BigDecimal.ZERO;
     }
 }

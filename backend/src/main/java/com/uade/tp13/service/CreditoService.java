@@ -164,7 +164,7 @@ public class CreditoService {
     @Transactional
     public void cerrarSiCorresponde(Credito credito) {
         boolean quedanImpagas = cuotaRepository
-                .existsByCreditoIdAndPagada(credito.getId(), EstadoCuota.PENDIENTE);
+                .existsByCreditoIdAndEstado(credito.getId(), EstadoCuota.PENDIENTE);
         if (!quedanImpagas) {
             credito.setEstado(EstadoCredito.CERRADO);
             creditoRepository.save(credito);
@@ -185,7 +185,7 @@ public class CreditoService {
 
         // VENCIDA derivada
         EstadoCuota estadoDerivado;
-        if (cuota.getPagada() == EstadoCuota.PAGADA) {
+        if (cuota.getEstado() == EstadoCuota.PAGADA) {
             estadoDerivado = EstadoCuota.PAGADA;
         } else if (LocalDate.now().isAfter(cuota.getFechaVencimiento())) {
             estadoDerivado = EstadoCuota.VENCIDA;
@@ -250,7 +250,7 @@ public class CreditoService {
                     .fechaVencimiento(LocalDate.now().plusDays(7L * i))
                     .monto(montoCuota)
                     .montoRecargo(BigDecimal.ZERO)
-                    .pagada(EstadoCuota.PENDIENTE)
+                    .estado(EstadoCuota.PENDIENTE)
                     .build());
         }
         return cuotas;
