@@ -18,12 +18,12 @@ public class ClientesEtiqueta {
   
     
     //@ManyToOne( optional = false)
-    //@JoinColumn(name="cliente")
+    //@JoinColumn(name="cliente_id")
     //private Cliente cliente;
 
    
     @ManyToOne( optional = false)
-    @JoinColumn(name = "etiqueta")
+    @JoinColumn(name = "etiqueta_id")
     private Etiqueta etiqueta; //fk etiqueta
 
     //@ManyToOne(optional = false)
