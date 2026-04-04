@@ -14,9 +14,21 @@ import java.util.List;
 @Repository
 public interface ClientesEtiquetaRepository extends JpaRepository<ClientesEtiqueta, long>{
 
-Page<Etiqueta> findByNombre(String nombre, Pageable pageable);
-    Page<Etiqueta> Cliente(long Cliente, Pageable pageable);
-    Page<Etiqueta> findByColor(String color, Pageable pageable);
+    Page<ClientesEtiqueta> findByEtiqueta (String etiqueta_id, Pageable pageable);
+    Page<ClientesEtiqueta> findByCliente_id(long cliente_id, Pageable pageable);
+    Page<ClientesEtiqueta> findByUsuario(long asignado_por_id, Pageable pageable);
+
+
+    List<ClientesEtiqueta>findByEtiqueta(String etiqueta_id);
+    List<ClientesEtiqueta>findByCliente_id(long cliente_id );
+    List<ClientesEtiqueta>findByUsuario(long asignado_por_id);
+
+    boolean existsById(long id);
+
+
+
+
+
 
 
 
