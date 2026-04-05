@@ -14,4 +14,11 @@ public class ErrorResponse {
     private String error;
     private List<String> mensajes;
     private LocalDateTime timestamp;
+
+    public ErrorResponse(int status, String error, List<String> mensajes) {
+        this.status = status;
+        this.error = error;
+        this.mensajes = mensajes;
+        this.timestamp = LocalDateTime.now();
+    }
 }

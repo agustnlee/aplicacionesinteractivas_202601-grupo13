@@ -1,16 +1,13 @@
 package com.uade.tp13.controller;
 
+import com.uade.tp13.dto.request.*;
+import com.uade.tp13.dto.response.*;
+import com.uade.tp13.enums.EstadoCredito;
+import com.uade.tp13.service.CreditoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-
-import com.uade.tp13.dto.request.CreditoRequest;
-import com.uade.tp13.dto.response.CreditoResponse;
-import com.uade.tp13.service.CreditoService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/creditos")
@@ -19,18 +16,85 @@ public class CreditoController {
 
     private final CreditoService creditoService;
 
-    @PostMapping
-    public ResponseEntity<CreditoResponse> crear(@Valid @RequestBody CreditoRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(creditoService.crear(request));
-    }
-
+    // GET /api/creditos/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<CreditoResponse> buscarPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(creditoService.buscarPorId(id));
+    public ResponseEntity<CreditoResponse> obtener(@PathVariable Long id) {
+        return ResponseEntity.ok(creditoService.obtenerCredito(id));
     }
 
-    @GetMapping("/cliente/{dni}")
-    public ResponseEntity<List<CreditoResponse>> listarPorCliente(@PathVariable String dni) {
-        return ResponseEntity.ok(creditoService.listarPorCliente(dni));
+    // GET /api/creditos?pagina=0&tamanio=10 (ej)
+    @GetMapping
+    public ResponseEntity<PaginatedResponse<CreditoResponse>> listar(
+            @RequestParam(defaultValue = "0")  int pagina,
+            @RequestParam(defaultValue = "10") int tamanio) {
+        return ResponseEntity.ok(creditoService.listarCreditos(pagina, tamanio));
+    }
+
+    // GET /api/creditos/por-estado?estado=ACTIVO&pagina=0&tamanio=10 (ej)
+    @GetMapping("/por-estado")
+    public ResponseEntity<PaginatedResponse<CreditoResponse>> listarPorEstado(
+            @RequestParam EstadoCredito estado,
+            @RequestParam(defaultValue = "0")  int pagina,
+            @RequestParam(defaultValue = "10") int tamanio) {
+        return ResponseEntity.ok(creditoService.listarPorEstado(estado, pagina, tamanio));
+    }
+
+    // GET /api/creditos/por-cliente/{clienteId}?pagina=0&tamanio=10
+    @GetMapping("/por-cliente/{clienteId}")
+    public ResponseEntity<PaginatedResponse<CreditoResponse>> listarPorCliente(
+            @PathVariable Long clienteId,
+            @RequestParam(defaultValue = "0")  int pagina,
+            @RequestParam(defaultValue = "10") int tamanio) {
+        return ResponseEntity.ok(creditoService.listarPorCliente(clienteId, pagina, tamanio));
+    }
+
+    // GET /api/creditos/por-cobrador/{cobradorId}?pagina=0&tamanio=10
+    @GetMapping("/por-cobrador/{cobradorId}")
+    public ResponseEntity<PaginatedResponse<CreditoResponse>> listarPorCobrador(
+            @PathVariable Long cobradorId,
+            @RequestParam(defaultValue = "0")  int pagina,
+            @RequestParam(defaultValue = "10") int tamanio) {
+        return ResponseEntity.ok(creditoService.listarPorCobrador(cobradorId, pagina, tamanio));
+    }
+
+    // GET /api/creditos/mis-creditos/{creadoPorId}?pagina=0&tamanio=10
+        @GetMapping("/mis-creditos/{creadoPorId}")
+        public ResponseEntity<PaginatedResponse<CreditoResponse>> listarPorCreadoPor(
+                @PathVariable Long creadoPorId,
+                @RequestParam(defaultValue = "0")  int pagina,
+                @RequestParam(defaultValue = "10") int tamanio) {
+            return ResponseEntity.ok(creditoService.listarPorCreadoPor(creadoPorId, pagina, tamanio));
+        }
+
+    // POST /api/creditos/preview
+    @PostMapping("/preview")
+    public ResponseEntity<PlanCuotasResponse> preview(
+            @Valid @RequestBody CrearCreditoRequest request) {
+        return ResponseEntity.ok(creditoService.calcularPlanPreview(request));
+    }
+
+    // POST /api/creditos
+    @PostMapping
+    public ResponseEntity<CreditoResponse> crear(
+            @Valid @RequestBody CrearCreditoRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(creditoService.crearCredito(request));
+    }
+
+    // PATCH /api/creditos/{id}/cobrador
+    @PatchMapping("/{id}/cobrador")
+    public ResponseEntity<CreditoResponse> cambiarCobrador(
+            @PathVariable Long id,
+            @Valid @RequestBody CambiarCobradorRequest request) {
+        return ResponseEntity.ok(creditoService.cambiarCobrador(id, request));
+    }
+
+    // PATCH /api/creditos/{id}/cancelar
+    @PatchMapping("/{id}/cancelar")
+    public ResponseEntity<CreditoResponse> cancelar(
+            @PathVariable Long id,
+            @Valid @RequestBody CancelarCreditoRequest request) {
+        return ResponseEntity.ok(creditoService.cancelarCredito(id, request));
     }
 }
