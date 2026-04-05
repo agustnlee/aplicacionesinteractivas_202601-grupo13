@@ -41,16 +41,16 @@ public class Usuario implements UserDetails {
     private Boolean estado = true;
  
     @Column(updatable = false)
-    private java.time.LocalDate fechaCreacion;
+    private java.time.LocalDateTime fechaCreacion;
     @PrePersist
     public void prePersist() {
-        this.fechaCreacion = java.time.LocalDate.now();
+        this.fechaCreacion = java.time.LocalDateTime.now();
     }
  
  
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(rol.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));
     }
  
     @Override
