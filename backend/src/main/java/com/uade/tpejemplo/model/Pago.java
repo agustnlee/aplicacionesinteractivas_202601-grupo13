@@ -1,11 +1,9 @@
 package com.uade.tpejemplo.model;
 
+import com.uade.tpejemplo.enums.MetodoPago;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,21 +21,28 @@ public class Pago {
     private Long id;
 
     @NotNull
-    @Column(name = "importe", nullable = false, precision = 12, scale = 2)
-    private BigDecimal importe;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_cuota", referencedColumnName = "id")
+    private Cuota cuota; // Relación Cuota (Cuota)
+
+    @Column(name = "fecha_pagado")
+    private LocalDateTime fechaPagado; // Fecha_Pagado
 
     @NotNull
-    @Column(name = "moneda", nullable = false, length = 3)
-    private String moneda; // "ARS"
+    @Column(name = "monto", nullable = false, precision = 12, scale = 2)
+    private BigDecimal monto; // Monto (mismo de la cuota)
 
-    @Column(name = "fecha_pago")
-    private LocalDateTime fecha;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "metodo")
+    private MetodoPago metodo; // Metodo (enum METODO_PAGO)
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dni_cliente", referencedColumnName = "dni")
-    private Cliente cliente;
+    @JoinColumn(name = "id_usuario_cobrador", referencedColumnName = "id")
+    private Usuario cobradoPor; // Cobrado_Por (Usuario)
 
-    @Enumerated(EnumType.STRING)
-    private EstadoPago estado;
+    @PrePersist
+    protected void onCreate() {
+        this.fechaPagado = LocalDateTime.now();
+    }
 }
