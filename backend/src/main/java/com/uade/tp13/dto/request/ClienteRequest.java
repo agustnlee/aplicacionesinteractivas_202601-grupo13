@@ -11,7 +11,7 @@ import lombok.Data;
 public class ClienteRequest {
 
     @NotBlank(message = "El DNI es obligatorio")
-    @Pattern(regexp = "//d{7,8}",message = "El DNI debe tener entre 7 u 8 digitos")
+    @Pattern(regexp = "\\d{7,8}",message = "El DNI debe tener entre 7 u 8 digitos")
     private String dni;
 
     @NotBlank(message = "El nombre es obligatorio")
@@ -22,7 +22,7 @@ public class ClienteRequest {
     private String email;
 
     @NotBlank(message = "El telefono es obligatorio")
-    @Pattern(regexp = "//d{8,9}",message = "El telefono debe tener 8 numeros")
+    @Pattern(regexp = "\\d{8,9}",message = "El telefono debe tener 8 numeros")
     private String telefono;
 
     @NotBlank(message = "El domicilio es obligatorio")
