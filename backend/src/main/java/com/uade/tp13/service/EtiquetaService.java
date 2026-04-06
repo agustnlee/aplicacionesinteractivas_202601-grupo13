@@ -1,6 +1,8 @@
 package com.uade.tp13.service;
 
 
+import java.time.LocalDate;
+
 import org.hibernate.sql.results.NoMoreOutputsException;
 
 import com.uade.tp13.dto.request.CrearEtiquetaRequest;
@@ -16,12 +18,21 @@ public class EtiquetaService {
     private final EtiquetaRepository etiquetaRepository;
 
     private String nombreEtiqueta;
+    private String colorEtiqueta;
+    private String descripcionEtiqueta;
+    private LocalDate fechaCreacionEtiqueta;
+    private LocalDate fechaModificacionEtiqueta;
 
    
 
     public EtiquetaResponse crearEtiqueta (CrearEtiquetaRequest request){
 
         nombreEtiqueta=request.getNombreEtiqueta();
+        colorEtiqueta=request.getColorEtiqueta();
+        descripcionEtiqueta= request.getDescripcionEtiqueta();
+        fechaCreacionEtiqueta= request.getFechaCreacionEtiqueta();
+        
+
 
 
         if (etiquetaRepository.existsByNombre( nombreEtiqueta )== false){
@@ -29,10 +40,10 @@ public class EtiquetaService {
 
 
             Etiqueta etiqueta = Etiqueta.builder().nombre(nombreEtiqueta)
-            .color(request.getColorEtiqueta())
-            .descripcion(request.getDescripcionEtiqueta())
-            .fechaCreacion(request.getFechaCreacionEtiqueta())
-            .fechaModificacion(request.getFechaModificacionEtiqueta()).build;
+            .color(colorEtiqueta)
+            .descripcion(descripcionEtiqueta)
+            .fechaCreacion(fechaCreacionEtiqueta)
+            .fechaModificacion(fechaCreacionEtiqueta).build;
 
             return mapToResponse(etiquetaRepository.save(etiqueta));
 
@@ -42,32 +53,30 @@ public class EtiquetaService {
     }
 
 
-    EtiquetaResponse modificarEtiqueta(ModificarEtiquetaRequest request){
+    EtiquetaResponse modificarEtiqueta( Long etiquetaId , ModificarEtiquetaRequest request){
 
 
-             
-            Etiqueta etiqueta = get(request)
+        Etiqueta etiqueta = get(etiquetaId);
+
+        //TODO: validar que el nombre no coincida con el nombre de otra etiqueta
+
+        etiqueta.setNombreEtiqueta(nombreEtiqueta).setColor(colorEtiqueta).setDescripcion(descripcionEtiqueta).setFechaModificacionEtiqueta(fechaModificacionEtiqueta);
+        
             
     
-            
-            Etiqueta.get.nombre(request.getNombreEtiqueta())
-            .color(request.getColorEtiqueta())
-            .descripcion(request.getDescripcionEtiqueta())
-            .fechaCreacion(request.getFechaCreacionEtiqueta())
-            .fechaModificacion(request.getFechaModificacionEtiqueta()).build;
-
-            if (EtiquetaRepository.existsByNombre()==){
-
+           return mapToResponse(etiquetaRepository.save(etiqueta));
 
             }
 
-            return mapToResponse(etiquetaRepository.save(etiqueta));
+            
 
 
-    }
-    EtiquetaResponse eliminar(CrearEtiquetaRequest request){
+    
+    //EtiquetaResponse eliminar( request){
 
-    }
+
+        // return mapToResponse
+    //}
 
     
 
