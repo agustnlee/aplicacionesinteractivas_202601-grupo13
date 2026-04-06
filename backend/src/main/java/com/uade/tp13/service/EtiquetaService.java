@@ -13,7 +13,7 @@ import com.uade.tp13.model.Etiqueta;
 
 
 
-public class EtiquetaService {
+ public class EtiquetaService {
     
     private final EtiquetaRepository etiquetaRepository;
 
@@ -22,6 +22,11 @@ public class EtiquetaService {
     private String descripcionEtiqueta;
     private LocalDate fechaCreacionEtiqueta;
     private LocalDate fechaModificacionEtiqueta;
+
+
+    public EtiquetaResponse obtenerEtiquetaId(Long etiquetaId){
+
+    }
 
    
 
@@ -34,7 +39,7 @@ public class EtiquetaService {
         
 
 
-
+// validacion al crear etiqueta. Si el nombre ya existe e
         if (etiquetaRepository.existsByNombre( nombreEtiqueta )== false){
 
 
@@ -47,13 +52,15 @@ public class EtiquetaService {
 
             return mapToResponse(etiquetaRepository.save(etiqueta));
 
+            else throw Exception
+
         }
 
          
     }
 
 
-    EtiquetaResponse modificarEtiqueta( Long etiquetaId , ModificarEtiquetaRequest request){
+    public EtiquetaResponse modificarEtiqueta( Long etiquetaId , ModificarEtiquetaRequest request){
 
 
         Etiqueta etiqueta = get(etiquetaId);
@@ -67,12 +74,10 @@ public class EtiquetaService {
            return mapToResponse(etiquetaRepository.save(etiqueta));
 
             }
-
-            
-
-
     
-    //EtiquetaResponse eliminar( request){
+    public EtiquetaResponse eliminarEtiqueta( EliminarEtiquetaRequest){
+
+
 
 
         // return mapToResponse
