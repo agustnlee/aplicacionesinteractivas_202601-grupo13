@@ -51,25 +51,20 @@ public class CreditoService {
         return mapToPageResponse(creditoRepository.findAll(pageable));
     }
 
-    public PaginatedResponse<CreditoResponse> listarPorEstado(EstadoCredito estado, int pagina, int tamanio) {
+    public PaginatedResponse<CreditoResponse> listarConFiltros(
+        EstadoCredito estado, Long clienteId,
+        Long cobradorId, Long creadoPorId,
+        int pagina, int tamanio) {
+
         Pageable pageable = buildPageable(pagina, tamanio);
-        return mapToPageResponse(creditoRepository.findByEstado(estado, pageable));
+
+        Page<Credito> page = creditoRepository.buscarConFiltros(
+            estado, clienteId, cobradorId, creadoPorId, pageable
+        );
+
+        return mapToPageResponse(page);
     }
 
-    public PaginatedResponse<CreditoResponse> listarPorCliente(Long clienteId, int pagina, int tamanio) {
-        Pageable pageable = buildPageable(pagina, tamanio);
-        return mapToPageResponse(creditoRepository.findByClienteId(clienteId, pageable));
-    }
-
-    public PaginatedResponse<CreditoResponse> listarPorCobrador(Long cobradorId, int pagina, int tamanio) {
-        Pageable pageable = buildPageable(pagina, tamanio);
-        return mapToPageResponse(creditoRepository.findByCobradorId(cobradorId, pageable));
-    }
-
-    public PaginatedResponse<CreditoResponse> listarPorCreadoPor(Long creadoPorId, int pagina, int tamanio) {
-        Pageable pageable = buildPageable(pagina, tamanio);
-        return mapToPageResponse(creditoRepository.findByCreadoPorId(creadoPorId, pageable));
-    }
 
     // Crear
 
@@ -204,7 +199,6 @@ public class CreditoService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
     public CreditoResponse mapToResponse(Credito c) {
         return CreditoResponse.builder()
                 .id(c.getId())
