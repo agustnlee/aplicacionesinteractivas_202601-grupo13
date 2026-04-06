@@ -9,14 +9,13 @@ import org.springframework.data.repository.query.Param;
 
 import com.uade.tp13.enums.EstadoCredito;
 import com.uade.tp13.model.Credito;
-
 import java.util.List;
 
 @Repository
 public interface CreditoRepository extends JpaRepository<Credito, Long> {
 
 
-    // para endpoints
+    // para endpoints + Logica interna
     @Query
     ("""
         SELECT c FROM Credito c
@@ -32,10 +31,6 @@ public interface CreditoRepository extends JpaRepository<Credito, Long> {
             @Param("creadoPorId") Long creadoPorId,
             Pageable pageable
     );
-
-    // Para lógica interna 
-    @Query("SELECT c FROM Credito c WHERE (:estado IS NULL OR c.estado = :estado)")
-    List<Credito> buscarParaProcesosInternos(@Param("estado") EstadoCredito estado);
 
     boolean existsByCliente_IdAndEstadoIn(Long clienteId, List<EstadoCredito> estados);
 }

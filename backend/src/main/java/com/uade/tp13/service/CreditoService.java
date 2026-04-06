@@ -5,6 +5,7 @@ import com.uade.tp13.dto.response.*;
 import com.uade.tp13.enums.EstadoCredito;
 import com.uade.tp13.enums.EstadoCuota;
 import com.uade.tp13.exception.*;
+import com.uade.tp13.mapper.CreditoCuotaMapper;
 import com.uade.tp13.model.*;
 import com.uade.tp13.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class CreditoService {
 
     private final CreditoRepository creditoRepository;
     private final CuotaRepository cuotaRepository;
+    private final CreditoCuotaMapper creditoCuotaMapper;
 
     // subsets 
     private static final Set<EstadoCredito> ESTADOS_FINALES = Set.of(
@@ -43,12 +45,7 @@ public class CreditoService {
     // Consultas
 
     public CreditoResponse obtenerCredito(Long creditoId) {
-        return mapToResponse(getOrThrow(creditoId));
-    }
-
-    public PaginatedResponse<CreditoResponse> listarCreditos(int pagina, int tamanio) {
-        Pageable pageable = buildPageable(pagina, tamanio);
-        return mapToPageResponse(creditoRepository.findAll(pageable));
+        return creditoCuotaMapper.creditoToResponse(getOrThrow(creditoId));
     }
 
     public PaginatedResponse<CreditoResponse> listarConFiltros(
@@ -62,7 +59,7 @@ public class CreditoService {
             estado, clienteId, cobradorId, creadoPorId, pageable
         );
 
-        return mapToPageResponse(page);
+        return creditoCuotaMapper.creditoToPageResponse(page);
     }
 
 
@@ -107,7 +104,7 @@ public class CreditoService {
                 request.getInteres(),
                 request.getCantidadCuotas()));
 
-        return mapToResponse(creditoRepository.save(credito));
+        return creditoCuotaMapper.creditoToResponse(creditoRepository.save(credito));
     }
 
     // Modificar
@@ -123,7 +120,7 @@ public class CreditoService {
         // TODO: validar cobradorId existe activo COBRADOR
         // credito.setCobrador(cobrador);
 
-        return mapToResponse(creditoRepository.save(credito));
+        return creditoCuotaMapper.creditoToResponse(creditoRepository.save(credito));
     }
 
     // Cancelar Credito 
@@ -138,7 +135,7 @@ public class CreditoService {
             throw new CreditoFinalizadoException(credito.getEstado());
 
         credito.setEstado(request.getMotivoCancelacion());
-        return mapToResponse(creditoRepository.save(credito));
+        return creditoCuotaMapper.creditoToResponse(creditoRepository.save(credito));
     }
 
     // Cambios estado interno
@@ -172,64 +169,8 @@ public class CreditoService {
         return creditoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException( "Crédito no encontrado con id: " + id));
     }
+ 
 
-    // mappers
-
-    CuotaResponse mapCuotaToResponse(Cuota cuota) {
-        BigDecimal recargo = cuota.getMontoRecargo() != null ? cuota.getMontoRecargo() : BigDecimal.ZERO;
-
-        // VENCIDA derivada
-        EstadoCuota estadoDerivado;
-        if (cuota.getEstado() == EstadoCuota.PAGADA) {
-            estadoDerivado = EstadoCuota.PAGADA;
-        } else if (LocalDate.now().isAfter(cuota.getFechaVencimiento())) {
-            estadoDerivado = EstadoCuota.VENCIDA;
-        } else {
-            estadoDerivado = EstadoCuota.PENDIENTE;
-        }
-        
-        return CuotaResponse.builder()
-                .id(cuota.getId())
-                .numeroCuota(cuota.getNumeroCuota())
-                .fechaVencimiento(cuota.getFechaVencimiento())
-                .monto(cuota.getMonto())
-                .montoRecargo(recargo)
-                .montoTotal(cuota.getMonto().add(recargo))
-                .estado(estadoDerivado)
-                .build();
-    }
-
-    public CreditoResponse mapToResponse(Credito c) {
-        return CreditoResponse.builder()
-                .id(c.getId())
-                // TODO: LIberar cuando cliente y cobrador
-                // .clienteId(c.getCliente().getId())
-                // .clienteNombre(c.getCliente().getNombre())
-                // .cobradorId(c.getCobrador().getId())
-                // .cobradorNombre(c.getCobrador().getNombre())
-                .monto(c.getMonto())
-                .cantidadCuotas(c.getCantidadCuotas())
-                .interes(c.getInteres())
-                .estado(c.getEstado())
-                .fechaCreacion(c.getFechaCreacion())
-                .cuotas(c.getCuotas().stream()
-                        .map(this::mapCuotaToResponse)
-                        .toList())
-                .build();
-    }
-
-    private PaginatedResponse<CreditoResponse> mapToPageResponse(Page<Credito> page) {
-        return PaginatedResponse.<CreditoResponse>builder()
-            .contenido(page.getContent().stream()
-                    .map(this::mapToResponse)
-                    .toList())
-            .paginaActual(page.getNumber())
-            .totalPaginas(page.getTotalPages())
-            .totalElementos(page.getTotalElements())
-            .tamanioPagina(page.getSize())
-            .esUltima(page.isLast())
-            .build();
-    }
 
     // Builders internos
 
