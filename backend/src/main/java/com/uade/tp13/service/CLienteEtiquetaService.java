@@ -33,8 +33,8 @@ public class CLienteEtiquetaService {
     @Transactional
 public void asignarEtiqueta(ClienteEtiquetaRequest request) {
     // 1. Validar Cliente
-    Cliente cliente = clienteRepository.findByDni(request.getDniCliente())
-            .orElseThrow(() -> new RuntimeException("No existe el cliente con DNI: " + request.getDniCliente()));
+    Cliente cliente = clienteRepository.findById(request.getClienteId())
+            .orElseThrow(() -> new RuntimeException("No existe el cliente con Id: " + request.getIdCliente()));
 
     // 2. Validar Etiqueta
     Etiqueta etiqueta = etiquetaRepository.findById(request.getEtiquetaId())
@@ -45,7 +45,7 @@ public void asignarEtiqueta(ClienteEtiquetaRequest request) {
             .orElseThrow(() -> new RuntimeException("Usuario asignador no encontrado"));
 
     // 4. Validar Duplicado
-    if (clienteEtiquetaRepository.existsByClienteDniAndEtiquetaId(cliente.getDni(), etiqueta.getId())) {
+    if (clienteEtiquetaRepository.existsByClienteIdAndEtiquetaId(cliente.getId(), etiqueta.getId())) {
         throw new RuntimeException("El cliente ya tiene asignada esta etiqueta");
     }
 
@@ -77,9 +77,9 @@ public void asignarEtiqueta(ClienteEtiquetaRequest request) {
 
     // --- ELIMINAR (Quitar etiqueta del cliente) ---
     @Transactional
-    public void quitarEtiqueta(String dni, Long etiquetaId) {
+    public void quitarEtiqueta(Long clienteId, Long etiquetaId) {
         // Buscamos la relación específica
-        ClienteEtiqueta asignacion = clienteEtiquetaRepository.findByClienteDniAndEtiquetaId(dni, etiquetaId)
+        ClienteEtiqueta asignacion = clienteEtiquetaRepository.findByClienteIdAndEtiquetaId(clienteId, etiquetaId)
                 .orElseThrow(() -> new RuntimeException("El cliente no tiene asignada esa etiqueta"));
         
         clienteEtiquetaRepository.delete(asignacion);
@@ -111,8 +111,8 @@ public Page<EtiquetaResumenResponse> obtenerResumenEtiquetas(Pageable pageable) 
     }
 
     // --- HU48: Listar etiquetas por cliente (Paginado con Trazabilidad) ---
-    public Page<ClienteEtiquetaResponse> obtenerEtiquetasPorCliente(String dni, Pageable pageable) {
-        Page<ClienteEtiqueta> asignaciones = clienteEtiquetaRepository.findByClienteDni(dni, pageable);
+    public Page<ClienteEtiquetaResponse> obtenerEtiquetasPorCliente(long clienteId, Pageable pageable) {
+        Page<ClienteEtiqueta> asignaciones = clienteEtiquetaRepository.findByClienteId(clienteId, pageable);
         
         return asignaciones.map(this::mapToResponse);
     }
@@ -121,7 +121,7 @@ public Page<EtiquetaResumenResponse> obtenerResumenEtiquetas(Pageable pageable) 
     private ClienteEtiquetaResponse mapToResponse(ClienteEtiqueta ce) {
         return ClienteEtiquetaResponse.builder()
                 .etiquetaId(ce.getEtiqueta().getId())
-                .clienteDni(ce.getCliente().getDni()) 
+                .clienteId(ce.getCliente().getId()) 
                 .asignadoPorId(ce.getAsignado_por_id().getId())
                 .asignadoEn(ce.getAsignado_en())// Usamos el ID de la relación ManyToOne
                 .build();

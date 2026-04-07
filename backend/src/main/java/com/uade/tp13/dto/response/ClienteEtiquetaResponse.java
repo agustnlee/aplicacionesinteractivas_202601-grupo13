@@ -11,7 +11,7 @@ import lombok.Data;
 public class ClienteEtiquetaResponse {
 
      private Long etiquetaId;
-     private String clienteDni;
+     private Long clienteId;
      private Long asignadoPorId;
      private LocalDate asignadoEn;
 

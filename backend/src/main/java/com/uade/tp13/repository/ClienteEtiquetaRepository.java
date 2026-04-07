@@ -19,28 +19,28 @@ import jakarta.transaction.Transactional;
 public interface ClienteEtiquetaRepository extends JpaRepository<ClienteEtiqueta, Long> {
 
 
-    Optional<ClienteEtiqueta> findByClienteDniAndEtiquetaId(String dni, long id);
+    Optional<ClienteEtiqueta> findByClienteIdAndEtiquetaId(Long clienteId, long etiquetaId);
 
     long countByEtiquetaId(Long etiquetaId);
 
     
     void deleteByClienteIdAndEtiquetaId(Long clienteId, Long etiquetaId);
-    Page<ClienteEtiqueta> findByEtiquetaId (long etiqueta_id, Pageable pageable);
+    Page<ClienteEtiqueta> findByEtiquetaId (long etiquetaId, Pageable pageable);
    //HU47
 
-    Page<ClienteEtiqueta> findByClienteDni(String cliente_dni, Pageable pageable);
+    Page<ClienteEtiqueta> findByClienteId(Long clienteId, Pageable pageable);
     //Hu45
 
 
-    Page<ClienteEtiqueta> findByAsignadoPorId(long asignado_por_id, Pageable pageable);
+    Page<ClienteEtiqueta> findByAsignadoPorId(long asignadoPorId, Pageable pageable);
 
     //Hu48
 
     
  
     boolean existsById(long id);
-    boolean existsByEtiquetaId(Long id);
-    boolean existsByClienteDniAndEtiquetaId(String dni , Long id);
+    boolean existsByEtiquetaId(Long etiquetaId);
+    boolean existsByClienteIdAndEtiquetaId(Long clienteId, Long etiquetaId);
 
     @ Modifying// Necesario para queries de actualización/borrado
     @Transactional

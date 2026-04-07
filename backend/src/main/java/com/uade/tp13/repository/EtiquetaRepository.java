@@ -11,11 +11,11 @@ import com.uade.tp13.model.Etiqueta;
 @Repository
 public interface EtiquetaRepository extends JpaRepository<Etiqueta, Long > {
 
-    Optional <Etiqueta> findByNombre(String nombre);
+    Optional <Etiqueta> findByNombreIgnoreCase(String nombre);
    
 
     
-    boolean existsByNombre(String nombre);
+    boolean existsByNombreIgoneCase(String nombre);
     boolean existsById(Long id);
      
   

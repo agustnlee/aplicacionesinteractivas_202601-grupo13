@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Data
 public class ClienteEtiquetaRequest {
-    @NotBlank(message = "El DNI del cliente es obligatorio")
-    private String dniCliente;
+    @NotBlank(message = "El ID del cliente es obligatorio")
+    private Long clienteId;
 
     @NotNull(message = "El ID de la etiqueta es obligatorio")
     private Long etiquetaId;
