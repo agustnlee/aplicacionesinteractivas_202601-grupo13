@@ -11,4 +11,7 @@ public class ClienteEtiquetaRequest {
 
     @NotNull(message = "El ID de la etiqueta es obligatorio")
     private Long etiquetaId;
+
+    @NotNull(message = "El ID del usuario asignador es obligatorio")
+    private Long idUsuarioAsignador;
 }
