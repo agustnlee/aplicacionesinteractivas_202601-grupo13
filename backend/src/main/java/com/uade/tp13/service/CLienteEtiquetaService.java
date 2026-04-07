@@ -65,10 +65,20 @@ public void asignarEtiqueta(ClienteEtiquetaRequest request) {
         // 1. Buscar la asignación existente por su ID
         ClienteEtiqueta asignacion = clienteEtiquetaRepository.findById(idAsignacion)
                 .orElseThrow(() -> new RuntimeException("La asignación no existe"));
+        
 
         // 2. Buscar la nueva etiqueta
         Etiqueta nuevaEtiqueta = etiquetaRepository.findById(nuevoEtiquetaId)
+
                 .orElseThrow(() -> new RuntimeException("La nueva etiqueta no existe"));
+
+        Cliente clienteAsignado =asignacion.getCliente();
+
+
+    
+        if (clienteEtiquetaRepository.existsByClienteIdAndEtiqueta(clienteAsignado.getId(),nuevaEtiqueta.getId()) ){
+        throw new RuntimeException("El cliente ya tiene asignada esta etiqueta");
+    }
 
         // 3. Actualizar
         asignacion.setEtiqueta(nuevaEtiqueta);

@@ -19,7 +19,7 @@ import jakarta.transaction.Transactional;
 public interface ClienteEtiquetaRepository extends JpaRepository<ClienteEtiqueta, Long> {
 
 
-    Optional<ClienteEtiqueta> findByClienteIdAndEtiquetaId(Long clienteId, long etiquetaId);
+    Optional<ClienteEtiqueta> findByClienteIdAndEtiquetaId(Long clienteId, Long etiquetaId);
 
     long countByEtiquetaId(Long etiquetaId);
 
@@ -32,7 +32,7 @@ public interface ClienteEtiquetaRepository extends JpaRepository<ClienteEtiqueta
     //Hu45
 
 
-    Page<ClienteEtiqueta> findByAsignadoPorId(long asignadoPorId, Pageable pageable);
+    Page<ClienteEtiqueta> findByAsignadoPorId(Long asignadoPorId, Pageable pageable);
 
     //Hu48
 
@@ -40,6 +40,7 @@ public interface ClienteEtiquetaRepository extends JpaRepository<ClienteEtiqueta
  
     boolean existsById(long id);
     boolean existsByEtiquetaId(Long etiquetaId);
+    boolean existsByIdAndClienteId(Long id, Long clienteId);
     boolean existsByClienteIdAndEtiquetaId(Long clienteId, Long etiquetaId);
 
     @ Modifying// Necesario para queries de actualización/borrado
