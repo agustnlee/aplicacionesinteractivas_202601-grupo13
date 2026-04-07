@@ -9,7 +9,7 @@ import lombok.Data;
 
 
 @Data
-public class CrearEtiquetaRequest {
+public class EtiquetaRequest {
 
      @NotBlank(message = "El nombre de la etiqueta es obligatorio")
      private String nombreEtiqueta;
