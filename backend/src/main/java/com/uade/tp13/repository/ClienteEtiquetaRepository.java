@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 
 import com.uade.tp13.model.ClienteEtiqueta;
 
+import jakarta.transaction.Transactional;
+
 @Repository
 public interface ClienteEtiquetaRepository extends JpaRepository<ClienteEtiqueta, Long> {
 
@@ -41,6 +43,7 @@ public interface ClienteEtiquetaRepository extends JpaRepository<ClienteEtiqueta
     boolean existsByClienteDniAndEtiquetaId(String dni , Long id);
 
     @ Modifying// Necesario para queries de actualización/borrado
+    @Transactional
     @ Query("DELETE FROM ClienteEtiqueta ce WHERE ce.etiqueta.id = :etiquetaId")
     void deleteAllByEtiquetaId(Long etiquetaId);
 
