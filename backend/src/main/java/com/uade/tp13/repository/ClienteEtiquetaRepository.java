@@ -29,12 +29,14 @@ public interface ClienteEtiquetaRepository extends JpaRepository<ClienteEtiqueta
     //Hu48
  
     boolean existsById(long id);
+    boolean existsByEtiquetaId(Long id);
+    boolean existsByClienteDniAndEtiquetaId(Long dni , Long id);
 
     @ Modifying// Necesario para queries de actualización/borrado
     @ Query("DELETE FROM ClienteEtiqueta ce WHERE ce.etiqueta.id = :etiquetaId")
     void deleteAllByEtiquetaId(Long etiquetaId);
 
-    
+
 
 }
 

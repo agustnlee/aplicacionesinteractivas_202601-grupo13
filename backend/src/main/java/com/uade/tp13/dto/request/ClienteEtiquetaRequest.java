@@ -1,0 +1,14 @@
+package com.uade.tp13.dto.request;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+@Data
+public class ClienteEtiquetaRequest {
+    @NotBlank(message = "El DNI del cliente es obligatorio")
+    private String dniCliente;
+
+    @NotNull(message = "El ID de la etiqueta es obligatorio")
+    private Long etiquetaId;
+}

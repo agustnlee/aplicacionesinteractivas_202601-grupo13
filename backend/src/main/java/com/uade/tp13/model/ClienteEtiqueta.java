@@ -17,18 +17,18 @@ public class ClienteEtiqueta {
     private Long id;
   
     
-    //@ManyToOne( optional = false)
-    //@JoinColumn(name="cliente_id")
-    //private Cliente cliente;
+    @ManyToOne( optional = false)
+    @JoinColumn(name="cliente_id")
+    private Cliente cliente;
 
    
     @ManyToOne( optional = false)
     @JoinColumn(name = "etiqueta_id")
     private Etiqueta etiqueta; //fk etiqueta
 
-    //@ManyToOne(optional = false)
-    //@JoinColumn(name = "asignado_por_id")
-    //private Usuario AsignadoPor;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "asignado_por_id")
+    private Usuario AsignadoPor;
 
     
     
