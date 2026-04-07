@@ -20,8 +20,9 @@ public class Etiqueta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
+    @Column(name = "nombre" ,unique = true)
     private String nombre;
+
     private String color;
     private String descripcion;
     private LocalDate fechaCreacion;

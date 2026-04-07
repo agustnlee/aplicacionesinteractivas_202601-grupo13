@@ -53,7 +53,7 @@ public void asignarEtiqueta(ClienteEtiquetaRequest request) {
     ClienteEtiqueta nuevaAsignacion = ClienteEtiqueta.builder()
             .cliente(cliente)
             .etiqueta(etiqueta)
-            .AsignadoPor(usuario) // <--- Aquí vinculamos al usuario
+            .asignado_por_id(usuario) // <--- Aquí vinculamos al usuario
             // No seteamos AsignadoEn porque lo hace el @PrePersist de la entidad
             .build();
     
@@ -122,8 +122,8 @@ public Page<EtiquetaResumenResponse> obtenerResumenEtiquetas(Pageable pageable) 
         return ClienteEtiquetaResponse.builder()
                 .etiquetaId(ce.getEtiqueta().getId())
                 .clienteDni(ce.getCliente().getDni()) 
-                .asignadoPorId(ce.getAsignadoPor().getId())
-                .asignadoEn(ce.getAsignadoEn())// Usamos el ID de la relación ManyToOne
+                .asignadoPorId(ce.getAsignado_por_id().getId())
+                .asignadoEn(ce.getAsignado_en())// Usamos el ID de la relación ManyToOne
                 .build();
 
     

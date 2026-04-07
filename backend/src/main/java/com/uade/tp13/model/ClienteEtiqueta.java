@@ -18,24 +18,24 @@ public class ClienteEtiqueta {
   
     
     @ManyToOne( optional = false)
-    @JoinColumn(name="cliente_id")
+    @JoinColumn(name="cliente_id", nullable = false)
     private Cliente cliente;
 
    
     @ManyToOne( optional = false)
-    @JoinColumn(name = "etiqueta_id")
+    @JoinColumn(name = "etiqueta_id", nullable = false)
     private Etiqueta etiqueta; //fk etiqueta
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "asignado_por_id")
-    private Usuario AsignadoPor;
+    @JoinColumn(name = "asignado_por_id", nullable = false)
+    private Usuario asignado_por_id;
 
     
-    
-    private LocalDate AsignadoEn;
+    @Column(name = "asignado_en", nullable = false)
+    private LocalDate asignado_en;
 
      @PrePersist
     public void prePersist() {
-        this.AsignadoEn = LocalDate.now();}
+        this.asignado_en = LocalDate.now();}
 
 }
