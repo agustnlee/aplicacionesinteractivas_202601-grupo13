@@ -1,28 +1,39 @@
 package com.uade.tp13.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.List;
+import lombok.*;
 
 @Entity
 @Table(name = "clientes")
-@Data
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Cliente {
 
     @Id
-    @Column(name = "dni", length = 15)
-    private String dni;
-
-    @NotBlank
-    @Column(name = "nombre", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false)
     private String nombre;
+    @Column(nullable = false, unique = true)
+    private String dni;
+    private String email;
+    private String telefono;
+    private String domicilio;
 
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Credito> creditos;
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean estado = true;
+
+    @Column(updatable = false)
+    private java.time.LocalDateTime fechaCreacion;
+    @PrePersist
+    protected void prePersist() {
+        this.fechaCreacion = java.time.LocalDateTime.now();
+    }
+    @ManyToOne (optional = false)
+    @JoinColumn(name = "creado_por_id")
+    private Usuario creadoPor;
+
 }

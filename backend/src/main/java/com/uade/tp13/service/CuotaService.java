@@ -2,6 +2,7 @@ package com.uade.tp13.service;
 
 import com.uade.tp13.dto.response.CuotaResponse;
 import com.uade.tp13.enums.EstadoCuota;
+import com.uade.tp13.mapper.CreditoCuotaMapper;
 import com.uade.tp13.repository.CuotaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ public class CuotaService {
 
     private final CuotaRepository cuotaRepository;
     private final CreditoService creditoService;
+    private final CreditoCuotaMapper creditoCuotaMapper;
 
     // Consultas
 
@@ -26,7 +28,7 @@ public class CuotaService {
         creditoService.getOrThrow(creditoId);
         return cuotaRepository.findByCreditoId(creditoId)
                 .stream()
-                .map(creditoService::mapCuotaToResponse)
+                .map(creditoCuotaMapper::cuotaToResponse)
                 .toList();
     }
 
@@ -35,10 +37,12 @@ public class CuotaService {
     public List<CuotaResponse> obtenerPendientes(Long creditoId) {
         creditoService.getOrThrow(creditoId);
         return cuotaRepository
-                .findByCreditoIdAndEstado(creditoId, EstadoCuota.PENDIENTE)
+                .findByCreditoIdAndEstadoAndFechaVencimientoGreaterThanEqual(
+                creditoId,
+                EstadoCuota.PENDIENTE,
+                LocalDate.now())
                 .stream()
-                .filter(c -> !LocalDate.now().isAfter(c.getFechaVencimiento()))
-                .map(creditoService::mapCuotaToResponse)
+                .map(creditoCuotaMapper::cuotaToResponse)
                 .toList();
     }
 
@@ -48,10 +52,12 @@ public class CuotaService {
     public List<CuotaResponse> obtenerVencidas(Long creditoId) {
         creditoService.getOrThrow(creditoId);
         return cuotaRepository
-                .findByCreditoIdAndEstado(creditoId, EstadoCuota.PENDIENTE)
+                .findByCreditoIdAndEstadoAndFechaVencimientoBefore(
+                creditoId, 
+                EstadoCuota.PENDIENTE, 
+                LocalDate.now())  // fechaVencimiento < hoy 
                 .stream()
-                .filter(c -> LocalDate.now().isAfter(c.getFechaVencimiento()))
-                .map(creditoService::mapCuotaToResponse)
+                .map(creditoCuotaMapper::cuotaToResponse)
                 .toList();
     }
 
