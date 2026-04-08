@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import org.springframework.stereotype.Service;
 
 import com.uade.tp13.dto.request.EtiquetaRequest;
+
 import com.uade.tp13.dto.response.EtiquetaResponse;
 import com.uade.tp13.repository.ClienteEtiquetaRepository;
 import com.uade.tp13.repository.EtiquetaRepository;
@@ -34,8 +35,11 @@ import com.uade.tp13.model.Etiqueta;
         if (etiquetaRepository.existsByNombreIgnoreCase(request.getNombreEtiqueta())) {
             throw new RuntimeException("Ya existe una etiqueta con ese nombre.");
         }
+
+        String nombre= request.getNombreEtiqueta();
+        nombre.toLowerCase().trim();
         Etiqueta etiqueta = Etiqueta.builder()
-                .nombre(request.getNombreEtiqueta())
+                .nombre(nombre)
                 .color(request.getColorEtiqueta())
                 .descripcion(request.getDescripcionEtiqueta())
                 .build();
