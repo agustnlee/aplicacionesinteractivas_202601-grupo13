@@ -1,2 +1,8 @@
 package com.uade.tpejemplo.enums;
-public enum MetodoPago { EFECTIVO, DEBITO, CREDITO, TRANSFERENCIA }
+
+public enum MetodoPago {
+    EFECTIVO,
+    TARJETA,
+    TRANSFERENCIA,
+    OTRO
+}

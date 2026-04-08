@@ -23,23 +23,26 @@ public class Pago {
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cuota", referencedColumnName = "id")
-    private Cuota cuota; // Relación Cuota (Cuota)
+    private Cuota cuota; // Relación con Cuota (según el doc)
 
     @Column(name = "fecha_pagado")
-    private LocalDateTime fechaPagado; // Fecha_Pagado
+    private LocalDateTime fechaPagado; // Se setea solo con @PrePersist
 
     @NotNull
     @Column(name = "monto", nullable = false, precision = 12, scale = 2)
-    private BigDecimal monto; // Monto (mismo de la cuota)
+    private BigDecimal monto; // Monto efectivamente pagado
 
     @Enumerated(EnumType.STRING)
     @Column(name = "metodo")
-    private MetodoPago metodo; // Metodo (enum METODO_PAGO)
+    private MetodoPago metodo; // Enum METODO_PAGO (Efectivo, Tarjeta, etc.)
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario_cobrador", referencedColumnName = "id")
-    private Usuario cobradoPor; // Cobrado_Por (Usuario)
+    private Usuario cobradoPor; // Quién lo cobró
+
+    @Column(name = "observaciones")
+    private String observaciones; // El "parámetro" extra para detalles del pago
 
     @PrePersist
     protected void onCreate() {
