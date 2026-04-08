@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import org.springframework.stereotype.Service;
 
 import com.uade.tp13.dto.request.EtiquetaRequest;
-import com.uade.tp13.dto.request.ModificarEtiquetaRequest;
 import com.uade.tp13.dto.response.EtiquetaResponse;
 import com.uade.tp13.repository.ClienteEtiquetaRepository;
 import com.uade.tp13.repository.EtiquetaRepository;
@@ -32,7 +31,7 @@ import com.uade.tp13.model.Etiqueta;
 
 // validacion al crear etiqueta. Si el nombre ya existe
     public Etiqueta crearEtiqueta(EtiquetaRequest request) {
-        if (etiquetaRepository.existsByNombreIgoneCase(request.getNombreEtiqueta())) {
+        if (etiquetaRepository.existsByNombreIgnoreCase(request.getNombreEtiqueta())) {
             throw new RuntimeException("Ya existe una etiqueta con ese nombre.");
         }
         Etiqueta etiqueta = Etiqueta.builder()
@@ -51,7 +50,7 @@ import com.uade.tp13.model.Etiqueta;
     // 2. Validar integridad del catálogo (HU43)
     // Si el nombre está cambiando, verificamos que el nuevo no exista ya en otra etiqueta
     if (!etiqueta.getNombre().equalsIgnoreCase(request.getNombreEtiqueta()) && 
-        etiquetaRepository.existsByNombreIgoneCase(request.getNombreEtiqueta())) {
+        etiquetaRepository.existsByNombreIgnoreCase(request.getNombreEtiqueta())) {
         throw new RuntimeException("No se puede renombrar: ya existe otra etiqueta llamada " + request.getNombreEtiqueta());
     }
 
