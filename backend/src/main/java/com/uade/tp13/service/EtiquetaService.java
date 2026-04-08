@@ -24,7 +24,7 @@ import com.uade.tp13.model.Etiqueta;
     
     private final EtiquetaRepository etiquetaRepository;
     private final ClienteEtiquetaRepository clienteEtiquetaRepository;
-    private String nombreNormalizado;
+    
 
     private String NormalizarNombre (EtiquetaRequest request){
         String nombreNormalizado= request.getNombreEtiqueta().trim().toLowerCase();
