@@ -22,7 +22,7 @@ public class ClienteEtiquetaController {
 
     // --- HU45: Asignar etiqueta a cliente ---
     @PostMapping
-    public ResponseEntity<Void> asignarEtiqueta(@Valid @RequestBody ClienteEtiquetaRequest request, idCliente, idEtiqueta) {
+    public ResponseEntity<Void> asignarEtiqueta(@Valid @RequestBody ClienteEtiquetaRequest request) {
         clienteEtiquetaService.asignarEtiqueta(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
