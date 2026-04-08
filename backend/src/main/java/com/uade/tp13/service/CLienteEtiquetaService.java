@@ -121,7 +121,7 @@ public Page<EtiquetaResumenResponse> obtenerResumenEtiquetas(Pageable pageable) 
     }
 
     // --- HU48: Listar etiquetas por cliente (Paginado con Trazabilidad) ---
-    public Page<ClienteEtiquetaResponse> obtenerEtiquetasPorCliente(long clienteId, Pageable pageable) {
+    public Page<ClienteEtiquetaResponse> obtenerEtiquetasPorCliente(Long clienteId, Pageable pageable) {
         Page<ClienteEtiqueta> asignaciones = clienteEtiquetaRepository.findByClienteId(clienteId, pageable);
         
         return asignaciones.map(this::mapToResponse);
