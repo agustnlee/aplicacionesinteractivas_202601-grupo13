@@ -25,7 +25,7 @@ public interface ClienteEtiquetaRepository extends JpaRepository<ClienteEtiqueta
 
     
     void deleteByClienteIdAndEtiquetaId(Long clienteId, Long etiquetaId);
-    Page<ClienteEtiqueta> findByEtiquetaId (long etiquetaId, Pageable pageable);
+    Page<ClienteEtiqueta> findByEtiquetaId (Long etiquetaId, Pageable pageable);
    //HU47
 
     Page<ClienteEtiqueta> findByClienteId(Long clienteId, Pageable pageable);
