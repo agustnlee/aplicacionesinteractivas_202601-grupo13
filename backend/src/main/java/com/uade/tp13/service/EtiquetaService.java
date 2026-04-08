@@ -24,6 +24,13 @@ import com.uade.tp13.model.Etiqueta;
     
     private final EtiquetaRepository etiquetaRepository;
     private final ClienteEtiquetaRepository clienteEtiquetaRepository;
+    private String nombreNormalizado;
+
+    private String NormalizarNombre (EtiquetaRequest request){
+        String nombreNormalizado= request.getNombreEtiqueta().trim().toLowerCase();
+        return nombreNormalizado;
+
+    }
 
 
 
@@ -37,8 +44,8 @@ import com.uade.tp13.model.Etiqueta;
             throw new BusinessException("Ya existe una etiqueta con ese nombre.");
         }
 
-        String nombreNormalizado= request.getNombreEtiqueta().toLowerCase().trim();
-       
+       nombreNormalizado=NormalizarNombre(request);
+
         Etiqueta etiqueta = Etiqueta.builder()
                 .nombre(nombreNormalizado)
                 .color(request.getColorEtiqueta())
@@ -60,7 +67,7 @@ import com.uade.tp13.model.Etiqueta;
     }
 
     // 3. Actualizar los campos (HU40)
-    String nombreNormalizado=request.getNombreEtiqueta().toLowerCase().trim();
+    nombreNormalizado=NormalizarNombre(request);
     etiqueta.setNombre(nombreNormalizado);
     etiqueta.setColor(request.getColorEtiqueta());
     etiqueta.setDescripcion(request.getDescripcionEtiqueta());
