@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 
-public class CLienteEtiquetaService {
+public class ClienteEtiquetaService {
     private final ClienteEtiquetaRepository clienteEtiquetaRepository;
     private final ClienteRepository clienteRepository;
     private final EtiquetaRepository etiquetaRepository;
