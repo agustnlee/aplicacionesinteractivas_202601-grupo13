@@ -34,7 +34,7 @@ public class ClienteEtiquetaService {
 public void asignarEtiqueta(ClienteEtiquetaRequest request) {
     // 1. Validar Cliente
     Cliente cliente = clienteRepository.findByClienteId(request.getClienteId())
-            .orElseThrow(() -> new RuntimeException("No existe el cliente con Id: " + request.getIdCliente()));
+            .orElseThrow(() -> new RuntimeException("No existe el cliente con Id: " + request.getClienteId()));
 
     // 2. Validar Etiqueta
     Etiqueta etiqueta = etiquetaRepository.findById(request.getEtiquetaId())
