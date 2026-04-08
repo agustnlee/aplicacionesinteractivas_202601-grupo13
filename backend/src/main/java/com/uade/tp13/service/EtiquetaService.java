@@ -11,6 +11,8 @@ import com.uade.tp13.dto.response.EtiquetaResponse;
 import com.uade.tp13.exception.BusinessException;
 import com.uade.tp13.repository.ClienteEtiquetaRepository;
 import com.uade.tp13.repository.EtiquetaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -88,6 +90,32 @@ import com.uade.tp13.model.Etiqueta;
         etiquetaRepository.deleteById(id);
     }
 
+
+    public EtiquetaResponse obtenerEtiquetaPorId(Long id) {
+    Etiqueta etiqueta = etiquetaRepository.findById(id)
+            .orElseThrow(() -> new BusinessException("Etiqueta no encontrada con el ID: " + id));
+    return mapToResponse(etiqueta);
+    }
+
+    public Page<EtiquetaResponse> buscarEtiquetas(String nombre, String color, Pageable pageable) {
+        Page<Etiqueta> etiquetas = etiquetaRepository.findByFiltros(nombre, color, pageable);
+        return etiquetas.map(this::mapToResponse);
+    }
+
+// Método auxiliar para mapear de la Entidad al DTO de respuesta
+    private EtiquetaResponse mapToResponse(Etiqueta etiqueta) {
+     return EtiquetaResponse.builder()
+            .etiquetaId(etiqueta.getId())
+            .nombreEtiqueta(etiqueta.getNombre())
+            .colorEtiqueta(etiqueta.getColor())
+            .descripcionEtiqueta(etiqueta.getDescripcion())
+            .build();
+    }
+
+
+
+
+    
 }
 
 
