@@ -33,7 +33,7 @@ public class CLienteEtiquetaService {
     @Transactional
 public void asignarEtiqueta(ClienteEtiquetaRequest request) {
     // 1. Validar Cliente
-    Cliente cliente = clienteRepository.findById(request.getClienteId())
+    Cliente cliente = clienteRepository.findByClienteId(request.getClienteId())
             .orElseThrow(() -> new RuntimeException("No existe el cliente con Id: " + request.getIdCliente()));
 
     // 2. Validar Etiqueta
@@ -53,7 +53,7 @@ public void asignarEtiqueta(ClienteEtiquetaRequest request) {
     ClienteEtiqueta nuevaAsignacion = ClienteEtiqueta.builder()
             .cliente(cliente)
             .etiqueta(etiqueta)
-            .asignado_por_id(usuario) // <--- Aquí vinculamos al usuario
+            .asignadoPorId(usuario) // <--- Aquí vinculamos al usuario
             // No seteamos AsignadoEn porque lo hace el @PrePersist de la entidad
             .build();
     
@@ -132,8 +132,8 @@ public Page<EtiquetaResumenResponse> obtenerResumenEtiquetas(Pageable pageable) 
         return ClienteEtiquetaResponse.builder()
                 .etiquetaId(ce.getEtiqueta().getId())
                 .clienteId(ce.getCliente().getId()) 
-                .asignadoPorId(ce.getAsignado_por_id().getId())
-                .asignadoEn(ce.getAsignado_en())// Usamos el ID de la relación ManyToOne
+                .asignadoPorId(ce.getAsignadoPorId().getId())
+                .asignadoEn(ce.getAsignadoEn())// Usamos el ID de la relación ManyToOne
                 .build();
 
     
