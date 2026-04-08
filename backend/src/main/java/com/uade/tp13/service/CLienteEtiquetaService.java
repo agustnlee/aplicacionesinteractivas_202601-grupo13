@@ -76,7 +76,7 @@ public void asignarEtiqueta(ClienteEtiquetaRequest request) {
 
 
     
-        if (clienteEtiquetaRepository.existsByClienteIdAndEtiqueta(clienteAsignado.getId(),nuevaEtiqueta.getId()) ){
+        if (clienteEtiquetaRepository.existsByClienteIdAndEtiquetaId(clienteAsignado.getId(),nuevaEtiqueta.getId()) ){
         throw new RuntimeException("El cliente ya tiene asignada esta etiqueta");
     }
 
