@@ -19,12 +19,7 @@ public class EtiquetaRequest {
 
      private String descripcionEtiqueta;
 
-     @NotNull(message = "La fecha de creacion de la etiqueta es obligatorio")
-     private LocalDate fechaCreacionEtiqueta;
-
-     @NotNull(message = "La fecha de modificacion de la etiqueta es obligatorio")
-     private LocalDate fechaModificacionEtiqueta;
-
+   
     
 
 
