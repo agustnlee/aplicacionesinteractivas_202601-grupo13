@@ -13,7 +13,7 @@ public class ClienteEtiquetaResponse {
      private Long etiquetaId;
      private Long clienteId;
      private Long asignadoPorId;
-     private LocalDate asignadoEn;
+   
 
 
     

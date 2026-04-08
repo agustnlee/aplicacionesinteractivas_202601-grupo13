@@ -17,7 +17,6 @@ public class EtiquetaResponse {
     private String colorEtiqueta;
     private String nombreEtiqueta;
     private String descripcionEtiqueta;
-    private LocalDate fechaCreacionEtiqueta;
-    private LocalDate fechaModificacionEtiqueta;
+    
     
 }
