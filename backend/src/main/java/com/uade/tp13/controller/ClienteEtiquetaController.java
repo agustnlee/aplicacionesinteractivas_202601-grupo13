@@ -21,12 +21,22 @@ public class ClienteEtiquetaController {
     private final ClienteEtiquetaService clienteEtiquetaService;
 
     // --- HU45: Asignar etiqueta a cliente ---
-    @PostMapping
-    public ResponseEntity<Void> asignarEtiqueta(@Valid @RequestBody ClienteEtiquetaRequest request) {
+    @PostMapping("/{clienteId}/etiquetas/{etiquetaId}")
+    public ResponseEntity<Void> asignarEtiqueta(
+            @PathVariable Long clienteId,
+            @PathVariable Long etiquetaId,
+            @RequestParam Long idUsuarioAsignador) { 
+        
+        // Creamos el Request "on the fly" para pasárselo al Service actual
+        ClienteEtiquetaRequest request = new ClienteEtiquetaRequest();
+        request.setClienteId(clienteId);
+        request.setEtiquetaId(etiquetaId);
+        request.setIdUsuarioAsignador(idUsuarioAsignador);
+        
         clienteEtiquetaService.asignarEtiqueta(request);
+        
         return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
+            }
     // --- HU47: Obtener resumen estadístico de etiquetas (Paginado) ---
     @GetMapping("/resumen")
     public ResponseEntity<Page<EtiquetaResumenResponse>> obtenerResumenEtiquetas(
