@@ -28,14 +28,14 @@ public class ClienteEtiqueta {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "asignado_por_id", nullable = false)
-    private Usuario asignado_por_id;
+    private Usuario asignadoPorId;
 
     
     @Column(name = "asignado_en", nullable = false)
-    private LocalDate asignado_en;
+    private LocalDate asignadoEn;
 
      @PrePersist
     public void prePersist() {
-        this.asignado_en = LocalDate.now();}
+        this.asignadoEn = LocalDate.now();}
 
 }
