@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.uade.tp13.dto.request.ClienteEtiquetaRequest;
 import com.uade.tp13.dto.response.ClienteEtiquetaResponse;
 import com.uade.tp13.dto.response.EtiquetaResumenResponse;
+import com.uade.tp13.exception.BusinessException;
 import com.uade.tp13.model.Cliente;
 import com.uade.tp13.model.ClienteEtiqueta;
 import com.uade.tp13.model.Etiqueta;
@@ -34,19 +35,19 @@ public class ClienteEtiquetaService {
 public void asignarEtiqueta(ClienteEtiquetaRequest request) {
     // 1. Validar Cliente
     Cliente cliente = clienteRepository.findByClienteId(request.getClienteId())
-            .orElseThrow(() -> new RuntimeException("No existe el cliente con Id: " + request.getClienteId()));
+            .orElseThrow(() -> new BusinessException("No existe el cliente con Id: " + request.getClienteId()));
 
     // 2. Validar Etiqueta
     Etiqueta etiqueta = etiquetaRepository.findById(request.getEtiquetaId())
-            .orElseThrow(() -> new RuntimeException("La etiqueta no existe"));
+            .orElseThrow(() -> new BusinessException ("La etiqueta no existe"));
 
     // 3. Validar Usuario (Asignador)
     Usuario usuario = usuarioRepository.findById(request.getIdUsuarioAsignador())
-            .orElseThrow(() -> new RuntimeException("Usuario asignador no encontrado"));
+            .orElseThrow(() -> new BusinessException("Usuario asignador no encontrado"));
 
     // 4. Validar Duplicado
     if (clienteEtiquetaRepository.existsByClienteIdAndEtiquetaId(cliente.getId(), etiqueta.getId())) {
-        throw new RuntimeException("El cliente ya tiene asignada esta etiqueta");
+        throw new BusinessException("El cliente ya tiene asignada esta etiqueta");
     }
 
     // 5. Crear y persistir
@@ -64,20 +65,20 @@ public void asignarEtiqueta(ClienteEtiquetaRequest request) {
     public void modificarAsignacion(Long idAsignacion, Long nuevoEtiquetaId) {
         // 1. Buscar la asignación existente por su ID
         ClienteEtiqueta asignacion = clienteEtiquetaRepository.findById(idAsignacion)
-                .orElseThrow(() -> new RuntimeException("La asignación no existe"));
+                .orElseThrow(() -> new BusinessException("La asignación no existe"));
         
 
         // 2. Buscar la nueva etiqueta
         Etiqueta nuevaEtiqueta = etiquetaRepository.findById(nuevoEtiquetaId)
 
-                .orElseThrow(() -> new RuntimeException("La nueva etiqueta no existe"));
+                .orElseThrow(() -> new BusinessException("La nueva etiqueta no existe"));
 
         Cliente clienteAsignado =asignacion.getCliente();
 
 
     
         if (clienteEtiquetaRepository.existsByClienteIdAndEtiquetaId(clienteAsignado.getId(),nuevaEtiqueta.getId()) ){
-        throw new RuntimeException("El cliente ya tiene asignada esta etiqueta");
+        throw new BusinessException("El cliente ya tiene asignada esta etiqueta");
     }
 
         // 3. Actualizar
@@ -90,7 +91,7 @@ public void asignarEtiqueta(ClienteEtiquetaRequest request) {
     public void quitarEtiqueta(Long clienteId, Long etiquetaId) {
         // Buscamos la relación específica
         ClienteEtiqueta asignacion = clienteEtiquetaRepository.findByClienteIdAndEtiquetaId(clienteId, etiquetaId)
-                .orElseThrow(() -> new RuntimeException("El cliente no tiene asignada esa etiqueta"));
+                .orElseThrow(() -> new BusinessException("El cliente no tiene asignada esa etiqueta"));
         
         clienteEtiquetaRepository.delete(asignacion);
     }
@@ -99,7 +100,7 @@ public void asignarEtiqueta(ClienteEtiquetaRequest request) {
     @Transactional
     public void eliminarPorId(Long idAsignacion) {
         if (!clienteEtiquetaRepository.existsById(idAsignacion)) {
-            throw new RuntimeException("No se encontró la asignación de etiqueta");
+            throw new BusinessException("No se encontró la asignación de etiqueta");
         }
         clienteEtiquetaRepository.deleteById(idAsignacion);
     
