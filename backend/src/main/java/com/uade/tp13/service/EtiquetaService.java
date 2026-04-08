@@ -44,10 +44,10 @@ import com.uade.tp13.model.Etiqueta;
             throw new BusinessException("Ya existe una etiqueta con ese nombre.");
         }
 
-       nombreNormalizado=NormalizarNombre(request);
+       
 
         Etiqueta etiqueta = Etiqueta.builder()
-                .nombre(nombreNormalizado)
+                .nombre(NormalizarNombre(request))
                 .color(request.getColorEtiqueta())
                 .descripcion(request.getDescripcionEtiqueta())
                 .build();
@@ -67,8 +67,8 @@ import com.uade.tp13.model.Etiqueta;
     }
 
     // 3. Actualizar los campos (HU40)
-    nombreNormalizado=NormalizarNombre(request);
-    etiqueta.setNombre(nombreNormalizado);
+    
+    etiqueta.setNombre(NormalizarNombre(request));
     etiqueta.setColor(request.getColorEtiqueta());
     etiqueta.setDescripcion(request.getDescripcionEtiqueta());
     
