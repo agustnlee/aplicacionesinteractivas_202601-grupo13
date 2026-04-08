@@ -36,10 +36,10 @@ import com.uade.tp13.model.Etiqueta;
             throw new RuntimeException("Ya existe una etiqueta con ese nombre.");
         }
 
-        String nombre= request.getNombreEtiqueta();
-        nombre.toLowerCase().trim();
+        String nombreNormalizado= request.getNombreEtiqueta().toLowerCase().trim();
+       
         Etiqueta etiqueta = Etiqueta.builder()
-                .nombre(nombre)
+                .nombre(nombreNormalizado)
                 .color(request.getColorEtiqueta())
                 .descripcion(request.getDescripcionEtiqueta())
                 .build();
@@ -59,7 +59,8 @@ import com.uade.tp13.model.Etiqueta;
     }
 
     // 3. Actualizar los campos (HU40)
-    etiqueta.setNombre(request.getNombreEtiqueta());
+    String nombreNormalizado=request.getNombreEtiqueta().toLowerCase().trim();
+    etiqueta.setNombre(nombreNormalizado);
     etiqueta.setColor(request.getColorEtiqueta());
     etiqueta.setDescripcion(request.getDescripcionEtiqueta());
     
