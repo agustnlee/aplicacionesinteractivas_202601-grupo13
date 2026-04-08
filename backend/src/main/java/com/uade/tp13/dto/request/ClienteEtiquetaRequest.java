@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class ClienteEtiquetaRequest {
-    @NotBlank(message = "El ID del cliente es obligatorio")
+    @NotNull(message = "El ID del cliente es obligatorio")
     private Long clienteId;
 
     @NotNull(message = "El ID de la etiqueta es obligatorio")
