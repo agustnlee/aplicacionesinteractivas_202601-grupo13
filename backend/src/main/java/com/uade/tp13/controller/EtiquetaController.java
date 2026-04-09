@@ -2,6 +2,7 @@ package com.uade.tp13.controller;
 
 import com.uade.tp13.dto.request.EtiquetaRequest;
 import com.uade.tp13.dto.response.CreditoResponse;
+import com.uade.tp13.dto.response.EtiquetaResponse;
 import com.uade.tp13.model.Etiqueta;
 import com.uade.tp13.service.EtiquetaService;
 import jakarta.validation.Valid;
@@ -22,17 +23,26 @@ public class EtiquetaController {
 
     private final EtiquetaService etiquetaService;
 
+    
+
     @PostMapping
-    public ResponseEntity<EtiquetaResponse> crearEtiqueta(@Valid @RequestBody EtiquetaRequest request) {
+    
+    public ResponseEntity<Etiqueta> crearEtiqueta(@Valid @RequestBody EtiquetaRequest request) {
         Etiqueta nuevaEtiqueta = etiquetaService.crearEtiqueta(request);
+
+        
+        
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaEtiqueta);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EtiquetaResponse> modificarEtiqueta(
+    public ResponseEntity<Etiqueta> modificarEtiqueta(
             @PathVariable Long id, 
             @Valid @RequestBody EtiquetaRequest request) {
         Etiqueta etiquetaModificada = etiquetaService.modificarEtiqueta(id, request);
+
+        
+
         return ResponseEntity.ok(etiquetaModificada);
     }
 
