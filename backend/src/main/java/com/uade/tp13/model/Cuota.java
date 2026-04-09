@@ -31,9 +31,8 @@ public class Cuota {
     @Enumerated(EnumType.STRING)
     private EstadoCuota estado;
 
-    /*TODO: Liberar cuando este pago
     @OneToOne(mappedBy = "cuota", cascade = CascadeType.ALL)
-    private Pago pago;*/
+    private Pago pago;
 
     @PrePersist
     public void prePersist() {
