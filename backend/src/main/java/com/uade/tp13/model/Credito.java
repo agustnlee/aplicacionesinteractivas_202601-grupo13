@@ -21,7 +21,6 @@ public class Credito {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /*  TODO liberar para cuando esten las demas entidades
 
     @ManyToOne(optional = false) 
     @JoinColumn(name = "cliente_id")
@@ -34,8 +33,6 @@ public class Credito {
     @ManyToOne(optional = false)
     @JoinColumn(name = "creado_por_id")
     private Usuario creadoPor;
-
-    */
 
     private BigDecimal monto;
     private Integer cantidadCuotas;

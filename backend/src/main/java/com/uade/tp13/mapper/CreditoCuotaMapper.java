@@ -18,11 +18,10 @@ public class CreditoCuotaMapper {
     public CreditoResponse creditoToResponse(Credito c) {
         return CreditoResponse.builder()
                 .id(c.getId())
-                // TODO: liberar cuando cliente y cobrador estén disponibles
-                // .clienteId(c.getCliente().getId())
-                // .clienteNombre(c.getCliente().getNombre())
-                // .cobradorId(c.getCobrador().getId())
-                // .cobradorNombre(c.getCobrador().getNombre())
+                .clienteId(c.getCliente().getId())
+                .clienteNombre(c.getCliente().getNombre())
+                .cobradorId(c.getCobrador().getId())
+                .cobradorNombre(c.getCobrador().getNombre())
                 .monto(c.getMonto())
                 .cantidadCuotas(c.getCantidadCuotas())
                 .interes(c.getInteres())

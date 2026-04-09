@@ -61,6 +61,4 @@ public class CuotaService {
                 .toList();
     }
 
-    // TODO: Registrar Pago
-    
 }

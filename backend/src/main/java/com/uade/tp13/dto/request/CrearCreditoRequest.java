@@ -6,15 +6,11 @@ import java.math.BigDecimal;
 
 @Data
 public class CrearCreditoRequest {
-
-
-    /* TODO: liberar cuando esten cliente y usuario
     @NotNull(message = "El cliente es obligatorio")
     private Long clienteId;
 
     @NotNull(message = "El cobrador es obligatorio")
     private Long cobradorId;
-     */
 
     @NotNull(message = "El monto es obligatorio")
     @DecimalMin(value = "1.0", message = "El monto debe ser mayor a 0")
