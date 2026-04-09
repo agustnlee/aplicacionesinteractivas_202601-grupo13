@@ -1,9 +1,6 @@
-package com.uade.tpejemplo.model;
+package com.uade.tp13.model;
 
 import com.uade.tp13.enums.MetodoPago;
-import com.uade.tp13.model.Cuota;
-import com.uade.tp13.model.Usuario;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
