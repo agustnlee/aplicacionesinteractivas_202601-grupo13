@@ -12,4 +12,5 @@ public class CreditoFichaResponse {
     private BigDecimal monto;
     private Long cobradorId;
     private String cobradorNombre;
+    private LocalDateTime fechaCreacion;
 }
