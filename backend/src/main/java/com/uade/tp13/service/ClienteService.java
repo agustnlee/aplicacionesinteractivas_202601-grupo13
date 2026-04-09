@@ -23,18 +23,11 @@ public class ClienteService {
     private final UsuarioRepository usuarioRepository;
     private final CreditoRepository creditoRepository;
     private final ClienteEtiquetaRepository clienteEtiquetaRepository;
-    //clienteequi
  
     private static final Set<EstadoCredito> estadosCreditoInvalido = Set.of(
             EstadoCredito.ACTIVO,
             EstadoCredito.EN_MORA
     );
- 
-    @Transactional(readOnly = true)
-    public PaginatedResponse<ClienteResponse> listarClientes(int pagina, int tamanio) {
-        Pageable pageable = buildPageable(pagina, tamanio);
-        return mapToPageResponseBasico(clienteRepository.findAll(pageable));
-    }
    
     //BusquedasDirecta
     @Transactional(readOnly = true)
@@ -47,19 +40,6 @@ public class ClienteService {
         Cliente cliente = clienteRepository.findByDni(dni)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró cliente con DNI: " + dni));
         return mapToResponseBasico(cliente);
-    }
- 
-    @Transactional(readOnly = true)
-    public PaginatedResponse<ClienteResponse> busquedaEstado(Boolean estado, int pagina, int tamanio) {
-        Pageable pageable = buildPageable(pagina, tamanio);
-        return mapToPageResponseBasico(clienteRepository.findByEstado(estado, pageable));
-    }
- 
-    @Transactional(readOnly = true)
-    public PaginatedResponse<ClienteResponse> busquedaCreadoPor(Long idCreadoPor, int pagina, int tamanio) {
-        Pageable pageable = buildPageable(pagina, tamanio);
-        Page<Cliente> page = clienteRepository.findByCreadoPorId(idCreadoPor, pageable);
-        return mapToPageResponseBasico(page);
     }
  
     @Transactional(readOnly = true)
