@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.uade.tp13.enums.EstadoCredito;
 import com.uade.tp13.model.Credito;
-import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface CreditoRepository extends JpaRepository<Credito, Long> {
@@ -32,5 +32,5 @@ public interface CreditoRepository extends JpaRepository<Credito, Long> {
             Pageable pageable
     );
 
-    boolean existsByCliente_IdAndEstadoIn(Long clienteId, List<EstadoCredito> estados);
+    boolean existsByCliente_IdAndEstadoIn(Long clienteId, Set<EstadoCredito> estados);
 }
