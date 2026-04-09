@@ -22,7 +22,7 @@ public class ClienteService {
     private final ClienteRepository clienteRepository;
     private final UsuarioRepository usuarioRepository;
     private final CreditoRepository creditoRepository;
-    private final ClienteEtiquetaRepository clientesEtiquetaRepository;
+    private final ClienteEtiquetaRepository clienteEtiquetaRepository;
     //clienteequi
  
     private static final Set<EstadoCredito> estadosCreditoInvalido = Set.of(
@@ -120,7 +120,7 @@ public class ClienteService {
  
     private void validarImpedimentosDeBaja(Long clienteId) {
         if (creditoRepository.existsByCliente_IdAndEstadoIn(clienteId, estadosCreditoInvalido)) {
-            throw new ReglaNegocioException("No se puede dar de baja: el cliente tiene créditos activos o en mora.");
+            throw new BusinessException("No se puede dar de baja: el cliente tiene créditos activos o en mora.");
         }
     }
  
@@ -130,8 +130,8 @@ public class ClienteService {
         Cliente cliente = getOrThrow(id);
         Pageable limiteFicha = PageRequest.of(0, 100);
        
-        List<Credito> creditos = creditoRepository.findByCliente_Id(id, limiteFicha).getContent();
-        List<ClientesEtiqueta> etiquetas = clientesEtiquetaRepository.findByCliente_Id(id, limiteFicha).getContent();
+        List<Credito> creditos = creditoRepository.buscarConFiltros(EstadoCredito.ACTIVO,id,null,null, limiteFicha).getContent();
+        List<ClienteEtiqueta> etiquetas = clienteEtiquetaRepository.findByCliente_Id(id, limiteFicha).getContent();
        
         return fichaCompleta(cliente, creditos, etiquetas);
     }
@@ -175,7 +175,7 @@ public class ClienteService {
     }
  
     // FICHA COMPLETA DE CLIENTE
-    private ClienteFichaResponse fichaCompleta(Cliente cliente, List<Credito> creditos, List<ClientesEtiqueta> etiquetas) {
+    private ClienteFichaResponse fichaCompleta(Cliente cliente, List<Credito> creditos, List<ClienteEtiqueta> etiquetas) {
         return ClienteFichaResponse.builder()
                 .id(cliente.getId())
                 .nombre(cliente.getNombre())
@@ -192,10 +192,11 @@ public class ClienteService {
                 .build();
     }
  
-    private List<EtiquetaFichaResponse> detalleEtiquetaFicha(List<ClientesEtiqueta> asignaciones) {
+    private List<EtiquetaFichaResponse> detalleEtiquetaFicha(List<ClienteEtiqueta> asignaciones) {
         return asignaciones.stream()
                 .map(ce -> EtiquetaFichaResponse.builder()
-                        .id(ce.getEtiqueta().getId())
+                        .idClienteEtiqueta(ce.getEtiqueta().getId())
+                        .idEtiqueta(ce.getEtiqueta().getId())
                         .nombre(ce.getEtiqueta().getNombre())
                         .color(ce.getEtiqueta().getColor())
                         .build())
@@ -209,6 +210,7 @@ public class ClienteService {
                         .monto(cr.getMonto())
                         .cobradorId(cr.getCobrador() != null ? cr.getCobrador().getId() : null)
                         .cobradorNombre(cr.getCobrador() != null ? cr.getCobrador().getNombre() : "Sin asignar")
+                        .fechaCreacion(cr.getFechaCreacion())
                         .build())
                 .collect(Collectors.toList());
     }
