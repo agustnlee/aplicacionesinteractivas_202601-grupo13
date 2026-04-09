@@ -4,6 +4,8 @@ import java.math.BigDecimal;
  
 import lombok.Builder;
 import lombok.Data;
+import java.time.LocalDate;
+import com.uade.tp13.enums.EstadoCredito;
  
 @Data
 @Builder
@@ -12,5 +14,6 @@ public class CreditoFichaResponse {
     private BigDecimal monto;
     private Long cobradorId;
     private String cobradorNombre;
-    private LocalDateTime fechaCreacion;
+    private EstadoCredito estado;
+    private LocalDate fechaCreacion;
 }
