@@ -27,13 +27,13 @@ public class UsuarioController {
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) ROL_USUARIO rol,
             @RequestParam(required = false) Boolean estado,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamanio
     ) {
-        return ResponseEntity.ok(usuarioService.buscarUsuarios(nombre, rol, estado, page, size));
+        return ResponseEntity.ok(usuarioService.buscarUsuarios(nombre, rol, estado, pagina, tamanio));
     }
  
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponse> actualizar(
             @PathVariable Long id,
             @Valid @RequestBody UsuarioUpdateRequest request

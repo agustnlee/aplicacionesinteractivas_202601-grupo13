@@ -6,6 +6,8 @@ import com.uade.tp13.dto.response.ClienteFichaResponse;
 import com.uade.tp13.dto.response.ClienteResponse;
 import com.uade.tp13.dto.response.PaginatedResponse;
 import com.uade.tp13.service.ClienteService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +21,8 @@ public class ClienteController {
     private final ClienteService clienteService;
     @PostMapping
     public ResponseEntity<ClienteResponse> crearCliente(
-        @RequestBody ClienteRequest request,
-        @PathVariable Long id) {
+        @Valid @RequestBody ClienteRequest request,
+        @RequestParam(required = false) Long id) {
  
         ClienteResponse response = clienteService.crearCliente(request, id);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -28,7 +30,8 @@ public class ClienteController {
  
     @PutMapping("/{id}")
     public ResponseEntity<ClienteResponse> editarCliente(
-            @PathVariable Long id, @RequestBody ClienteUpdateRequest request) {
+            @PathVariable Long id, 
+            @Valid @RequestBody ClienteUpdateRequest request) {
  
         ClienteResponse response = clienteService.editarCliente(id, request);
         return ResponseEntity.ok(response);
@@ -39,14 +42,16 @@ public class ClienteController {
         clienteService.alterarEstado(id);
         return ResponseEntity.noContent().build();
     }
- 
-    // Busquedas directa
+
     @GetMapping
     public ResponseEntity<PaginatedResponse<ClienteResponse>> listarClientes(
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) Boolean estado,
+            @RequestParam(required = false) Long creadoPorId,
             @RequestParam(defaultValue = "0") int pagina,
             @RequestParam(defaultValue = "10") int tamanio) {
  
-        return ResponseEntity.ok(clienteService.listarClientes(pagina, tamanio));
+        return ResponseEntity.ok(clienteService.buscarClientes(nombre, estado, creadoPorId, pagina, tamanio));
     }
  
     @GetMapping("/{id}")
@@ -57,36 +62,6 @@ public class ClienteController {
     @GetMapping("/dni/{dni}")
     public ResponseEntity<ClienteResponse> busquedaDni(@PathVariable String dni) {
         return ResponseEntity.ok(clienteService.busquedaDni(dni));
-    }
- 
-    @GetMapping("/estado/{estado}")
-    public ResponseEntity<PaginatedResponse<ClienteResponse>> busquedaEstado(
-            @PathVariable Boolean estado,
-            @RequestParam(defaultValue = "0") int pagina,
-            @RequestParam(defaultValue = "10") int tamanio) {
- 
-        return ResponseEntity.ok(clienteService.busquedaEstado(estado, pagina, tamanio));
-    }
- 
-    @GetMapping("/creado-por/{idCreadoPor}")
-    public ResponseEntity<PaginatedResponse<ClienteResponse>> busquedaCreadoPor(
-            @PathVariable Long idCreadoPor,
-            @RequestParam(defaultValue = "0") int pagina,
-            @RequestParam(defaultValue = "10") int tamanio) {
- 
-        return ResponseEntity.ok(clienteService.busquedaCreadoPor(idCreadoPor, pagina, tamanio));
-    }
- 
-    // Filtro
-    @GetMapping("/buscar")
-    public ResponseEntity<PaginatedResponse<ClienteResponse>> buscarClientes(
-            @RequestParam(required = false) String nombre,
-            @RequestParam(required = false) Boolean estado,
-            @RequestParam(required = false) Long creadoPorId,
-            @RequestParam(defaultValue = "0") int pagina,
-            @RequestParam(defaultValue = "10") int tamanio) {
- 
-        return ResponseEntity.ok(clienteService.buscarClientes(nombre, estado, creadoPorId, pagina, tamanio));
     }
     //PENDIENTE
     @GetMapping("/{id}/ficha")
