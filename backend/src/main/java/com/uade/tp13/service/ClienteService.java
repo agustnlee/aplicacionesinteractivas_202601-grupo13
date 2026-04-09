@@ -210,6 +210,7 @@ public class ClienteService {
                         .monto(cr.getMonto())
                         .cobradorId(cr.getCobrador() != null ? cr.getCobrador().getId() : null)
                         .cobradorNombre(cr.getCobrador() != null ? cr.getCobrador().getNombre() : "Sin asignar")
+                        .estado(cr.getEstado())
                         .fechaCreacion(cr.getFechaCreacion())
                         .build())
                 .collect(Collectors.toList());
