@@ -1,4 +1,6 @@
 package com.uade.tp13.service.impl;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -16,40 +18,51 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MoraService {
 
+    private static final BigDecimal RECARGO_PORCENTAJE = new BigDecimal("0.10");
+
     private final CreditoRepository creditoRepository;
     private final CuotaRepository cuotaRepository;
 
-    public void marcarEnMora(Long creditoId) {
+    public void evaluarMora(Long creditoId) {
         List<Cuota> vencidas = cuotaRepository
-            .findByCreditoIdAndEstadoAndFechaVencimientoBefore(
-                creditoId,
-                EstadoCuota.PENDIENTE,
-                LocalDate.now()
-            );
+                .findByCreditoIdAndEstadoAndFechaVencimientoBefore(
+                        creditoId,
+                        EstadoCuota.PENDIENTE,
+                        LocalDate.now()
+                );
+
+        Credito credito = creditoRepository.findById(creditoId)
+                .orElseThrow(() -> new RuntimeException("Credito no encontrado"));
 
         if (!vencidas.isEmpty()) {
-            Credito credito = creditoRepository.findById(creditoId)
-                .orElseThrow(() -> new RuntimeException("Credito no encontrado"));
-
             credito.setEstado(EstadoCredito.EN_MORA);
-            creditoRepository.save(credito);
+            aplicarRecargo(vencidas);
+        } else {
+            credito.setEstado(EstadoCredito.ACTIVO);
         }
+
+        creditoRepository.save(credito);
+        cuotaRepository.saveAll(vencidas);
     }
 
-    public void normalizarMora(Long creditoId) {
-        List<Cuota> vencidas = cuotaRepository
-            .findByCreditoIdAndEstadoAndFechaVencimientoBefore(
-                creditoId,
-                EstadoCuota.PENDIENTE,
-                LocalDate.now()
-            );
+    public void forzarMora(Long creditoId) {
+        List<Cuota> pendientes = cuotaRepository
+                .findByCreditoIdAndEstado(creditoId, EstadoCuota.PENDIENTE);
 
-        if (vencidas.isEmpty()) {
-            Credito credito = creditoRepository.findById(creditoId)
+        Credito credito = creditoRepository.findById(creditoId)
                 .orElseThrow(() -> new RuntimeException("Credito no encontrado"));
 
-            credito.setEstado(EstadoCredito.ACTIVO);
-            creditoRepository.save(credito);
+        credito.setEstado(EstadoCredito.EN_MORA);
+        aplicarRecargo(pendientes);
+
+        creditoRepository.save(credito);
+        cuotaRepository.saveAll(pendientes);
+    }
+
+    private void aplicarRecargo(List<Cuota> cuotas) {
+        for (Cuota cuota : cuotas) {
+            BigDecimal recargo = cuota.getMonto().multiply(RECARGO_PORCENTAJE);
+            cuota.setMontoRecargo(recargo);
         }
     }
 }

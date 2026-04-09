@@ -16,6 +16,6 @@ public class MoraController {
 
     @PostMapping("/forzar/{creditoId}")
     public void forzarMora(@PathVariable Long creditoId) {
-        moraService.marcarEnMora(creditoId);
+        moraService.forzarMora(creditoId);
     }
 }
