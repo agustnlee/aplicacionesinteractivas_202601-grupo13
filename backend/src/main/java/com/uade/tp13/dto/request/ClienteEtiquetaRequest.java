@@ -1,6 +1,4 @@
 package com.uade.tp13.dto.request;
-
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 

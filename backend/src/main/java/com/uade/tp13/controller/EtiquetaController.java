@@ -1,7 +1,7 @@
 package com.uade.tp13.controller;
 
 import com.uade.tp13.dto.request.EtiquetaRequest;
-import com.uade.tp13.dto.response.CreditoResponse;
+import com.uade.tp13.dto.response.EtiquetaResponse;
 import com.uade.tp13.model.Etiqueta;
 import com.uade.tp13.service.EtiquetaService;
 import jakarta.validation.Valid;
@@ -22,10 +22,23 @@ public class EtiquetaController {
 
     private final EtiquetaService etiquetaService;
 
+    
+
     @PostMapping
+    
     public ResponseEntity<EtiquetaResponse> crearEtiqueta(@Valid @RequestBody EtiquetaRequest request) {
         Etiqueta nuevaEtiqueta = etiquetaService.crearEtiqueta(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaEtiqueta);
+
+        EtiquetaResponse response = EtiquetaResponse.builder()
+                .etiquetaId(nuevaEtiqueta.getId())
+                .nombreEtiqueta(nuevaEtiqueta.getNombre())
+                .colorEtiqueta(nuevaEtiqueta.getColor())
+                .descripcionEtiqueta(nuevaEtiqueta.getDescripcion())
+                .build();
+
+        
+        
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")
@@ -33,7 +46,17 @@ public class EtiquetaController {
             @PathVariable Long id, 
             @Valid @RequestBody EtiquetaRequest request) {
         Etiqueta etiquetaModificada = etiquetaService.modificarEtiqueta(id, request);
-        return ResponseEntity.ok(etiquetaModificada);
+
+        EtiquetaResponse response = EtiquetaResponse.builder()
+                .etiquetaId(etiquetaModificada.getId())
+                .nombreEtiqueta(etiquetaModificada.getNombre())
+                .colorEtiqueta(etiquetaModificada.getColor())
+                .descripcionEtiqueta(etiquetaModificada.getDescripcion())
+                .build();
+
+        
+
+        return ResponseEntity.ok(response);
     }
 
     // --- GET: Obtener etiqueta por ID ---

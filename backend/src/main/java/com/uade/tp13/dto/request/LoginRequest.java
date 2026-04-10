@@ -2,7 +2,6 @@ package com.uade.tp13.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,7 +13,6 @@ public class LoginRequest {
     @Email(message = "Debe tener un formato de email válido")
     private String email;
 
-    @NotBlank(message = "La contraseña es obligatoria")
-    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
+    @NotBlank(message = "La contraseña es obligatoria")  //TODO: Coincidir frontend y back con validacion
     private String password;
 }

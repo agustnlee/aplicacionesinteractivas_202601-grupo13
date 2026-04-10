@@ -4,7 +4,6 @@ import com.uade.tp13.dto.request.ClienteEtiquetaRequest;
 import com.uade.tp13.dto.response.ClienteEtiquetaResponse;
 import com.uade.tp13.dto.response.EtiquetaResumenResponse;
 import com.uade.tp13.service.ClienteEtiquetaService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
