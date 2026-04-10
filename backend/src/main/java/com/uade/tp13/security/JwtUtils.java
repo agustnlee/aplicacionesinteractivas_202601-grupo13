@@ -58,4 +58,9 @@ public class JwtUtils {
                 .parseSignedClaims(token)
                 .getPayload();
     }
+
+    // metodo que devuelve el tiempo absoluto (tiempo exacto en donde expira en el futuro)
+    public long getExpirationTimeMs(String token) {
+        return parseClaims(token).getExpiration().getTime();
+    }
 }

@@ -4,10 +4,13 @@ import com.uade.tp13.dto.request.LoginRequest;
 import com.uade.tp13.dto.response.AuthResponse;
 import com.uade.tp13.model.Usuario;
 import com.uade.tp13.security.JwtUtils;
+import com.uade.tp13.security.TokenBlacklist;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,6 +19,7 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    private final TokenBlacklist tokenBlacklist;
 
     public AuthResponse login(LoginRequest request) {
         // validacion credenciales (compara passwords con Bcrypt)
@@ -35,5 +39,14 @@ public class AuthService {
                 .id(usuario.getId())
                 .rol(usuario.getRol())
                 .build();
+    }
+
+    public void logout(String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            long expirationTimeMs = jwtUtils.getExpirationTimeMs(token);
+            tokenBlacklist.blacklist(token, expirationTimeMs);
+            SecurityContextHolder.clearContext();
+        }
     }
 }
