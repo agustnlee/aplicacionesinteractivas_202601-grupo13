@@ -21,6 +21,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
     private final UserDetailsService userDetailsService;
+    private final TokenBlacklist tokenBlacklist;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -34,8 +35,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // sacar prefijo Bearer para extraer token
         final String token = authHeader.substring(7);
 
-        // pasar sin authenticar
-        if (!jwtUtils.isTokenValid(token)) {
+        // pasar sin authenticar o si 
+        if (!jwtUtils.isTokenValid(token) || tokenBlacklist.isBlacklisted(token)) {
             filterChain.doFilter(request, response);
             return;
         }
