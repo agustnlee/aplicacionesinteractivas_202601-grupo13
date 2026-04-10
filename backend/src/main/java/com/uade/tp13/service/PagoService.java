@@ -2,7 +2,7 @@ package com.uade.tp13.service;
 
 import com.uade.tp13.enums.MetodoPago;
 import com.uade.tp13.enums.EstadoCuota;
-import com.uade.tp13.service.MoraService;
+import com.uade.tp13.service.impl.MoraService; 
 import com.uade.tp13.model.*;
 import com.uade.tp13.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,6 @@ public class PagoService {
     private final CuotaRepository cuotaRepository;
     private final CreditoService creditoService;
     private final UsuarioRepository usuarioRepository; 
-    // 1. Inyectamos MoraService
     private final MoraService moraService; 
 
     @Transactional
@@ -29,9 +28,11 @@ public class PagoService {
         Usuario cobrador = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario cobrador no encontrado"));
 
+        // 1. Actualizar cuota
         cuota.setEstado(EstadoCuota.PAGADA);
         cuotaRepository.save(cuota);
 
+        // 2. Crear pago
         Pago pago = Pago.builder()
                 .cuota(cuota)
                 .monto(cuota.getMonto().add(cuota.getMontoRecargo()))
@@ -42,9 +43,10 @@ public class PagoService {
         
         Pago pagoGuardado = pagoRepository.save(pago);
 
+        // 3. Control de cierre de crédito
         creditoService.cerrarSiCorresponde(cuota.getCredito());
         
-        // 2. Evaluar mora al registrar
+        // 4. Evaluar mora al finalizar el registro
         moraService.evaluarMora(cuota.getCredito().getId());
 
         return pagoGuardado;
@@ -65,7 +67,7 @@ public class PagoService {
         
         pagoRepository.delete(pago);
         
-        // 3. Evaluar mora al cancelar
+        // Evaluar mora al finalizar la cancelación
         moraService.evaluarMora(cuota.getCredito().getId());
     }
 }
