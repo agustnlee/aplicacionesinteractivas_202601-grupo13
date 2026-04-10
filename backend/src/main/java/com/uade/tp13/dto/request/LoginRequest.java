@@ -15,6 +15,6 @@ public class LoginRequest {
     private String email;
 
     @NotBlank(message = "La contraseña es obligatoria")
-    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
+    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres") //TODO: Coincidir frontend y back con validacion
     private String password;
 }
