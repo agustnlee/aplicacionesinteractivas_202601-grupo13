@@ -34,7 +34,7 @@ public class ClienteEtiquetaService {
     @Transactional
 public void asignarEtiqueta(ClienteEtiquetaRequest request) {
     // 1. Validar Cliente
-    Cliente cliente = clienteRepository.findByClienteId(request.getClienteId())
+    Cliente cliente = clienteRepository.findById(request.getClienteId())
             .orElseThrow(() -> new BusinessException("No existe el cliente con Id: " + request.getClienteId()));
 
     // 2. Validar Etiqueta
