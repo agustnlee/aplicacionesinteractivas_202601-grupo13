@@ -1,9 +1,5 @@
 package com.uade.tp13.dto.request;
-
-import java.time.LocalDate;
-
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 import lombok.Data;
 

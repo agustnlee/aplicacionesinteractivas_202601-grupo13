@@ -1,12 +1,6 @@
 package com.uade.tp13.service;
-
-
-import java.time.LocalDate;
-
 import org.springframework.stereotype.Service;
-
 import com.uade.tp13.dto.request.EtiquetaRequest;
-
 import com.uade.tp13.dto.response.EtiquetaResponse;
 import com.uade.tp13.exception.BusinessException;
 import com.uade.tp13.repository.ClienteEtiquetaRepository;
