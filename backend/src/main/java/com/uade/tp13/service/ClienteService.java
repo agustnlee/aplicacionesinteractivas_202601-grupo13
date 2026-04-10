@@ -111,7 +111,7 @@ public class ClienteService {
         Pageable limiteFicha = PageRequest.of(0, 100);
        
         List<Credito> creditos = creditoRepository.buscarConFiltros(EstadoCredito.ACTIVO,id,null,null, limiteFicha).getContent();
-        List<ClienteEtiqueta> etiquetas = clienteEtiquetaRepository.findByCliente_Id(id, limiteFicha).getContent();
+        List<ClienteEtiqueta> etiquetas = clienteEtiquetaRepository.findByClienteId(id, limiteFicha).getContent();
        
         return fichaCompleta(cliente, creditos, etiquetas);
     }
