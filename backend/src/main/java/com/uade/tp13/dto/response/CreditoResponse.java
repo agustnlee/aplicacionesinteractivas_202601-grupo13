@@ -12,12 +12,11 @@ import java.util.List;
 @Builder
 public class CreditoResponse {
     private Long id;
-    /* TODO: Liberar cuando entidades cliente y usuario listo 
     private Long clienteId;
     private String clienteNombre;
     private Long cobradorId;
     private String cobradorNombre;
-    */
+    
     private BigDecimal monto;
     private Integer cantidadCuotas;
     private BigDecimal interes;

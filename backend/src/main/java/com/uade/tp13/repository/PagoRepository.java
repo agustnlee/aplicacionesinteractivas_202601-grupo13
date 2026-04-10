@@ -1,6 +1,6 @@
-package com.uade.tpejemplo.repository;
+package com.uade.tp13.repository;
 
-import com.uade.tpejemplo.model.Pago;
+import com.uade.tp13.model.Pago;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

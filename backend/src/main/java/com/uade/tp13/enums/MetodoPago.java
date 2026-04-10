@@ -1,4 +1,4 @@
-package com.uade.tpejemplo.enums;
+package com.uade.tp13.enums;
 
 public enum MetodoPago {
     EFECTIVO,
