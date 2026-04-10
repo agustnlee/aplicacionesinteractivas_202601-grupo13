@@ -3,10 +3,12 @@ package com.uade.tp13.controller;
 import com.uade.tp13.dto.request.*;
 import com.uade.tp13.dto.response.*;
 import com.uade.tp13.enums.EstadoCredito;
+import com.uade.tp13.model.Usuario;
 import com.uade.tp13.service.CreditoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -48,10 +50,10 @@ public class CreditoController {
     // POST /api/creditos
     @PostMapping
     public ResponseEntity<CreditoResponse> crear(
-            @Valid @RequestBody CrearCreditoRequest request) {
+            @Valid @RequestBody CrearCreditoRequest request, @AuthenticationPrincipal Usuario usuario) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(creditoService.crearCredito(request));
+                .body(creditoService.crearCredito(request, usuario));
     }
 
     // PATCH /api/creditos/{id}/cobrador

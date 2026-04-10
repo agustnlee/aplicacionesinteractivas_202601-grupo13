@@ -88,10 +88,9 @@ public class CreditoService {
 
     // Crear Credito + Crear Plan
     @Transactional
-    public CreditoResponse crearCredito(CrearCreditoRequest request) {
+    public CreditoResponse crearCredito(CrearCreditoRequest request, Usuario creadoPor) { // creadoPor validado por JWT
         Cliente cliente = validarClienteActivo(request.getClienteId());
         Usuario cobrador = validarCobradorActivo(request.getCobradorId());
-        Usuario creadoPor = validarUsuarioActivo(creadoPorId); //TODO: JWT cuando ponga lo actualizo
 
         Credito credito = Credito.builder()
                 .monto(request.getMonto())
@@ -195,7 +194,7 @@ public class CreditoService {
         }
         return cobrador;
     }
-
+    /* TODO: Check if necessary method validarUsuarioActivo(Long usuarioID) *
     private Usuario validarUsuarioActivo(Long usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + usuarioId));
@@ -204,6 +203,7 @@ public class CreditoService {
         }
         return usuario;
     }
+    */
 
 
     // Builders internos
