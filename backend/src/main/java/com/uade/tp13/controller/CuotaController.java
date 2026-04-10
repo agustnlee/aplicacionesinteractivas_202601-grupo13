@@ -32,7 +32,5 @@ public class CuotaController {
     public ResponseEntity<List<CuotaResponse>> vencidas(@PathVariable Long creditoId) {
         return ResponseEntity.ok(cuotaService.obtenerVencidas(creditoId));
     }
-
-    // TODO: endpoint pago POST /api/creditos/{creditoId}/cuotas/{cuotaId}/pagar o algo por el estilo
     
 }

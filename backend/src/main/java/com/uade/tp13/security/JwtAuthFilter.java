@@ -19,35 +19,43 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
+    private final JwtUtils jwtUtils;
     private final UserDetailsService userDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        final String authHeader = request.getHeader("Authorization");
 
-        String authHeader = request.getHeader("Authorization");
-
+        // SIn header Authroization o no es Bearer, pasar sin autenticar (dsp SecurityConfig decide si el endpoint requiere auth o no)
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
+        // sacar prefijo Bearer para extraer token
+        final String token = authHeader.substring(7);
 
-        String token = authHeader.substring(7);
-        String username = jwtUtil.extraerUsername(token);
-
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-            if (jwtUtil.esValido(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
+        // pasar sin authenticar
+        if (!jwtUtils.isTokenValid(token)) {
+            filterChain.doFilter(request, response);
+            return;
         }
 
+        String email = jwtUtils.extractEmail(token);
+
+        // solo si hay email y no hay sesion activa 
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            // obj de autentication 
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); // netadata
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+        }
         filterChain.doFilter(request, response);
     }
 }

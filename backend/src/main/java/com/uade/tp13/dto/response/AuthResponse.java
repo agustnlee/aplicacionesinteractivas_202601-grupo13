@@ -1,13 +1,15 @@
 package com.uade.tp13.dto.response;
 
-import lombok.AllArgsConstructor;
+import com.uade.tp13.enums.ROL_USUARIO;
+
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
+@Builder
 public class AuthResponse {
 
     private String token;
-    private String username;
-    private String rol;
+    private Long id;
+    private ROL_USUARIO rol;
 }
