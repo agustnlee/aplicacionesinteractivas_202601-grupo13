@@ -33,4 +33,6 @@ public interface CreditoRepository extends JpaRepository<Credito, Long> {
     );
 
     boolean existsByCliente_IdAndEstadoIn(Long clienteId, List<EstadoCredito> estados);
+
+    Page<Credito> findByEstado(EstadoCredito estado, Pageable pageable);
 }
