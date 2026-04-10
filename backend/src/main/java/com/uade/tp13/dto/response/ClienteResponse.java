@@ -2,6 +2,7 @@ package com.uade.tp13.dto.response;
 
 import lombok.Builder;
 import lombok.Data;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -13,9 +14,9 @@ public class ClienteResponse {
     private String telefono;
     private String domicilio;
     private Boolean estado;
-    private java.time.LocalDateTime fechaCreacion;
+    private LocalDateTime fechaCreacion;
 
-    private Long IdCreadoPor;
+    private Long idCreadoPor;
     private String nombreCreadoPor;
 
 }

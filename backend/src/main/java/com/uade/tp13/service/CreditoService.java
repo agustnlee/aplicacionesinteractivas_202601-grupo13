@@ -4,6 +4,7 @@ import com.uade.tp13.dto.request.*;
 import com.uade.tp13.dto.response.*;
 import com.uade.tp13.enums.EstadoCredito;
 import com.uade.tp13.enums.EstadoCuota;
+import com.uade.tp13.enums.ROL_USUARIO;
 import com.uade.tp13.exception.*;
 import com.uade.tp13.mapper.CreditoCuotaMapper;
 import com.uade.tp13.model.*;
@@ -27,6 +28,8 @@ public class CreditoService {
 
     private final CreditoRepository creditoRepository;
     private final CuotaRepository cuotaRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final ClienteRepository clienteRepository;
     private final CreditoCuotaMapper creditoCuotaMapper;
 
     // subsets 
@@ -85,18 +88,17 @@ public class CreditoService {
 
     // Crear Credito + Crear Plan
     @Transactional
-    public CreditoResponse crearCredito(CrearCreditoRequest request) {
-        // TODO: validar clienteId existe, ctivo clienteRepository
-        // TODO: validar cobradorId existe, activo, COBRADOR usuarioRepository
+    public CreditoResponse crearCredito(CrearCreditoRequest request, Usuario creadoPor) { // creadoPor validado por JWT
+        Cliente cliente = validarClienteActivo(request.getClienteId());
+        Usuario cobrador = validarCobradorActivo(request.getCobradorId());
 
         Credito credito = Credito.builder()
                 .monto(request.getMonto())
                 .cantidadCuotas(request.getCantidadCuotas())
                 .interes(request.getInteres())
-                // TODO: Esperar clinete y susario
-                // .cliente(cliente)   
-                // .cobrador(cobrador)  
-                // .creadoPor(auth)     
+                .cliente(cliente)   
+                .cobrador(cobrador)  
+                .creadoPor(creadoPor)     
                 .build();
 
         credito.setCuotas(buildCuotas(credito,
@@ -117,8 +119,8 @@ public class CreditoService {
         if (ESTADOS_FINALES.contains(credito.getEstado()))
             throw new CreditoFinalizadoException(credito.getEstado());
 
-        // TODO: validar cobradorId existe activo COBRADOR
-        // credito.setCobrador(cobrador);
+        Usuario cobrador = validarCobradorActivo(request.getCobradorId());
+        credito.setCobrador(cobrador);
 
         return creditoCuotaMapper.creditoToResponse(creditoRepository.save(credito));
     }
@@ -169,7 +171,39 @@ public class CreditoService {
         return creditoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException( "Crédito no encontrado con id: " + id));
     }
- 
+    
+
+    // Helpers privados
+    private Cliente validarClienteActivo(Long clienteId) {
+        Cliente cliente = clienteRepository.findById(clienteId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + clienteId));
+        if (!cliente.getEstado()) {
+            throw new BusinessException("El cliente con id " + clienteId + " está inactivo.");
+        }
+        return cliente;
+    }
+
+    private Usuario validarCobradorActivo(Long cobradorId) {
+        Usuario cobrador = usuarioRepository.findById(cobradorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cobrador no encontrado con id: " + cobradorId));
+        if (!cobrador.getEstado()) {
+            throw new BusinessException("El cobrador con id " + cobradorId + " está inactivo.");
+        }
+        if (cobrador.getRol() != ROL_USUARIO.COBRADOR) {
+            throw new BusinessException("El usuario con id " + cobradorId + " no tiene rol de COBRADOR.");
+        }
+        return cobrador;
+    }
+    /* TODO: Check if necessary method validarUsuarioActivo(Long usuarioID) *
+    private Usuario validarUsuarioActivo(Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + usuarioId));
+        if (!usuario.getEstado()) {
+            throw new BusinessException("El usuario con id " + usuarioId + " está inactivo.");
+        }
+        return usuario;
+    }
+    */
 
 
     // Builders internos

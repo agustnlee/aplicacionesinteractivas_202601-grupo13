@@ -73,7 +73,7 @@ public class UsuarioService {
     }
     private void validarImpedimentosDeBaja(Usuario usuario) {
         if (usuario.getRol() == ROL_USUARIO.COBRADOR) {
-            if (creditoRepository.existByCobrador_IdAndEstadoIn(usuario.getId(), estadosCreditoPendiente)) {
+            if (creditoRepository.existsByCobrador_IdAndEstadoIn(usuario.getId(), estadosCreditoPendiente)) {
                 throw new BusinessException("No se puede desactivar al cobrador porque tiene créditos activos o en mora.");
             }
         }
