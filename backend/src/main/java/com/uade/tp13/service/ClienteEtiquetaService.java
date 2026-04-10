@@ -114,6 +114,7 @@ public Page<EtiquetaResumenResponse> obtenerResumenEtiquetas(Pageable pageable) 
             long cantidad = clienteEtiquetaRepository.countByEtiquetaId(etiqueta.getId());
             
             return EtiquetaResumenResponse.builder()
+                    .etiquetaId(etiqueta.getId())
                     .nombreEtiqueta(etiqueta.getNombre())
                     .colorEtiqueta(etiqueta.getColor())
                     .cantidadClientes(cantidad)
