@@ -17,6 +17,8 @@ public class PagoService {
     private final CuotaRepository cuotaRepository;
     private final CreditoService creditoService;
     private final UsuarioRepository usuarioRepository; 
+    // 1. Inyectamos MoraService
+    private final MoraService moraService; 
 
     @Transactional
     public Pago registrarPago(Long cuotaId, MetodoPago metodo, String observaciones, Long usuarioId) {
@@ -26,11 +28,9 @@ public class PagoService {
         Usuario cobrador = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario cobrador no encontrado"));
 
-        // Actualizar cuota
         cuota.setEstado(EstadoCuota.PAGADA);
         cuotaRepository.save(cuota);
 
-        // Crear pago con el Builder respetando el monto + recargo
         Pago pago = Pago.builder()
                 .cuota(cuota)
                 .monto(cuota.getMonto().add(cuota.getMontoRecargo()))
@@ -41,8 +41,10 @@ public class PagoService {
         
         Pago pagoGuardado = pagoRepository.save(pago);
 
-        // Control automático de cierre de crédito
         creditoService.cerrarSiCorresponde(cuota.getCredito());
+        
+        // 2. Evaluar mora al registrar
+        moraService.evaluarMora(cuota.getCredito().getId());
 
         return pagoGuardado;
     }
@@ -62,7 +64,7 @@ public class PagoService {
         
         pagoRepository.delete(pago);
         
-        // Al cancelar, verificamos si el crédito debe volver a estado ACTIVO si estaba CERRADO
-       
+        // 3. Evaluar mora al cancelar
+        moraService.evaluarMora(cuota.getCredito().getId());
     }
 }
