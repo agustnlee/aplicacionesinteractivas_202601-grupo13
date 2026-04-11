@@ -46,11 +46,12 @@ public class CreditoService {
 
     
     // Consultas
-
+    @Transactional(readOnly = true)
     public CreditoResponse obtenerCredito(Long creditoId) {
         return creditoCuotaMapper.creditoToResponse(getOrThrow(creditoId));
     }
 
+    @Transactional(readOnly = true)
     public PaginatedResponse<CreditoResponse> listarConFiltros(
         EstadoCredito estado, Long clienteId,
         Long cobradorId, Long creadoPorId,
@@ -67,7 +68,7 @@ public class CreditoService {
 
 
     // Crear
-
+    @Transactional(readOnly = true)
     public PlanCuotasResponse calcularPlanPreview(CrearCreditoRequest request) {
         List<CuotaResponse> cuotas = buildCuotasPreview(
                 request.getMonto(),
