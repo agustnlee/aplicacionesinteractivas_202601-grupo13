@@ -61,18 +61,14 @@ public class MoraService {
         Credito credito = creditoRepository.findById(creditoId)
                 .orElseThrow(() -> new RuntimeException("Credito no encontrado"));
 
-        List<Cuota> vencidas = cuotaRepository
-                .findByCreditoIdAndEstadoAndFechaVencimientoBefore(
-                        creditoId,
-                        EstadoCuota.PENDIENTE,
-                        LocalDate.now()
-                );
+        List<Cuota> pendientes = cuotaRepository
+                .findByCreditoIdAndEstado(creditoId, EstadoCuota.PENDIENTE);
 
         credito.setEstado(EstadoCredito.EN_MORA);
 
-        if (!vencidas.isEmpty()) {
-            aplicarRecargo(credito, vencidas);
-            cuotaRepository.saveAll(vencidas);
+        if (!pendientes.isEmpty()) {
+            aplicarRecargoPorFuerza(credito, pendientes);
+            cuotaRepository.saveAll(pendientes);
         }
 
         creditoRepository.save(credito);
@@ -84,17 +80,27 @@ public class MoraService {
 
             if (diasVencidos <= 0) continue; 
 
-            // tasa diaria = interes% / 7 
+            // tasaDiaria = interes% / 7 
             BigDecimal tasaDiaria = credito.getInteres()
                     .divide(new BigDecimal("100"), 10, RoundingMode.HALF_UP)
                     .divide(new BigDecimal("7"), 10, RoundingMode.HALF_UP);
 
-            // recargo = monto_cuota * tasa_diaria * dias_vencidos
+            // recargo = monto_cuota * tasaDiaria * diasVencidos
             BigDecimal recargo = cuota.getMonto()
                     .multiply(tasaDiaria)
                     .multiply(BigDecimal.valueOf(diasVencidos))
                     .setScale(2, RoundingMode.HALF_UP);
 
+            cuota.setMontoRecargo(recargo);
+        }
+    }
+
+
+    private void aplicarRecargoPorFuerza(Credito credito, List<Cuota> cuotas) { // solo para testeo
+        for (Cuota cuota : cuotas) {
+            BigDecimal recargo = cuota.getMonto()
+                    .multiply(credito.getInteres())
+                    .divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
             cuota.setMontoRecargo(recargo);
         }
     }
