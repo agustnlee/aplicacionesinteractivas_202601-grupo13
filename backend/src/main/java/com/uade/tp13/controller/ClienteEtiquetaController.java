@@ -3,6 +3,7 @@ package com.uade.tp13.controller;
 import com.uade.tp13.dto.request.ClienteEtiquetaRequest;
 import com.uade.tp13.dto.response.ClienteEtiquetaResponse;
 import com.uade.tp13.dto.response.EtiquetaResumenResponse;
+import com.uade.tp13.model.Usuario;
 import com.uade.tp13.service.ClienteEtiquetaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,18 +26,19 @@ public class ClienteEtiquetaController {
     public ResponseEntity<Void> asignarEtiqueta(
             @PathVariable Long clienteId,
             @PathVariable Long etiquetaId,
-            @RequestParam Long idUsuarioAsignador) { 
+            @AuthenticationPrincipal Usuario usuario) { 
         
         // Creamos el Request "on the fly" para pasárselo al Service actual
         ClienteEtiquetaRequest request = new ClienteEtiquetaRequest();
         request.setClienteId(clienteId);
         request.setEtiquetaId(etiquetaId);
-        request.setIdUsuarioAsignador(idUsuarioAsignador);
+        request.setIdUsuarioAsignador(usuario.getId());
         
         clienteEtiquetaService.asignarEtiqueta(request);
         
         return ResponseEntity.status(HttpStatus.CREATED).build();
-            }
+    }
+    
     // --- HU47: Obtener resumen estadístico de etiquetas (Paginado) ---
     @GetMapping("/resumen")
     public ResponseEntity<Page<EtiquetaResumenResponse>> obtenerResumenEtiquetas(

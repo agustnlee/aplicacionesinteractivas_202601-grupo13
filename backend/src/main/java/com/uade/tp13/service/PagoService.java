@@ -1,8 +1,8 @@
 package com.uade.tp13.service;
 
 import com.uade.tp13.enums.MetodoPago;
+import com.uade.tp13.dto.response.PagoResponse;
 import com.uade.tp13.enums.EstadoCuota;
-import com.uade.tp13.service.impl.MoraService; 
 import com.uade.tp13.model.*;
 import com.uade.tp13.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -16,17 +16,13 @@ public class PagoService {
 
     private final PagoRepository pagoRepository;
     private final CuotaRepository cuotaRepository;
-    private final CreditoService creditoService;
-    private final UsuarioRepository usuarioRepository; 
+    private final CreditoService creditoService; 
     private final MoraService moraService; 
 
     @Transactional
-    public Pago registrarPago(Long cuotaId, MetodoPago metodo, String observaciones, Long usuarioId) {
+    public PagoResponse registrarPago(Long cuotaId, MetodoPago metodo, String observaciones, Usuario cobrador) {
         Cuota cuota = cuotaRepository.findById(cuotaId)
                 .orElseThrow(() -> new RuntimeException("Cuota no encontrada"));
-        
-        Usuario cobrador = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario cobrador no encontrado"));
 
         // 1. Actualizar cuota
         cuota.setEstado(EstadoCuota.PAGADA);
@@ -49,11 +45,15 @@ public class PagoService {
         // 4. Evaluar mora al finalizar el registro
         moraService.evaluarMora(cuota.getCredito().getId());
 
-        return pagoGuardado;
+        return toResponse(pagoGuardado);
     }
 
-    public List<Pago> obtenerPagosPorCredito(Long creditoId) {
-        return pagoRepository.findByCuota_Credito_Id(creditoId);
+    @Transactional(readOnly = true)
+    public List<PagoResponse> obtenerPagosPorCredito(Long creditoId) {
+        return pagoRepository.findByCuota_Credito_Id(creditoId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     @Transactional
@@ -69,5 +69,19 @@ public class PagoService {
         
         // Evaluar mora al finalizar la cancelación
         moraService.evaluarMora(cuota.getCredito().getId());
+    }
+     
+    // Helper privado builder para PagoResponse
+     private PagoResponse toResponse(Pago pago) {
+        return PagoResponse.builder()
+                .id(pago.getId())
+                .cuotaId(pago.getCuota().getId())
+                .numeroCuota(pago.getCuota().getNumeroCuota())
+                .monto(pago.getMonto())
+                .metodo(pago.getMetodo())
+                .cobradoPorNombre(pago.getCobradoPor().getNombre())
+                .observaciones(pago.getObservaciones())
+                .fechaPagado(pago.getFechaPagado())
+                .build();
     }
 }

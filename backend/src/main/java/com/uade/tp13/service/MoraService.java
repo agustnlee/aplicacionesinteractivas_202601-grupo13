@@ -1,4 +1,4 @@
-package com.uade.tp13.service.impl;
+package com.uade.tp13.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
