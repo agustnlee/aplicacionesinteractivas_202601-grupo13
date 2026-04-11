@@ -3,7 +3,6 @@ package com.uade.tp13.service;
 import com.uade.tp13.enums.MetodoPago;
 import com.uade.tp13.dto.response.PagoResponse;
 import com.uade.tp13.enums.EstadoCuota;
-import com.uade.tp13.service.impl.MoraService; 
 import com.uade.tp13.model.*;
 import com.uade.tp13.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -71,7 +70,8 @@ public class PagoService {
         // Evaluar mora al finalizar la cancelación
         moraService.evaluarMora(cuota.getCredito().getId());
     }
-
+     
+    // Helper privado builder para PagoResponse
      private PagoResponse toResponse(Pago pago) {
         return PagoResponse.builder()
                 .id(pago.getId())
