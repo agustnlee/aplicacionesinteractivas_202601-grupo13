@@ -1,6 +1,7 @@
 package com.uade.tp13.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MoraService {
 
-    private static final BigDecimal RECARGO_FIJO_POR_DIA = new BigDecimal("500");
+    private static final BigDecimal TASA_RECARGO_DIARIO = new BigDecimal("0.01");
 
     private final CreditoRepository creditoRepository;
     private final CuotaRepository cuotaRepository;
@@ -81,13 +82,20 @@ public class MoraService {
         for (Cuota cuota : cuotas) {
             long diasVencidos = ChronoUnit.DAYS.between(cuota.getFechaVencimiento(), LocalDate.now());
 
-            BigDecimal recargoBase = cuota.getMonto()
-                    .multiply(credito.getInteres())
-                    .divide(new BigDecimal("100"));
+            if (diasVencidos <= 0) continue; 
 
-            BigDecimal recargoPorDias = RECARGO_FIJO_POR_DIA.multiply(BigDecimal.valueOf(diasVencidos));
+            // tasa diaria = interes% / 7 
+            BigDecimal tasaDiaria = credito.getInteres()
+                    .divide(new BigDecimal("100"), 10, RoundingMode.HALF_UP)
+                    .divide(new BigDecimal("7"), 10, RoundingMode.HALF_UP);
 
-            cuota.setMontoRecargo(recargoBase.add(recargoPorDias));
+            // recargo = monto_cuota * tasa_diaria * dias_vencidos
+            BigDecimal recargo = cuota.getMonto()
+                    .multiply(tasaDiaria)
+                    .multiply(BigDecimal.valueOf(diasVencidos))
+                    .setScale(2, RoundingMode.HALF_UP);
+
+            cuota.setMontoRecargo(recargo);
         }
     }
 
