@@ -63,9 +63,12 @@ public class PagoService {
         
         Cuota cuota = pago.getCuota();
         Long creditoId = cuota.getCredito().getId();
+
         cuota.setEstado(EstadoCuota.PENDIENTE);
-        cuotaRepository.save(cuota); 
-        pagoRepository.delete(pago);
+        cuota.setPago(null);
+        cuotaRepository.saveAndFlush(cuota);
+
+        pagoRepository.deleteByIdDirecto(pagoId); // boorra
 
         // Evaluar mora al finalizar la cancelación
         moraService.evaluarMora(creditoId);
