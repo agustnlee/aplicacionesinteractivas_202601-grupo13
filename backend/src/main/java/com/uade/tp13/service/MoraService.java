@@ -13,6 +13,7 @@ import com.uade.tp13.model.Cuota;
 import com.uade.tp13.repository.CreditoRepository;
 import com.uade.tp13.repository.CuotaRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +21,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MoraService {
 
-    private static final BigDecimal TASA_RECARGO_DIARIO = new BigDecimal("0.01");
 
     private final CreditoRepository creditoRepository;
     private final CuotaRepository cuotaRepository;
 
+    @Transactional
     public void evaluarMora(Long creditoId) {
         Credito credito = creditoRepository.findById(creditoId)
                 .orElseThrow(() -> new RuntimeException("Credito no encontrado"));
@@ -56,7 +57,8 @@ public class MoraService {
         creditoRepository.save(credito);
         cuotaRepository.saveAll(pendientes);
     }
-
+    
+    @Transactional
     public void forzarMora(Long creditoId) {
         Credito credito = creditoRepository.findById(creditoId)
                 .orElseThrow(() -> new RuntimeException("Credito no encontrado"));

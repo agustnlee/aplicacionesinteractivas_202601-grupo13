@@ -157,7 +157,8 @@ public class CreditoService {
 
     // Cerrar credito automaticamente cuando no quedan cuotas pendientes
     @Transactional
-    public void cerrarSiCorresponde(Credito credito) {
+    public void cerrarSiCorresponde(Long creditoId) {
+        Credito credito = getOrThrow(creditoId);
         boolean quedanImpagas = cuotaRepository
                 .existsByCreditoIdAndEstado(credito.getId(), EstadoCuota.PENDIENTE);
         if (!quedanImpagas) {

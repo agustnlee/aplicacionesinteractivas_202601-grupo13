@@ -40,7 +40,7 @@ public class PagoService {
         Pago pagoGuardado = pagoRepository.save(pago);
 
         // 3. Control de cierre de crédito
-        creditoService.cerrarSiCorresponde(cuota.getCredito());
+        creditoService.cerrarSiCorresponde(cuota.getCredito().getId());
         
         // 4. Evaluar mora al finalizar el registro
         moraService.evaluarMora(cuota.getCredito().getId());
@@ -62,13 +62,14 @@ public class PagoService {
                 .orElseThrow(() -> new RuntimeException("Pago no encontrado"));
         
         Cuota cuota = pago.getCuota();
+        Long creditoId = cuota.getCredito().getId();
         cuota.setEstado(EstadoCuota.PENDIENTE);
         cuotaRepository.save(cuota); 
-        
         pagoRepository.delete(pago);
-        
+
         // Evaluar mora al finalizar la cancelación
-        moraService.evaluarMora(cuota.getCredito().getId());
+        moraService.evaluarMora(creditoId);
+       
     }
      
     // Helper privado builder para PagoResponse
