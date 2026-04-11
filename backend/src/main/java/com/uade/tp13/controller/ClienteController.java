@@ -5,12 +5,14 @@ import com.uade.tp13.dto.request.ClienteUpdateRequest;
 import com.uade.tp13.dto.response.ClienteFichaResponse;
 import com.uade.tp13.dto.response.ClienteResponse;
 import com.uade.tp13.dto.response.PaginatedResponse;
+import com.uade.tp13.model.Usuario;
 import com.uade.tp13.service.ClienteService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
  
@@ -22,9 +24,9 @@ public class ClienteController {
     @PostMapping
     public ResponseEntity<ClienteResponse> crearCliente(
         @Valid @RequestBody ClienteRequest request,
-        @RequestParam(required = false) Long id) {
+        @AuthenticationPrincipal Usuario usuario) {
  
-        ClienteResponse response = clienteService.crearCliente(request, id);
+        ClienteResponse response = clienteService.crearCliente(request,  usuario.getId());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
  

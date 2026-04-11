@@ -49,6 +49,7 @@ public class PagoService {
         return toResponse(pagoGuardado);
     }
 
+    @Transactional(readOnly = true)
     public List<PagoResponse> obtenerPagosPorCredito(Long creditoId) {
         return pagoRepository.findByCuota_Credito_Id(creditoId)
                 .stream()
