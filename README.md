@@ -5,6 +5,24 @@ Sistema de gestión de créditos interno desarrollado como trabajo práctico obl
 
 ---
 
+## Módulos Incluídos
+
+### Cliente
+    Incluye la gestión de clentes externos, quienes no forman parte de los usuarios del sistema. Las operaciones más relevantes son la alta, la modificación de sus datos, la baja lógica y el listaje.
+
+### Usuario
+    Incluye la gestión de los usuarios del sistema, siendo los empleados internos. Los roles asignables son ADMIN, ANALISTA, y COBRADOR, los cuales van a tener autorizaciones y permisos diferentes según sus responsabilidades.
+
+### Crédito
+    Incluye la gestión de créditos asignados a un cliente, junto a un cobrador designado, y las cuotas y pagos relacionados. Las operaciones mas relevantes son la creación, el listaje, y la cancelación de créditos, el listaje de cuotas por estado, y la realización total y cancelación de pagos.
+
+### Mora
+    Incluye la gestión automática de créditos en mora. El propósito de este módulo es la adición de una penalización si no se pagan las cuotas en su debido tiempo. Las operaciónes más relevantes son la evaluación diaria de créditos, para establecerlos en estado EN_MORA junto a un recargo adicional de sus cuotas, y la evaluación del estado de mora al cancelar un pago de una cuota.
+
+### Etiqueta
+    Incluye la gestión de etiquetas y asignaciones de las mismas a los clientes. El propósito de este módulo es la agregación de un pantallazo general del cliente de forma conscisa, para apoyar la toma de desición durante la aprobación de un crédito. Las operaciones más relevantes son la creación, modificación y eliminación de etiquetas, y la asignación/desasignación de estas a un cliente existente.
+
+
 ## Stack tecnológico
 
 | Capa | Tecnología |

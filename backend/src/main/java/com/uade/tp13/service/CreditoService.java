@@ -111,7 +111,6 @@ public class CreditoService {
     }
 
     // Modificar
-
     // Cambiar cobrador
     @Transactional
     public CreditoResponse cambiarCobrador(Long creditoId, CambiarCobradorRequest request) {
