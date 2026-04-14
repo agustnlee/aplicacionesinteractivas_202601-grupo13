@@ -1,9 +1,27 @@
-# TP Ejemplo — Aplicaciones Interactivas UADE
+# TP Grupo 13 — Aplicaciones Interactivas UADE 1C 2026
 
-Sistema de créditos y cobranzas desarrollado como ejemplo didáctico para la materia
+Sistema de gestión de créditos interno desarrollado como trabajo práctico obligatorio para la materia
 **Aplicaciones Interactivas (3.4.082)** de la UADE.
 
 ---
+
+## Módulos Incluídos
+
+### Cliente
+Incluye la gestión de clentes externos, quienes no forman parte de los usuarios del sistema. Las operaciones más relevantes son la alta, la modificación de sus datos, la baja lógica y el listaje.
+
+### Usuario
+Incluye la gestión de los usuarios del sistema, siendo los empleados internos. Los roles asignables son ADMIN, ANALISTA, y COBRADOR, los cuales van a tener autorizaciones y permisos diferentes según sus responsabilidades.
+
+### Crédito
+Incluye la gestión de créditos asignados a un cliente, junto a un cobrador designado, y las cuotas y pagos relacionados. Las operaciones mas relevantes son la creación, el listaje, y la cancelación de créditos, el listaje de cuotas por estado, y la realización total y cancelación de pagos.
+
+### Mora
+Incluye la gestión automática de créditos en mora. El propósito de este módulo es la adición de una penalización si no se pagan las cuotas en su debido tiempo. Las operaciónes más relevantes son la evaluación diaria de créditos, para establecerlos en estado EN_MORA junto a un recargo adicional de sus cuotas, y la evaluación del estado de mora al cancelar un pago de una cuota.
+
+### Etiqueta
+Incluye la gestión de etiquetas y asignaciones de las mismas a los clientes. El propósito de este módulo es la agregación de un pantallazo general del cliente de forma conscisa, para apoyar la toma de desición durante la aprobación de un crédito. Las operaciones más relevantes son la creación, modificación y eliminación de etiquetas, y la asignación/desasignación de estas a un cliente existente.
+
 
 ## Stack tecnológico
 
@@ -23,34 +41,27 @@ Sistema de créditos y cobranzas desarrollado como ejemplo didáctico para la ma
 ## Estructura del proyecto
 
 ```
-tpejemplo/
-├── backend/               → Proyecto Spring Boot (Maven)
-│   └── src/main/java/com/uade/tpejemplo/
-│       ├── config/        → SecurityConfig (JWT + stateless)
-│       ├── controller/    → AuthController, ClienteController, CreditoController, CobranzaController
-│       ├── dto/
-│       │   ├── request/   → ClienteRequest, CreditoRequest, CobranzaRequest, LoginRequest, RegisterRequest
-│       │   └── response/  → ClienteResponse, CreditoResponse, CuotaResponse, CobranzaResponse, AuthResponse
-│       ├── exception/     → ResourceNotFoundException, BusinessException, GlobalExceptionHandler
-│       ├── model/         → Cliente, Credito, Cuota, CuotaId, Cobranza, Usuario, Rol
-│       ├── repository/    → ClienteRepository, CreditoRepository, CuotaRepository, CobranzaRepository, UsuarioRepository
-│       ├── security/      → JwtUtil, JwtAuthFilter, UserDetailsServiceImpl
-│       └── service/
-│           ├── ClienteService / ClienteServiceImpl
-│           ├── CreditoService / CreditoServiceImpl
-│           └── CobranzaService / CobranzaServiceImpl
-└── frontend/              → Proyecto React + Vite
-    └── src/
-        ├── api/           → apiClient.js, auth.js, clientes.js, creditos.js, cobranzas.js
-        ├── components/    → Navbar.jsx, PrivateRoute.jsx
-        ├── store/
-        │   ├── index.js                  → configureStore (combina reducers)
-        │   └── slices/
-        │       ├── authSlice.js          → login/register thunks + logout
-        │       ├── clientesSlice.js      → fetchClientes + addCliente
-        │       ├── creditosSlice.js      → fetchCreditosPorCliente + addCredito
-        │       └── cobranzasSlice.js     → fetchCobranzasPorCredito + addCobranza
-        └── pages/         → Login.jsx, Register.jsx, Clientes.jsx, Creditos.jsx, Cobranzas.jsx
+proyecto/
+├── backend/
+│   └── src/
+│       └── main/
+│           └── java/com/uade/tp13/
+│               ├── config/
+│               ├── controller/
+│               ├── dto/
+│               │   ├── request/
+│               │   └── response/
+│               ├── enums/
+│               ├── exception/
+│               ├── mapper/
+│               ├── model/
+│               ├── repository/
+│               ├── scheduler/
+│               ├── security/
+│               ├── service/
+│               └── TpGrupo13.java
+└── frontend/
+    └── (por definir)
 ```
 
 ---
@@ -60,145 +71,169 @@ tpejemplo/
 ### Cliente
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
-| dni | String (PK) | DNI del cliente |
+| id | Long (PK) | Id interno |
 | nombre | String | Nombre completo |
-
-### Credito
-| Campo | Tipo | Descripción |
-|-------|------|-------------|
-| id | Long (PK, auto) | Identificador |
-| cliente | FK → Cliente | Dueño del crédito |
-| deudaOriginal | BigDecimal | Monto total del crédito |
-| fecha | LocalDate | Fecha de otorgamiento |
-| importeCuota | BigDecimal | Valor de cada cuota |
-| cantidadCuotas | Integer | Número de cuotas |
-
-### Cuota
-| Campo | Tipo | Descripción |
-|-------|------|-------------|
-| idCredito + idCuota | PK compuesta (@EmbeddedId) | Clave compuesta |
-| credito | FK → Credito | Crédito al que pertenece |
-| fechaVencimiento | LocalDate | Vencimiento mensual auto-generado |
-
-> Al crear un crédito se generan automáticamente N cuotas con vencimiento mensual.
-
-### Cobranza
-| Campo | Tipo | Descripción |
-|-------|------|-------------|
-| id | Long (PK, auto) | Identificador |
-| cuota | FK → Cuota | Cuota que se está pagando |
-| importe | BigDecimal | Importe cobrado |
+| dni | String | DNI |
+| email | String | Email único |
+| telefono | String | Número de teléfono |
+| domicilio | String | Domicilio |
+| estado | Boolean | Estado Activo/Inactivo |
+| fechaCreacion | LocalDateTime | Fecha de creación |
+| creadoPor | Usuario (FK) | Usuario creador |
 
 ### Usuario
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
-| id | Long (PK, auto) | Identificador |
-| username | String (unique) | Nombre de usuario |
-| password | String (BCrypt) | Contraseña encriptada |
-| rol | Enum (ADMIN/USER) | Rol del usuario |
+| id | Long (PK) | Id interno |
+| nombre | String | Nombre completo |
+| email | String | Email único |
+| password | String | Contraseña encriptada |
+| rol | ROL_USUARIO | Admin/Analista/Cobrador |
+| estado | Boolean | Estado Activo/Inactivo |
+| fechaCreacion | LocalDateTime | Fecha de creación |
+
+### Credito
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| id | Long (PK) | Id interno |
+| cliente | Cliente (FK) | Receptor del credito |
+| cobrador | Usuario (FK)| Cobrador asignado que registra pagos |
+| creadoPor | Usuario (FK) | Usuario creador Admin/Analista |
+| monto | BigDecimal | Monto base (cantidad recibida por el cliente) |
+| cantidadCuotas | Integer | Número de cuotas |
+| interes | BigDecimal | Interés del crédito aplicado en cuotas |
+| estado | EstadoCredito | Estado del crédito ACTIVO/EN_MORA/CANCELADO/CANCELADO_REFINANCIACION/CERRADO |
+| fechaCreacion | LocalDateTime | Fecha de creación |
+| cuotas | List<Cuota> (FK) | Lista de cuotas del crédito |
+
+### Cuota
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| id | Long (PK) | Id interno |
+| credito | Credito (FK)| Crédito al que pertenece |
+| fechaVencimiento | LocalDate | Vencimiento mensual auto-generado |
+| numeroCuota | Integer | Id local |
+| monto | BigDecimal | Monto base de la cuota |
+| montoRecargo | BigDecimal | Monto agregado en mora |
+| estado | EstadoCuota | PAGADA/VENCIDA/PENDIENTE |
+| pago | Pago (FK) | Pago realizado de la cuota |
+
+> Al crear un crédito se generan automáticamente N cuotas con vencimiento semanal.
+
+### Pago
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| id | Long (PK) | Id interno |
+| cuota | Cuota (FK) | Cuota asociada al pago |
+| fechaPagado | LocalDateTime | Fecha registrada del pago |
+| monto | BigDecimal | Monto pagado |
+| metodo | MetodoPago | Metodo del pago EFECTIVO/TARJETA/TRANSFERENCIA/OTRO |
+| cobradoPor | Usuario (FK) | Cobrador registrado del pago |
+| observaciones | String | Informacion adicional agregado |
+
+### Etiqueta
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| id | Long (PK) | Id interno |
+| nombre | String | Nombre normalizado |
+| color | String | Color asignado |
+| descripcion | String | Descripcion adicional |
+| fechaCreacion | LocalDate | Fecha creación |
+| fechaModificacion | LocalDate | Fecha última modificación |
+
+### ClienteEtiqueta
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| id | Long (PK) | Id interno |
+| cliente | Cliente (FK) | Cliente asignado |
+| etiqueta | Etiqueta (FK) | Etiqueta asignada |
+| asignadoPorId | Usuario (FK) | Usuario asignador de etiqueta a cliente |
+| asignadoEn | LocalDate | Fecha asignación |
 
 ---
 
 ## API REST
 
 ### Autenticación (pública)
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Registrar usuario, devuelve token JWT |
-| POST | `/api/auth/login` | Iniciar sesión, devuelve token JWT |
+| Método | Endpoint | Descripción | Roles |
+|--------|----------|-------------|-------|
+| POST | `/api/auth/login` | Iniciar sesión, devuelve token JWT | Ninguno |
+| POST | `/api/auth/logout` | Cerrar sesión, blacklist token JWT | Ninguno |
 
-### Clientes (requiere JWT)
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| POST | `/api/clientes` | Crear cliente |
-| GET | `/api/clientes` | Listar todos |
-| GET | `/api/clientes/{dni}` | Buscar por DNI |
+### Cliente (requiere JWT)
+| Método | Endpoint | Descripción | Roles |
+|--------|----------|-------------|-------|
+| POST | `/api/clientes` | Crear cliente | Por Definir |
+| GET | `/api/clientes` | Listar clientes con filtros (nombre, estado, creadoPorId, paginado) | Por Definir |
+| GET | `/api/clientes/{id}` | Buscar por ID | Por Definir |
+| GET | `/api/clientes/dni/{dni}` | Buscar por DNI | Por Definir |
+| GET | `/api/clientes/{id}/ficha` | Obtener ficha completa del cliente | Por Definir |
+| GET | `/api/clientes/dni/{dni}/ficha` | Obtener ficha completa del cliente por DNI | Por Definir |
+| PUT | `/api/clientes/{id}` | Editar cliente | Por Definir |
+| PATCH | `/api/clientes/{id}/estado` | Activar/desactivar cliente | Por Definir |
 
-### Créditos (requiere JWT)
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| POST | `/api/creditos` | Crear crédito (genera cuotas automáticamente) |
-| GET | `/api/creditos/{id}` | Buscar por ID (incluye cuotas con estado pagada/pendiente) |
-| GET | `/api/creditos/cliente/{dni}` | Créditos de un cliente |
+### Crédito (requiere JWT)
+| Método | Endpoint | Descripción | Roles |
+|--------|----------|-------------|-------|
+| POST | `/api/creditos` | Crear crédito (genera cuotas automáticamente) | Por Definir |
+| POST | `/api/creditos/preview` | Previsualizar plan de cuotas sin confirmar | Por Definir |
+| GET | `/api/creditos/{id}` | Buscar por ID (incluye cuotas con estado pagada/pendiente) | Por Definir |
+| GET | `/api/creditos` | Listar créditos con filtros (estado, clienteId, cobradorId, creadoPorId, paginado) | Por Definir |
+| PATCH | `/api/creditos/{id}/cobrador` | Cambiar cobrador asignado | Por Definir |
+| PATCH | `/api/creditos/{id}/cancelar` | Cancelar crédito | Por Definir |
 
-### Cobranzas (requiere JWT)
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| POST | `/api/cobranzas` | Registrar pago de una cuota |
-| GET | `/api/cobranzas/credito/{idCredito}` | Cobranzas de un crédito |
+### Cuota (requiere JWT)
+| Método | Endpoint | Descripción | Roles |
+|--------|----------|-------------|-------|
+| GET | `/api/creditos/{creditoId}/cuotas` | Listar todas las cuotas de un crédito | Por Definir |
+| GET | `/api/creditos/{creditoId}/cuotas/pendientes` | Listar cuotas pendientes | Por Definir |
+| GET | `/api/creditos/{creditoId}/cuotas/vencidas` | Listar cuotas vencidas | Por Definir |
 
----
+### Pago (requiere JWT)
+| Método | Endpoint | Descripción | Roles |
+|--------|----------|-------------|-------|
+| POST | `/api/pagos/registrar/{cuotaId}` | Registrar pago de una cuota (método, observaciones) | Por Definir |
+| GET | `/api/pagos/credito/{creditoId}` | Obtener pagos de un crédito | Por Definir |
+| DELETE | `/api/pagos/{pagoId}` | Cancelar un pago | Por Definir |
 
-## Seguridad JWT
+### Mora (requiere JWT)
+| Método | Endpoint | Descripción | Roles |
+|--------|----------|-------------|-------|
+| POST | `/api/mora/forzar/{creditoId}` | Forzar mora manualmente sobre un crédito | Por Definir |
 
-El flujo de autenticación es:
+### Etiqueta (requiere JWT)
+| Método | Endpoint | Descripción | Roles |
+|--------|----------|-------------|-------|
+| POST | `/api/etiquetas` | Crear etiqueta | Por Definir |
+| GET | `/api/etiquetas` | Listar/buscar etiquetas con filtros (nombre, color, paginado) | Por Definir |
+| GET | `/api/etiquetas/{id}` | Obtener etiqueta por ID | Por Definir |
+| PUT | `/api/etiquetas/{id}` | Modificar etiqueta | Por Definir |
+| DELETE | `/api/etiquetas/{id}` | Eliminar etiqueta (param: forzar) | Por Definir |
 
-```
-1. POST /api/auth/register  →  { token, username, rol }
-2. POST /api/auth/login     →  { token, username, rol }
-3. Resto de endpoints       →  Header: Authorization: Bearer <token>
-```
+### ClienteEtiqueta (requiere JWT)
+| Método | Endpoint | Descripción | Roles |
+|--------|----------|-------------|-------|
+| POST | `/api/clientes-etiquetas/{clienteId}/etiquetas/{etiquetaId}` | Asignar etiqueta a cliente | Por Definir |
+| GET | `/api/clientes-etiquetas/cliente/{clienteId}` | Obtener etiquetas de un cliente (paginado) | Por Definir |
+| GET | `/api/clientes-etiquetas/resumen` | Resumen estadístico de etiquetas (paginado) | Por Definir |
+| DELETE | `/api/clientes-etiquetas/{idAsignacion}` | Quitar etiqueta de un cliente | Por Definir |
 
-- Token firmado con HMAC-SHA384
-- Expiración: 24 horas
-- Sesión stateless (sin HttpSession)
-- Contraseñas encriptadas con BCrypt
-
----
-
-## Manejo de errores
-
-Todos los errores devuelven un `ErrorResponse` uniforme:
-
-```json
-{
-  "status": 400,
-  "error": "Error de negocio",
-  "mensajes": ["La cuota 1 del crédito 1 ya fue pagada"],
-  "timestamp": "2026-03-03T14:00:00"
-}
-```
-
-Excepciones manejadas por `@RestControllerAdvice`:
-- `ResourceNotFoundException` → 404
-- `BusinessException` → 400 (reglas de negocio)
-- `MethodArgumentNotValidException` → 400 (validaciones `@Valid`)
-- `Exception` genérica → 500
-
----
-
-## Frontend React + Redux
-
-### Redux store
-
-El estado global está dividido en 4 slices:
-
-| Slice | Estado | Acciones |
-|-------|--------|----------|
-| `auth` | `user`, `loading`, `error` | `loginThunk`, `registerThunk`, `logout` |
-| `clientes` | `lista`, `loading`, `error` | `fetchClientes`, `addCliente` |
-| `creditos` | `lista`, `loading`, `error` | `fetchCreditosPorCliente`, `addCredito`, `clearCreditos` |
-| `cobranzas` | `lista`, `loading`, `error` | `fetchCobranzasPorCredito`, `addCobranza`, `clearCobranzas` |
-
-Cada operación asíncrona usa `createAsyncThunk`, que maneja automáticamente los estados `pending / fulfilled / rejected`.
-
-### Otros conceptos del frontend
-
-- **PrivateRoute** redirige a `/login` si `state.auth.user` es null
-- **Navbar** despacha `logout()` y limpia `localStorage`
-- **apiClient.js** centraliza todas las llamadas fetch con el header `Authorization: Bearer <token>`
-- El proxy de Vite redirige `/api/*` → `localhost:8080` (evita CORS en desarrollo)
-
-### Páginas
-| Ruta | Componente | Acceso |
-|------|-----------|--------|
-| `/login` | Login.jsx | Público |
-| `/register` | Register.jsx | Público |
-| `/clientes` | Clientes.jsx | Privado |
-| `/creditos` | Creditos.jsx | Privado |
-| `/cobranzas` | Cobranzas.jsx | Privado |
+### Usuario (requiere JWT)
+| Método | Endpoint | Descripción | Roles |
+|--------|----------|-------------|-------|
+| POST | `/api/usuarios` | Crear usuario | Por Definir |
+| GET | `/api/usuarios` | Listar usuarios con filtros (nombre, rol, estado, paginado) | Por Definir |
+| PUT | `/api/usuarios/{id}` | Editar usuario | Por Definir |
+| PATCH | `/api/usuarios/{id}/estado` | Activar/desactivar usuario | Por Definir |
+| PATCH | `/api/usuarios/{id}/password` | Resetear contraseña | Por Definir |
 
 ---
+
+
+
+
+## Frontend React + Redux (POR DEFINIR)
+
 
 ## Cómo correr el proyecto
 
@@ -224,12 +259,12 @@ npm run dev
 
 | Unidad | Tema | Implementado en |
 |--------|------|----------------|
-| I | Spring Boot, arquitectura, estructura de proyectos | Toda la capa backend |
-| II | Hibernate/JPA, entidades, repositorios | `model/`, `repository/` |
-| II | Seguridad con JWT | `security/`, `config/SecurityConfig` |
-| III | React + Vite, componentes, props | `pages/`, `components/` |
-| III | React Hooks (`useState`, `useEffect`) | Todas las páginas |
-| III | React Router | `App.jsx`, `PrivateRoute` |
-| IV | Fetch, consumo de API | `api/` |
-| IV | Renderizado condicional | Estados de carga y error en cada página |
+| I | Spring Boot, arquitectura, estructura de proyectos | `/backend` |
+| II | Hibernate/JPA, entidades, repositorios | `/moderl`, `/repository` |
+| II | Seguridad con JWT | `/security` |
+| III | React + Vite, componentes, props | (Por Definir) |
+| III | React Hooks (`useState`, `useEffect`) | /frontend |
+| III | React Router | (Por Definir) |
+| IV | Fetch, consumo de API | `/api` |
+| IV | Renderizado condicional | Estados de carga + error en cada página |
 | V | Redux I y II: acciones, reducers, store, thunks | `store/slices/`, `store/index.js` |
