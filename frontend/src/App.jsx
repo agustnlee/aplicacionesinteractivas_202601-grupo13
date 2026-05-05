@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import PrivateRoute from './components/PrivateRoute';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -16,7 +15,6 @@ export default function App() {
         <Route path="/register"  element={<Register />} />
         <Route path="/clientes"  element={<PrivateRoute><Clientes /></PrivateRoute>} />
         <Route path="/creditos"  element={<PrivateRoute><Creditos /></PrivateRoute>} />
-        <Route path="/cobranzas" element={<PrivateRoute><Cobranzas /></PrivateRoute>} />
         <Route path="*"          element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
