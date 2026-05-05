@@ -1,25 +1,372 @@
-* { box-sizing: border-box; margin: 0; padding: 0; }
+
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'); /* Import de fuente */
+
+/* == Variables Globales ==  */
+
+:root {
+
+  /* Colores base */
+
+  --bg:               #f0f4f8;
+  --bg-2:             #e2e8f0;
+  --surface:          #ffffff;
+  --surface-2:        #f8fafc;
+  --border:           #cbd5e1;
+  --border-subtle:    #e2e8f0;
+
+  /* Colores primarios por valor */
+
+  --primary-900:      #0b1731;
+  --primary-800:      #112a52;
+  --primary-700:      #1d4ed8;
+  --primary-600:      #2563eb;
+  --primary-500:      #3b82f6;
+  --primary-100:      #bcd9ff;
+  --primary-50:       #eff6ff;
+
+  /* Colores de texto por estado */ 
+
+  --text:             #0f172a; /* texto normal */
+  --text-alt:         #334155; /* if texto normal se mezcla con el bg */
+  --text-muted:       #64748b; /* texto hover, etc */
+  --text-disabled:    #94a3b8; /* texto bloqueado (ej 5 segundos de espera antes de permitir baja */
+  --text-inverse:     #f8fafc; /* Inverso por si llega a ser necesario */
+
+  /* Colores estados principalmente para Toasts y Estados de entidad */
+
+  --success:          #16a34a; 
+  --success-bg:       #dcfce7;
+  --success-border:   #86efac;
+
+  --warning:          #d97706;
+  --warning-bg:       #fef3c7;
+  --warning-border:   #fcd34d;
+
+  --danger:           #dc2626;
+  --danger-bg:        #fee2e2;
+  --danger-border:    #fca5a5;
+
+  --info:             #0891b2;
+  --info-bg:          #cffafe;
+  --info-border:      #67e8f9;
+
+  --neutral:          #475569;
+  --neutral-bg:       #f1f5f9;
+  --neutral-border:   #cbd5e1;
+
+  /* fuente + tamaño + peso/grosor */
+
+  --font:             'Inter', system-ui, sans-serif;
+
+  --text-xs:  clamp(0.7rem, 0.65rem + 0.3vw, 0.75rem); 
+  --text-sm:  clamp(0.8rem, 0.75rem + 0.4vw, 0.875rem);
+  --text-base:clamp(0.9rem, 0.85rem + 0.5vw, 1rem);
+  --text-lg:  clamp(1rem, 0.95rem + 0.6vw, 1.125rem);
+  --text-xl:  clamp(1.1rem, 1rem + 0.8vw, 1.25rem);
+  --text-2xl: clamp(1.25rem, 1.1rem + 1.2vw, 1.5rem);
+  --text-3xl: clamp(1.5rem, 1.3rem + 2vw, 1.875rem);
+
+
+  --font-normal:      400;
+  --font-medium:      500;
+  --font-semibold:    600;
+  --font-bold:        700;
+
+  /* altura de linea */
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+
+  /* Espaciado generico */
+
+  --space-1:          0.25rem;
+  --space-2:          0.5rem;
+  --space-3:          0.75rem;
+  --space-4:          1rem;
+  --space-5:          1.25rem;
+  --space-6:          1.5rem;
+  --space-8:          2rem;
+  --space-10:         2.5rem;
+  --space-12:         3rem;
+
+  /* IMPORTANTE =============================== ESPACIADO POR CONTEXTO */
+
+  /* Para padding, elementos UI pequeños, etc */
+
+  --space-inline-xs: var(--space-1);
+  --space-inline-sm: var(--space-2);
+  --space-inline-md: var(--space-3);
+  --space-inline-lg: var(--space-4);
+
+
+  /* Para espacios entre elementos en columna o filas, registros en formularios, etc */
+  --space-stack-xs: var(--space-2);
+  --space-stack-sm: var(--space-3);
+  --space-stack-md: var(--space-4);
+  --space-stack-lg: var(--space-6);
+  --space-stack-xl: var(--space-8);
+
+  /* Espaciado interno para componentes, ej dentro de un componente CardCliente, espaciado para Id cliente, nombre etc */
+  --space-component-sm: var(--space-3);
+  --space-component-md: var(--space-4);
+  --space-component-lg: var(--space-6);
+
+  /* Espaciado para secciones de pagina o espaciados con separacion masiva  */
+  --space-section-sm: var(--space-6);
+  --space-section-md: var(--space-8);
+  --space-section-lg: var(--space-10);
+  --space-section-xl: var(--space-12);
+
+  /* Padding para contenedor/paginas */
+  --container-padding-sm: var(--space-4);
+  --container-padding-md: var(--space-6);
+  --container-padding-lg: var(--space-8);
+
+  /* Espaciado para gap entre elementos */
+  --gap-xs: var(--space-1);
+  --gap-sm: var(--space-2);
+  --gap-md: var(--space-4);
+  --gap-lg: var(--space-6);
+  --gap-xl: var(--space-8);
+
+  /* Espaciado para botones */
+  --btn-padding-y-sm: var(--space-1);
+  --btn-padding-x-sm: var(--space-3);
+
+  --btn-padding-y-md: var(--space-2);
+  --btn-padding-x-md: var(--space-4);
+
+  --btn-padding-y-lg: var(--space-3);
+  --btn-padding-x-lg: var(--space-6);
+
+
+
+  /* =========================================================== */
+
+
+  /* Radios para bordes  */
+  --radius-sm:        0.25rem;
+  --radius:           0.5rem;
+  --radius-lg:        0.75rem;
+  --radius-xl:        1rem;
+  --radius-full:      9999px;
+
+  /* Sombras efecto */
+  --shadow-sm:        0 1px 2px rgba(0,0,0,0.05);
+  --shadow:           0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md:        0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-lg:        0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+  --shadow-xl:        0 20px 25px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.04);
+
+  /* Variables para tiempo animacion y funciones de timing*/
+
+  --anim-fast:        150ms;
+  --anim-normal:      250ms;
+  --anim-slow:        400ms;
+
+  --ease-standard:    cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out:         cubic-bezier(0.0, 0, 0.2, 1);
+  --ease-bounce:      cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /*  Tamaño iconos  */
+  --icon-sm:          16px;
+  --icon-md:          20px;
+  --icon-lg:          24px;
+  --touch-min:        40px;
+
+  /* Opciones opacidad */
+  --opacity-disabled: 0.4;
+  --opacity-muted:    0.6;
+  --opacity-hover:    0.85;
+
+  /* Layout  */
+
+  --navbar-height:    3.5rem;
+  --footer-height:    6rem;
+  --content-padding:  var(--space-6);
+
+}
+
+/* Reset Inicial */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+}
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f0f4f8;
-  color: #333;
+  font-family: var(--font);
+  font-size: var(--text-base);
+  color: var(--text);
+  background-color: var(--bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-table th, table td {
-  padding: 10px 14px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-table th {
-  background-color: #f5f5f5;
-  font-weight: 600;
-  color: #555;
+
+h1 { font-size: var(--text-2xl); font-weight: var(--font-bold);     color: var(--text); }
+h2 { font-size: var(--text-xl);  font-weight: var(--font-semibold); color: var(--text); }
+h3 { font-size: var(--text-lg);  font-weight: var(--font-semibold); color: var(--text); }
+p  { color: var(--text-alt); }
+
+button { font-family: var(--font); cursor: pointer; border: none; background: none; }
+input, select, textarea { font-family: var(--font); }
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+
+/* Scrolbar */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--neutral); border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-disabled); }
+
+.scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
+.scrollbar-none::-webkit-scrollbar { display: none; }
+
+
+/* al hacer focus a elementos TODO: Revisar si necesario */
+:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
 }
 
-table tr:hover {
-  background-color: #fafafa;
+
+
+/* layout con flexchain */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
-a { color: #1565c0; }
+.app-body {
+  display: flex;
+  flex: 1;     
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--content-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-stack-lg);
+}
+
+/* == Clases globales ==  */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-inline-sm);
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+  border: 1px solid transparent;
+  transition: background var(--anim-fast) var(--ease-standard), transform var(--anim-fast), box-shadow var(--anim-fast);
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.btn-primary {
+  background: var(--primary-600);
+  color: var(--text-inverse);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-700);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+.btn-ghost:hover:not(:disabled) {
+  color: var(--text);
+  background: var(--surface-2);
+  border-color: var(--primary-500);
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+.btn-danger:hover:not(:disabled) {
+  color: var(--danger);
+  background: var(--danger-bg);
+  border-color: var(--danger);
+}
+
+.btn-success {
+  background: var(--success);
+  color: var(--text-inverse);
+}
+.btn-success:hover:not(:disabled) {
+  opacity: var(--opacity-hover);
+  transform: translateY(-1px);
+}
+
+/* tamaño botones */
+
+.btn-sm {
+  padding: var(--btn-padding-y-sm) var(--btn-padding-x-sm);
+  font-size: var(--text-xs);
+}
+
+.btn-md {
+  padding: var(--btn-padding-y-md) var(--btn-padding-x-md);
+  font-size: var(--text-sm);
+}
+
+.btn-lg {
+  padding: var(--btn-padding-y-lg) var(--btn-padding-x-lg);
+  font-size: var(--text-base);
+}
+
+/* Animaciones globales  */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in  { animation: fadeIn  var(--anim-normal) var(--ease-out); }
+.animate-slide-up { animation: slideUp var(--anim-normal) var(--ease-bounce); }
+
+.is-loading {
+  opacity: var(--opacity-muted);
+  pointer-events: none;
+  transition: opacity var(--anim-normal) var(--ease-standard);
+}
