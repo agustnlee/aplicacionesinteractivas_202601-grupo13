@@ -16,12 +16,13 @@ export const loginThunk = createAsyncThunk(
 
 export const logoutThunk = createAsyncThunk(
     "auth/logout",
-    async () => {
-        try {
-            await logout();
-        } catch {
-             // intencional: se limpia sesión local aunque falle backend
-        }
+    async (_, { rejectWithValue }) => {
+      try {
+        await logout();
+        return true;
+      } catch (err) {
+        return rejectWithValue(err);
+      }
     }
 );
 
@@ -59,12 +60,15 @@ const authSlice = createSlice({
             })
             .addCase(loginThunk.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload?.mensajes?.[0] || "Credenciales incorrectas";
+                state.error = action.payload?.mensajes?.[0] || "Unknown Error";
             })
             // logout
             .addCase(logoutThunk.fulfilled, (state) => {
                 state.token = null;
                 state.user = null;
+                state.loading = false;
+                state.error = null;
+
                 localStorage.removeItem("token");
                 localStorage.removeItem("user");
             });

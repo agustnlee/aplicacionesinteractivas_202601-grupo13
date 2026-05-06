@@ -8,6 +8,7 @@
   z-index: 1000;
   padding: var(--space-4);
   animation: fadeIn var(--anim-fast) var(--ease-out);
+  backdrop-filter: blur(4px);
 }
 
 .modal {
