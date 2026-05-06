@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import styles from "./Dropdown.module.css";
 
-export default function Dropdown({ trigger, items }) { // items: [{ label, onClick, variant: "default"|"danger", disabled }] para cada fila
+export default function Dropdown({ trigger, items }) { // items: [{ label, onClick, variant: "default"|"danger", disabled, icon }] para cada fila
     const [open, setOpen] = useState(false);
     const ref = useRef(null);
 

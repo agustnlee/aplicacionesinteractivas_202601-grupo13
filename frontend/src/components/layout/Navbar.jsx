@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
+import { ICONS } from "../../utils/icontypes";
 import Dropdown from "../common/Dropdown";
 import IconButton from "../ui/IconButton";
 import Modal from "../common/Modal";
@@ -79,15 +80,18 @@ export default function Navbar({ user, showToast }) {
                 trigger={<IconButton icon="user" />}
                 items={[
                   {
+                    icon: ICONS.circleArrow,
                     label: user.name,
                     onClick: () => navigate(`/usuario/${user.id}`),
                   },
                   {
+                    icon: ICONS.shieldCheck,
                     label: user.role,
                     disabled: true,
                   },
                   "divider",
                   {
+                    icon: ICONS.logout,
                     label: "Logout",
                     variant: "danger",
                     onClick: () => setLogoutOpen(true),
