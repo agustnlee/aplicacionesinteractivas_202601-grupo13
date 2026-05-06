@@ -1,0 +1,64 @@
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background var(--anim-fast) var(--ease-standard),
+    color var(--anim-fast) var(--ease-standard),
+    border-color var(--anim-fast) var(--ease-standard),
+    transform var(--anim-fast) var(--ease-standard),
+    box-shadow var(--anim-fast) var(--ease-standard);
+}
+
+.iconBtn:disabled {
+  opacity: var(--opacity-hover);
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* tamaños iconbutton only */
+.sm { width: 28px; height: 28px; }
+.md { width: 36px; height: 36px; }
+.lg { width: 44px; height: 44px; }
+
+/* variantes al estar hovered*/
+.default:hover:not(:disabled) {
+  background: var(--surface-2);
+  border-color: var(--primary-500);
+  color: var(--text);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.danger:hover:not(:disabled) {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger);
+  transform: translateY(-1px);
+}
+
+.success:hover:not(:disabled) {
+  background: var(--success-bg);
+  border-color: var(--success);
+  color: var(--success);
+  transform: translateY(-1px);
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--primary-100);
+  border-color: var(--primary-600);
+  color: var(--primary-700);
+  transform: translateY(-1px);
+}
+
+/* efecto al apretar  */
+.iconBtn:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: none;
+}

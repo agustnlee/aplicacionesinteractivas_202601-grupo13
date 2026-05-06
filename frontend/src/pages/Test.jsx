@@ -1,11 +1,3 @@
-
-
 export default function Test() {
-    return (<> 
-        <p> funciona /Test </p>
-        
-        
-        
-    </>);
-
+    return(<> Limpiar version limpia para commit </>);
 }

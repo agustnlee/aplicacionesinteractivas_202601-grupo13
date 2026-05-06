@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
 // import componentes puro layout
 import Navbar from './components/layout/Navbar';
@@ -14,8 +14,8 @@ import Clientes from './pages/clientes/Clientes';
 import ClientesDetail from './pages/clientes/ClientesDetail';
 import Creditos from './pages/creditos/Creditos';
 import CreditosDetail from './pages/creditos/CreditosDetail';
-import  Etiquetas from './pages/etiquetas/Etiquetas';
-import  EtiquetasDetail from './pages/etiquetas/EtiquetasDetail';
+import Etiquetas from './pages/etiquetas/Etiquetas';
+import EtiquetasDetail from './pages/etiquetas/EtiquetasDetail';
 import Usuarios from './pages/usuarios/Usuarios';
 import UsuariosDetail from './pages/usuarios/UsuariosDetail';
 
@@ -41,33 +41,41 @@ function Layout() {
 
 function App() {
   return (
-    <BrowserRouter>
       <Routes>
+        {/* Rutas sin layout ni auth */}
+        <Route path="/auth/login" element={<Login />} />
 
         {/* Rutas con layout  */}
         <Route element={<Layout />}>
+
+          {/* Públicas */}
           <Route path="/" element={<Home />} />
           <Route path="/test" element={<Test />} />
 
-          <Route path="/clientes" element={<Clientes />} />
-          <Route path="/clientes/:id" element={<ClientesDetail />} />
+          <Route element={<PrivateRoute />}>
+           <Route path="/auth/register" element={<Register />} />
 
-          <Route path="/creditos" element={<Creditos />} />
-          <Route path="/creditos/:id" element={<CreditosDetail />} />
+            <Route path="/clientes" element={<Clientes />} />
+            <Route path="/clientes/:id" element={<ClientesDetail />} />
 
-          <Route path="/etiquetas" element={<Etiquetas />} />
-          <Route path="/etiquetas/:id" element={<EtiquetasDetail />} />
+            <Route path="/creditos" element={<Creditos />} />
+            <Route path="/creditos/:id" element={<CreditosDetail />} />
 
-          <Route path="/usuarios" element={<Usuarios />} />
-          <Route path="/usuarios/:id" element={<UsuariosDetail />} />
+            <Route path="/etiquetas" element={<Etiquetas />} />
+            <Route path="/etiquetas/:id" element={<EtiquetasDetail />} />
+
+            <Route path="/usuarios" element={<Usuarios />} />
+            <Route path="/usuarios/:id" element={<UsuariosDetail />} />
+          </Route>
+
+          {/* Cualquier otra ruta */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
 
-        {/* Rutas sin layout */}
-        <Route path="/auth/login" element={<Login />} />
-        <Route path="/auth/register" element={<Register />} />
+        
+        
 
       </Routes>
-    </BrowserRouter>
   );
 }
 
