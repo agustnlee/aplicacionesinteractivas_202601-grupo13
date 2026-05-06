@@ -362,6 +362,11 @@ input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
   to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 .animate-fade-in  { animation: fadeIn  var(--anim-normal) var(--ease-out); }
 .animate-slide-up { animation: slideUp var(--anim-normal) var(--ease-bounce); }
 
