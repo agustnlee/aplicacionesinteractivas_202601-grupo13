@@ -111,10 +111,10 @@ export default function Navbar({ user, showToast }) {
             className={`${styles.sidebar} ${!sidebarOpen ? styles.sidebarClosed : ""}`}
             onClick={(e) => e.stopPropagation()} 
           >
-            <NavLink to="/clientes" className={({ isActive }) => isActive ? styles.active : ""} >Clientes</NavLink>
-            <NavLink to="/creditos" className={({ isActive }) => isActive ? styles.active : ""} >Creditos</NavLink>
-            <NavLink to="/etiquetas" className={({ isActive }) => isActive ? styles.active : ""} >Etiquetas</NavLink>
-            <NavLink to="/usuarios" className={({ isActive }) => isActive ? styles.active : ""} >Usuarios</NavLink>
+            <NavLink to="/clientes" className={({ isActive }) => isActive ? styles.active : ""} onClick={handleClose}>Clientes</NavLink>
+            <NavLink to="/creditos" className={({ isActive }) => isActive ? styles.active : ""} onClick={handleClose}>Creditos</NavLink>
+            <NavLink to="/etiquetas" className={({ isActive }) => isActive ? styles.active : ""} onClick={handleClose}>Etiquetas</NavLink>
+            <NavLink to="/usuarios" className={({ isActive }) => isActive ? styles.active : ""} onClick={handleClose}>Usuarios</NavLink>
           </div>
         </div>
       )}
