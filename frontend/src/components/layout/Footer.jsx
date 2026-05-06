@@ -1,9 +1,9 @@
 import styles from "./Footer.module.css";
-import { ICONS } from "../../utils/icons";
+import { ICONS } from "../../utils/icontypes";
 
 export default function Footer() {
   const GithubIcon = ICONS.github;
-  const GithubBranchIcon = ICONS.GithubBranchIcon;
+  const GithubBranchIcon = ICONS.gitBranch;
 
   const collaborators = [
     { name: "agustnlee", url: "https://github.com/agustnlee" },

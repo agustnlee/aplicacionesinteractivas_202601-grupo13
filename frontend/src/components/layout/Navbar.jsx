@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-import Dropdown from "../Dropdown/Dropdown";
-import IconButton from "../IconButton/IconButton";
-import Modal from "../Modal/Modal";
+import Dropdown from "../common/Dropdown";
+import IconButton from "../ui/IconButton";
+import Modal from "../common/Modal";
 import { useLockBodyScroll } from "../../hooks/useLockBodyScroll";
 import { logoutThunk } from "../../store/authSlice";
 

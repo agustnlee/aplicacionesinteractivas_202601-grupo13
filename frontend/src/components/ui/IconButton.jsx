@@ -1,4 +1,4 @@
-import { ICONS } from "../../utils/icons";
+import { ICONS } from "../../utils/icontypes";
 import styles from "./IconButton.module.css";
 
 export default function IconButton({

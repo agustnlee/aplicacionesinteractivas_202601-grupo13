@@ -1,4 +1,4 @@
-import { ICONS } from "../../utils/icons";
+import { ICONS } from "../../utils/icontypes";
 
 export default function Button({
     children,

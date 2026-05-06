@@ -14,8 +14,8 @@ import Clientes from './pages/clientes/Clientes';
 import ClientesDetail from './pages/clientes/ClientesDetail';
 import Creditos from './pages/creditos/Creditos';
 import CreditosDetail from './pages/creditos/CreditosDetail';
-import  Etiquetas from './pages/etiquetas/Etiquetas';
-import  EtiquetasDetail from './pages/etiquetas/EtiquetasDetail';
+import Etiquetas from './pages/etiquetas/Etiquetas';
+import EtiquetasDetail from './pages/etiquetas/EtiquetasDetail';
 import Usuarios from './pages/usuarios/Usuarios';
 import UsuariosDetail from './pages/usuarios/UsuariosDetail';
 
