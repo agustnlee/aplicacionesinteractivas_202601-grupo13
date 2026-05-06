@@ -4,7 +4,7 @@
   z-index: 100;
 
   background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1.5px solid var(--border);
 }
 
 .container {
@@ -39,60 +39,53 @@
   background: rgba(0,0,0,0.4);
   z-index: 999;
   backdrop-filter: blur(4px);
+  
+  opacity: 1;
+  transition: opacity 200ms ease;
+}
 
-  animation: fadeIn var(--anim-fast) var(--ease-out);
+.overlayClosing {
+  opacity: 0;
 }
 
 .sidebar {
-  width: 240px;
+  width: 360px;
   height: 100%;
   background: var(--surface);
   border-right: 1px solid var(--border);
 
   display: flex;
   flex-direction: column;
-  gap: var(--space-stack-sm);
-
+  gap: var(--space-stack-lg);
   padding: var(--space-4);
 
-  animation: slideInLeft var(--anim-normal) var(--ease-standard);
+  transform: translateX(0);
+  transition: transform 200ms ease;
+
 }
 
 .sidebar a {
+  font-size: var(--text-xl);
   text-decoration: none;
   color: var(--text);
-  padding: var(--space-2);
-  border-radius: var(--radius);
+  padding: var(--space-4);
 
   border-left: 3px solid transparent;
-  transition: color var(--anim-fast), border-color var(--anim-fast);
+  transition: color var(--anim-fast) var(--ease-standard), border-color var(--anim-fast) var(--ease-standard), background var(--anim-fast);
 }
 
 .sidebar a:hover {
   color: var(--primary-600);
+  background: rgba(0,0,0,0.04);
 }
 
-.sidebarClosing {
-  animation: slideOutLeft var(--anim-fast) forwards;
+.sidebarClosed {
+    transform: translateX(-100%);
 }
 
-.active {
+.sidebar a.active {
   border-left: 3px solid var(--primary-600);
   color: var(--primary-600);
   font-weight: var(--font-medium);
 }
 
-
-@keyframes slideInLeft {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideOutLeft {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-100%); }
-}

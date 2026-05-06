@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import Dropdown from "../common/Dropdown";
@@ -34,13 +34,20 @@ export default function Navbar({ user, showToast }) {
     navigate("/login");
   };
 
+  const handleOpen = () => {
+    setVisible(true);
+    requestAnimationFrame(() => {
+      setSidebarOpen(true);
+    });
+  };
+
   useEffect(() => {
     if (sidebarOpen) setVisible(true);
   }, [sidebarOpen]);
 
   const handleClose = () => {
     setSidebarOpen(false);
-    setTimeout(() => setVisible(false), 200); // match animation
+    setTimeout(() => setVisible(false), 200); 
   };
 
   return (
@@ -52,7 +59,8 @@ export default function Navbar({ user, showToast }) {
           <div className={styles.left}>
             <IconButton
               icon="menu"
-              onClick={() => setSidebarOpen(true)}
+              onClick={handleOpen}
+              size="lg"
             />
             <span className={styles.logo}>App Insert Logo+Name</span>
             
@@ -62,8 +70,9 @@ export default function Navbar({ user, showToast }) {
           <div className={styles.right}>
             {!isLoggedIn ? (
               <IconButton
-                icon="user"
+                icon="login"
                 onClick={() => navigate("/login")}
+                size="lg"
               />
             ) : (
               <Dropdown
@@ -92,19 +101,16 @@ export default function Navbar({ user, showToast }) {
       </nav>
 
       {/* SIDEBAR */}
-      {sidebarOpen && (
-        <div
-          className={styles.overlay}
-          onClick={() => setSidebarOpen(false)}
-        >
+      {visible && (
+        <div className={styles.overlay} onClick={handleClose} >
           <div
-            className={styles.sidebar}
-            onClick={(e) => e.stopPropagation()}
+            className={`${styles.sidebar} ${!sidebarOpen ? styles.sidebarClosed : ""}`}
+            onClick={(e) => e.stopPropagation()} 
           >
-            <Link to="/clientes" className={location.pathname === "/clientes" ? styles.active : ""} >Clientes</Link>
-            <Link to="/creditos" className={location.pathname === "/creditos" ? styles.active : ""} >Creditos</Link>
-            <Link to="/etiquetas" className={location.pathname === "/etiquetas" ? styles.active : ""} >Etiquetas</Link>
-            <Link to="/usuarios" className={location.pathname === "/usuarios" ? styles.active : ""} >Usuarios</Link>
+            <NavLink to="/clientes" className={({ isActive }) => isActive ? styles.active : ""} >Clientes</NavLink>
+            <NavLink to="/creditos" className={({ isActive }) => isActive ? styles.active : ""} >Creditos</NavLink>
+            <NavLink to="/etiquetas" className={({ isActive }) => isActive ? styles.active : ""} >Etiquetas</NavLink>
+            <NavLink to="/usuarios" className={({ isActive }) => isActive ? styles.active : ""} >Usuarios</NavLink>
           </div>
         </div>
       )}

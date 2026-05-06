@@ -40,7 +40,6 @@ export default function Footer() {
 
         {/* RIGHT */}
         <div className={styles.right}>
-          <GithubIcon size={18} />
 
           <div className={styles.users}>
             {collaborators.map((c) => (
@@ -50,7 +49,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {c.name}
+                <GithubIcon size={18} /> {c.name}
               </a>
             ))}
           </div>

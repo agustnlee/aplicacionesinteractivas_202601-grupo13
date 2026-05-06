@@ -3,7 +3,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   border: 1px solid var(--border);
   background: transparent;
   color: var(--text-muted);
@@ -17,7 +17,7 @@
 }
 
 .iconBtn:disabled {
-  opacity: var(--opacity-disabled);
+  opacity: var(--opacity-hover);
   cursor: not-allowed;
   transform: none !important;
 }
