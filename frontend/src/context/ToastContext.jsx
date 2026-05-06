@@ -1,8 +1,8 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useState, useCallback } from "react";
 import { CheckCircle, XCircle, AlertTriangle, Info, X } from "lucide-react";
 import styles from "./Toast.module.css";
 
-const ToastContext = createContext(null);
+export const ToastContext = createContext(null);
 const MAX_TOASTS = 4;
 
 const VARIANTS = {
@@ -58,8 +58,3 @@ export function ToastProvider({ children }) {
     );
 }
 
-export function useToast() {
-    const ctx = useContext(ToastContext);
-    if (!ctx) throw new Error("useToast debe usarse dentro de ToastProvider");
-    return ctx;
-}
