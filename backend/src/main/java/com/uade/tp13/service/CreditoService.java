@@ -190,8 +190,8 @@ public class CreditoService {
         if (!cobrador.getEstado()) {
             throw new BusinessException("El cobrador con id " + cobradorId + " está inactivo.");
         }
-        if (cobrador.getRol() != ROL_USUARIO.COBRADOR) {
-            throw new BusinessException("El usuario con id " + cobradorId + " no tiene rol de COBRADOR.");
+        if (cobrador.getRol() != ROL_USUARIO.COBRADOR && cobrador.getRol() != ROL_USUARIO.ADMIN) {
+            throw new BusinessException("El usuario con id " + cobradorId + " no tiene rol de COBRADOR o ADMIN.");
         }
         return cobrador;
     }
