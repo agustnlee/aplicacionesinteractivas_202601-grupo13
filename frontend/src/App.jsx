@@ -9,7 +9,6 @@ import PrivateRoute from './components/layout/PrivateRoute';
 // import paginas
 import Home from './pages/Home';
 import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
 import Clientes from './pages/clientes/Clientes';
 import ClientesDetail from './pages/clientes/ClientesDetail';
 import Creditos from './pages/creditos/Creditos';
@@ -53,7 +52,6 @@ function App() {
           <Route path="/test" element={<Test />} />
 
           <Route element={<PrivateRoute />}>
-           <Route path="/auth/register" element={<Register />} />
 
             <Route path="/clientes" element={<Clientes />} />
             <Route path="/clientes/:id" element={<ClientesDetail />} />
