@@ -10,7 +10,9 @@ export default function FilterSearch({ fields }) {
     const [selectedKey, setSelectedKey] = useState(activeKeyInUrl || fields[0]?.key);
     const [inputValue, setInputValue] = useState(searchParams.get(activeKeyInUrl) || '');
 
-    const debouncedValue = useDebounce(inputValue, 500);
+    const debouncedValue = useDebounce(inputValue, 0);
+
+    const fieldKeysString = fields.map(f => f.key).join(',');
 
     const handleKeyChange = (e) => {
         setSelectedKey(e.target.value);
@@ -18,17 +20,21 @@ export default function FilterSearch({ fields }) {
     };
     
     useEffect(() => {
-        const currentParams = Object.fromEntries([...searchParams]);
+        setSearchParams((prevParams) => {
+            const currentParams = Object.fromEntries([...prevParams]);
 
-        fields.forEach(f => delete currentParams[f.key]);
+            if (fieldKeysString) {
+                fieldKeysString.split(',').forEach(key => delete currentParams[key]);
+            }
 
-        if (debouncedValue !== '') {
-            currentParams[selectedKey] = debouncedValue;
-            currentParams.pagina = 0; 
-        }
+            if (debouncedValue !== '') {
+                currentParams[selectedKey] = debouncedValue;
+                currentParams.pagina = 0; 
+            }
 
-        setSearchParams(currentParams);
-    }, [debouncedValue, selectedKey]);
+            return currentParams;
+        });
+    }, [debouncedValue, selectedKey, fieldKeysString, setSearchParams]); // Linter 100% satisfecho y dependencias seguras
 
     const handleReset = () => {
         setInputValue('');
