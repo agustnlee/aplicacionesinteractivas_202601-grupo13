@@ -271,6 +271,13 @@ input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
 
 /* == Clases globales ==  */
 
+.title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  color: var(--primary-900);
+  border-left: 3px solid var(--primary-600);
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
