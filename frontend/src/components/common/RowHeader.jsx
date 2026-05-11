@@ -1,4 +1,4 @@
-import styles from './RowModels.module.css'; // Reutilizamos el CSS de tu fila genérica
+import styles from './RowModels.module.css';
 
 export default function RowHeader({ columns, hasActions }) {
     return (
