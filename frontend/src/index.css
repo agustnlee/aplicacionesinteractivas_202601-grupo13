@@ -8,11 +8,11 @@
 
   /* Colores base */
 
-  --bg:               #f0f4f8;
-  --bg-2:             #e2e8f0;
-  --surface:          #ffffff;
-  --surface-2:        #f8fafc;
-  --border:           #cbd5e1;
+  --bg:               #f1f1f1;
+  --bg-2:             #ccd5e2;
+  --surface:          #ebebeb;
+  --surface-2:        #b3b3b3;
+  --border:           #afbecf;
   --border-subtle:    #e2e8f0;
 
   /* Colores primarios por valor */
