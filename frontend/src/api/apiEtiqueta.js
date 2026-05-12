@@ -4,16 +4,17 @@ export const crearEtiqueta = (data) =>
     apiClient(`/etiquetas`, "POST", {data});
 
 
-export const modificarEtiqueta = (Id, data)=> 
-    apiClient(`/etiqueta/${id}`, "PUT", { data });
+export const modificarEtiqueta = (id, data)=> 
+    apiClient(`/etiquetas/${id}`, "PUT", { data });
 
-export const obtenerEtiquetaPorId= (Id)=>
-    apiClient(`/etiqueta/${id}`);
+export const obtenerEtiquetaPorId= (id)=>
+    apiClient(`/etiquetas/${id}`,"GET");
 
-export const buscarEtiquetas= (nombre, color )=>
-    apiClient("/etiquetas",{nombre},{color} );
+export const buscarEtiquetas = (nombre = "", color = "") => {
+    const query = new URLSearchParams({ nombre, color }).toString();
+    return apiClient(`/etiquetas?${query}`, "GET");};
 
-export const eliminarEtiqueta= (Id)=>
-    apiClient(`/etiqueta/${id}`);
+export const eliminarEtiqueta= (id,forzar = false)=>
+    apiClient(`/etiquetas/${id}?forzar=${forzar}`,"DELETE");
 
 
