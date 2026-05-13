@@ -1,0 +1,33 @@
+.filterContainer {
+    display: flex;
+    gap: var(--gap-sm);
+    align-items: center;
+    margin-bottom: var(--space-stack-md);
+    background-color: var(--surface);
+    padding: var(--space-component-sm);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.selectField, .textInput {
+    padding: var(--space-inline-sm) var(--space-inline-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--font);
+    font-size: var(--text-sm);
+    color: var(--text);
+    background-color: var(--surface);
+    outline: none;
+    transition: border-color var(--anim-fast) var(--ease-standard), 
+                box-shadow var(--anim-fast) var(--ease-standard);
+}
+
+.selectField:focus, .textInput:focus {
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 2px var(--primary-100);
+}
+
+.textInput {
+    flex-grow: 1;
+}
