@@ -1,3 +1,9 @@
+import ColorPicker from "../components/common/ColorPicker";
 export default function Test() {
-    return(<> Limpiar version limpia para commit </>);
+    return(<> 
+
+    <ColorPicker/>
+    
+    
+    Limpiar version limpia para commit </>);
 }
