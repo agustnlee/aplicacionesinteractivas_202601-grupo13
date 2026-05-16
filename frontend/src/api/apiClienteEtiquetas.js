@@ -1,8 +1,8 @@
 import apiClient from "./apiClient";
 
 export const asignarEtiqueta = (clienteId, etiquetaId ) =>
-    { const params = new URLSearchParams({ idUsuarioAsignador });
-    return   apiClient(`/clientes-etiquetas/${clienteId}/etiquetas/${etiquetaId}?${params}=`, "POST");};
+    { 
+    return   apiClient(`/clientes-etiquetas/${clienteId}/etiquetas/${etiquetaId}`, "POST");};
 
   
 export const obtenerResumenEtiquetas= () =>
