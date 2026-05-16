@@ -1,8 +1,10 @@
 import ColorPicker from "../components/common/ColorPicker";
+import ColorPallete from "../components/common/ColorPallete";
 export default function Test() {
     return(<> 
 
-    <ColorPicker/>
+  
+    <ColorPallete/>
     
     
     Limpiar version limpia para commit </>);
