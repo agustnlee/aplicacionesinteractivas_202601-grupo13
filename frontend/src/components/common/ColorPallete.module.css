@@ -1,0 +1,46 @@
+
+
+.container{
+    
+    width: 400px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap:10px;
+    border-radius: 2rem;
+    box-shadow: 5px 5px 20px rgba(0,0,0,0.5) ;
+
+}
+
+.container2{
+    
+    width: 150px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap:15px;
+    border-radius: 2rem;
+    box-shadow: 5px 5px 20px rgba(0,0,0,0.5) ;
+
+}
+
+
+.ColorDisplay{
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+     ;
+
+
+}
+.ColorDisplay:hover{
+    transform: scale(1.4);
+    transition: 1.4s ease-in-out;
+}
+
+input{
+    height: 40px;
+    width: 100px;
+    border-radius: 5px;
+    padding: 3px, 5px;
+}
