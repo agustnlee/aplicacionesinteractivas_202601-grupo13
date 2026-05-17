@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginThunk, clearError } from "../../store/authSlice";
 import Button from "../../components/ui/Button";
+import InputPassword from "../../components/common/InputPassword";
 
 export default function Login() {
     const dispatch = useDispatch();
@@ -57,13 +58,9 @@ export default function Login() {
 
                     <label>
                         Contraseña
-                        <input
-                            className="input"
-                            type="password"
-                            name="password"
+                        <InputPassword
                             value={form.password}
                             onChange={handleChange}
-                            required
                         />
                     </label>
 

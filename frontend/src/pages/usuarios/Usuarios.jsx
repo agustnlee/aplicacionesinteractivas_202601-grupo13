@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { getUsuarios, crearUsuario } from "../../api/usuariosApi";
-import Modal from "../../components/common/Modal";
+import { getUsuarios, crearUsuario } from "../../api/usuarioApi";
 import Button from "../../components/ui/Button";
 import LoadingWrapper from "../../components/common/LoadingWrapper";
+import ModalCrearUsuario from "../../components/usuarios/ModalCrearUsuario";
+import { useToast } from "../../hooks/useToast";
 
 const ROLES = [
   "ADMIN",
@@ -15,6 +16,8 @@ export default function Usuarios() {
     const [usuarios, setUsuarios] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const { showToast } = useToast();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -70,6 +73,8 @@ export default function Usuarios() {
 
             await crearUsuario(formData);
 
+            showToast("Usuario creado correctamente", "success");
+
             setIsModalOpen(false);
 
             setFormData({
@@ -85,9 +90,9 @@ export default function Usuarios() {
 
             console.error(err);
 
-            alert(
-                err?.mensajes?.[0] ||
-                "Error al crear usuario"
+            showToast(
+                err?.mensajes?.[0] || "Error al crear usuario",
+                "error"
             );
         }
     };
@@ -137,63 +142,14 @@ export default function Usuarios() {
 
             </LoadingWrapper>
 
-            <Modal
+            <ModalCrearUsuario
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                title="Crear usuario"
-            >
-
-                <div
-                    style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "12px"
-                    }}
-                >
-
-                    <input
-                        type="text"
-                        name="nombre"
-                        placeholder="Nombre"
-                        value={formData.nombre}
-                        onChange={handleChange}
-                    />
-
-                    <input
-                        type="email"
-                        name="email"
-                        placeholder="Email"
-                        value={formData.email}
-                        onChange={handleChange}
-                    />
-
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Contraseña"
-                        value={formData.password}
-                        onChange={handleChange}
-                    />
-
-                    <select
-                        name="rol"
-                        value={formData.rol}
-                        onChange={handleChange}
-                    >
-                        {ROLES.map((rol) => (
-                            <option key={rol} value={rol}>
-                                {rol}
-                            </option>
-                        ))}
-                    </select>
-
-                    <Button onClick={handleCrearUsuario}>
-                        Crear usuario
-                    </Button>
-
-                </div>
-
-            </Modal>
+                formData={formData}
+                onChange={handleChange}
+                onSubmit={handleCrearUsuario}
+                roles={ROLES}
+            />
 
         </div>
     );
