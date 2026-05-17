@@ -1,24 +1,27 @@
 
 import Button from "../ui/Button" ;
+import IconButton from "../ui/IconButton";
 import React, { use } from "react";
 import styles from "./ColorPallete.module.css";
-
-
 import { useState } from "react";
+import { ICONS } from "../../utils/icontypes";
 
 export default function ColorPallete(){
 
        const [color, setColor]= useState("#FFFFFF");
+       const [isOpen, setIsOpen] = useState(false);
     
 
     
     const colorArray =[
-        "#e6c229",
-        "#f17105",
-        "#d11149",
-        "#6610f2",
-        "#1a8fe3",
-        "#04e762",
+        "#d72b31",
+        "#e94a22",
+        "#f69e31",
+        "#e8fa42",
+        "#60c04c",
+        "#21917b",
+        "#225575",
+        "#5f3675",
 
     ];
 
@@ -26,23 +29,51 @@ export default function ColorPallete(){
 
     return(<>
     <div >
-        elija un color:
 
-         <div className= {styles.container}>
+        <IconButton 
+                variant="primary" 
+                icon= "palette"
+                onClick={() => setIsOpen(!isOpen)}
+            >
+                
 
-               {colorArray?.map((color) => (
-                <div className={styles.ColorDisplay} onClick={()=> setColor(color)} style= {{backgroundColor: color}}></div>
-               ))}
 
-              
- 
- <div className={styles.container2}  style={{backgroundColor: color}}>
+            </IconButton>
 
-    color seleccionado
- </div></div> </div></>);
+            {isOpen && (
+                <div style={{ marginTop: '15px' }}>
+                    <p style={{ marginBottom: '10px' }}>Elija un color:</p>
+
+                    <div className={styles.container}>
+                        {colorArray?.map((colorValue, index) => (
+                            <div 
+                                key={index} // Importante para que React no se queje
+                                className={styles.ColorDisplay} 
+                                onClick={() => setColor(colorValue)} 
+                                style={{ backgroundColor: colorValue }}
+                            >
+                                
+                            </div>
+                        ))}
+
+                        <div 
+                            className={styles.container2} 
+                            style={{ backgroundColor: color }}
+                        >
+                           
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+        
+         </>
+    );
 }
+        
 
-   
+
+
 
 
 
