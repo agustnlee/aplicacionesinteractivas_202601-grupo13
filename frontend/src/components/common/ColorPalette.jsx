@@ -2,13 +2,14 @@
 import Button from "../ui/Button" ;
 import IconButton from "../ui/IconButton";
 import React, { use } from "react";
-import styles from "./ColorPallete.module.css";
+import styles from "./ColorPalette.module.css";
 import { useState } from "react";
 import { ICONS } from "../../utils/icontypes";
 
-export default function ColorPallete(){
 
-       const [color, setColor]= useState("#FFFFFF");
+export default function ColorPalette(){
+
+       const [color, setColor]= useState("var(--border)");
        const [isOpen, setIsOpen] = useState(false);
     
 

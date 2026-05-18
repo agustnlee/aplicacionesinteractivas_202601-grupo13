@@ -1,12 +1,12 @@
 
-import ColorPallete from "../components/common/ColorPallete";
+import ColorPalette from "../components/common/ColorPalette";
 
 
 export default function Test() {
     return(<> 
 
   
-    <ColorPallete/>
+    <ColorPalette/>
     
 rsion limpia para commit </>);
     
