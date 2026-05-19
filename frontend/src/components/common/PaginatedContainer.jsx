@@ -5,7 +5,6 @@ import LoadingWrapper from './LoadingWrapper';
 import styles from './PaginatedContainer.module.css';
 
 export default function PaginatedContainer({ 
-    title, 
     fields, 
     currentPage, 
     totalPages, 
@@ -27,7 +26,6 @@ export default function PaginatedContainer({
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                {title && <h2 className="title">{title}</h2>}
                 {fields && fields.length > 0 && <FilterSearch fields={fields} onCreate={onCreate} />}
             </div>
 
