@@ -19,5 +19,4 @@ export const ICONS = {
   circleArrow: CircleChevronRight,
   shieldCheck: ShieldCheck,
   
-  
 };
