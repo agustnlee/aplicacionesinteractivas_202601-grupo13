@@ -62,6 +62,7 @@
     scrollbar-width: none;    
     -ms-overflow-style: none;  
     padding: var(--space-1) 0;
+    max-width: 350px;
 }
 
 .tagsZone::-webkit-scrollbar {
