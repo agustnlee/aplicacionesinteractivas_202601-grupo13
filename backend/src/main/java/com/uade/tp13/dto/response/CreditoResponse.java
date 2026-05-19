@@ -16,6 +16,8 @@ public class CreditoResponse {
     private String clienteNombre;
     private Long cobradorId;
     private String cobradorNombre;
+    private Long creadoPorId;      
+    private String creadoPorNombre; 
     
     private BigDecimal monto;
     private Integer cantidadCuotas;

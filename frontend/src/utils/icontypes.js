@@ -1,4 +1,4 @@
-import { Trash2, Plus, PencilLine, ArrowDownToLine, LogOut, SquarePen, CircleUser, Info, Check, CircleAlert, GitBranch, Menu, LogIn, CircleChevronRight, ShieldCheck, CirclePlus, BookmarkPlus, BookmarkMinus, Bookmark, TagsIcon, AtSign, CircleCheck, CircleCheckBig, ClipboardPen, Palette, Hash, LockOpen, Lock, PencilLineIcon, Mail } from "lucide-react";
+import { Trash2, Plus, PencilLine, ArrowDownToLine, LogOut, SquarePen, CircleUser, Info, Check, CircleAlert, GitBranch, Menu, LogIn, CircleChevronRight, ShieldCheck, CirclePlus, BookmarkPlus, BookmarkMinus, Bookmark, TagsIcon, AtSign, CircleCheck, CircleCheckBig, ClipboardPen, Palette, Hash, LockOpen, Lock, PencilLineIcon, Mail, Eye, EyeOff } from "lucide-react";
 import { FaGithub } from 'react-icons/fa';
 
 export const ICONS = {
@@ -31,6 +31,8 @@ export const ICONS = {
   lockClosed: Lock,
   lockOpen: LockOpen,
   mail: Mail,
+  eye: Eye,
+  eyeOff: EyeOff,
 
   
 };
