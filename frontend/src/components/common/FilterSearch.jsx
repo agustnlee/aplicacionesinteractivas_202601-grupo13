@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import useDebounce from '../../hooks/useDebounce';
 import styles from './FilterSearch.module.css';
 
-export default function FilterSearch({ fields }) {
+export default function FilterSearch({ fields , onCreate}) {
     const [searchParams, setSearchParams] = useSearchParams();
     
     const activeKeyInUrl = fields.find(f => searchParams.has(f.key))?.key;
@@ -45,7 +45,7 @@ export default function FilterSearch({ fields }) {
     const isFilterActive = fields.some(f => searchParams.has(f.key));
 
     return (
-        <div className={styles.filterContainer}>
+       <div className={styles.filterContainer}>
             <select value={selectedKey} onChange={handleKeyChange} className={styles.selectField}>
                 {fields.map(field => (
                     <option key={field.key} value={field.key}>{field.label}</option>
@@ -70,8 +70,21 @@ export default function FilterSearch({ fields }) {
             )}
 
             {isFilterActive && (
-                <button type="button" onClick={handleReset} className="btn btn-ghost">
-                    Limpiar
+                <button type="button" 
+                onClick={handleReset} 
+                className={styles.iconBtn}
+                title="Limpiar filtro">
+                    X
+                </button>
+            )}
+            
+            {onCreate && (
+                <button 
+                    type="button" 
+                    onClick={onCreate} 
+                    className={styles.btnCrear}
+                >
+                    Crear
                 </button>
             )}
         </div>

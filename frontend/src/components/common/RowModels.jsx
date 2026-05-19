@@ -1,34 +1,26 @@
-// Destinado para el listado de los models, exepto etiqueta
+import { Link } from 'react-router-dom';
 import styles from './RowModels.module.css';
 
-export default function RowModels({ item, columns, actions }) {
+export default function RowModels({ item, columns, basePath }) {
     return (
         <div className={styles.fila}>
             <div className={styles.columnasContainer}>
-                {columns.map((col, index) => (
-                    <div 
-                    key={`${col.key}-${index}`} 
-                    className={styles.celda} 
-                    style={{ width: col.width || 'auto' }}>
-                        {col.render ? col.render(item) : item[col.key]}
+                {columns.map(col => (
+                    <div key={col.key} className={styles.celda} style={{ width: col.width }}>
+
+                        {basePath && col.key === 'id' ? (
+                            <Link to={`${basePath}/${item.id}`} className={styles.linkPrimary}>
+                                {item[col.key]}
+                            </Link>
+                        ) : col.render ? (
+                            col.render(item)
+                        ) : (
+                            item[col.key]
+                        )}
+
                     </div>
                 ))}
             </div>
-
-            {actions && actions.length > 0 && (
-                <div className={styles.acciones}>
-                    {actions.map((action, index) => (
-                        <button
-                            key={index}
-                            type="button"
-                            className={`btn btn-${action.variant || 'ghost'}`}
-                            onClick={() => action.onClick(item)}
-                        >
-                            {action.label}
-                        </button>
-                    ))}
-                </div>
-            )}
         </div>
     );
 }
