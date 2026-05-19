@@ -14,7 +14,7 @@ export default function PaginatedContainer({
     error,
     children,
     onCreate,
-    columns 
+    columns,
 }) {
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -32,13 +32,12 @@ export default function PaginatedContainer({
             </div>
 
             <div className={styles.content}>
-                <LoadingWrapper 
-                    isLoading={isLoading} 
-                    isEmpty={isEmpty} 
-                    error={error}
-                >
-                    {columns && <RowHeader columns={columns} />}
-                    
+                <LoadingWrapper isLoading={isLoading} isEmpty={isEmpty} error={error}>
+
+                    {columns && (
+                        <RowHeader columns={columns} />
+                    )}
+
                     <div className={styles.list}>
                         {children}
                     </div>
