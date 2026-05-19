@@ -21,12 +21,6 @@ export default function RowHeader({ columns, hasActions }) {
                     </div>
                 ))}
             </div>
-            
-            {hasActions && (
-                <div className={styles.acciones} style={{ visibility: 'hidden' }}>
-                    <button className="btn btn-sm">Acciones</button>
-                </div>
-            )}
         </div>
     );
 }
