@@ -50,7 +50,8 @@ function App() {
           {/* Públicas */}
           <Route path="/" element={<Home />} />
           <Route path="/test" element={<Test />} />
-
+<Route path="/etiquetas" element={<Etiquetas />} />
+            <Route path="/etiquetas/:id" element={<EtiquetasDetail />} />
           <Route element={<PrivateRoute />}>
 
             <Route path="/clientes" element={<Clientes />} />
@@ -59,8 +60,7 @@ function App() {
             <Route path="/creditos" element={<Creditos />} />
             <Route path="/creditos/:id" element={<CreditosDetail />} />
 
-            <Route path="/etiquetas" element={<Etiquetas />} />
-            <Route path="/etiquetas/:id" element={<EtiquetasDetail />} />
+            
 
             <Route path="/usuarios" element={<Usuarios />} />
             <Route path="/usuarios/:id" element={<UsuariosDetail />} />
