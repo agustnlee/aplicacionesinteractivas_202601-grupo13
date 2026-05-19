@@ -40,7 +40,9 @@
 
 }
 .ColorDisplay:hover{
-    transform: scale(1.4);
+    transform: scale(1.15);
     transition: 1.4s ease-in-out;
+    opacity: 70%;
+    cursor: pointer
 }
 
