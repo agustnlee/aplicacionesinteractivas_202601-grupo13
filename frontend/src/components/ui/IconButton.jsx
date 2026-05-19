@@ -7,6 +7,7 @@ export default function IconButton({
     variant = "default", // default | danger | success | primary en base a iconbuttonmodule
     size = "md",
     disabled = false,
+    bordered = true,
     title,
 }) {
     const IconComponent = ICONS[icon];
@@ -14,7 +15,7 @@ export default function IconButton({
 
     return (
         <button
-            className={`${styles.iconBtn} ${styles[variant]} ${styles[size]}`}
+            className={`${styles.iconBtn} ${styles[variant]} ${styles[size]} ${!bordered ? styles.noBorder : ""}`}
             onClick={onClick}
             disabled={disabled}
             title={title}

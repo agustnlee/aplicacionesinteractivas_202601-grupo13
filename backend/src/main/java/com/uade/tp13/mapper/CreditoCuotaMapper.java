@@ -22,6 +22,8 @@ public class CreditoCuotaMapper {
                 .clienteNombre(c.getCliente().getNombre())
                 .cobradorId(c.getCobrador().getId())
                 .cobradorNombre(c.getCobrador().getNombre())
+                .creadoPorId(c.getCreadoPor().getId())        
+                .creadoPorNombre(c.getCreadoPor().getNombre())
                 .monto(c.getMonto())
                 .cantidadCuotas(c.getCantidadCuotas())
                 .interes(c.getInteres())
