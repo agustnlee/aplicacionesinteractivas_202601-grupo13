@@ -5,13 +5,13 @@ const FichaCredito = ({ credito }) => {
   return (
     <div style={{ 
       display: 'flex', 
-      justify: 'space-between', 
+      justifyContent: 'space-between', 
       padding: '16px', 
-      borderBottom: '1px solid var(--border-color, #eee)', 
+      borderBottom: '1px solid #eee', 
       alignItems: 'center' 
     }}>
       <span style={{ flex: 1 }}>
-        <Link to={`/creditos/${credito.id}`} style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>
+        <Link to={`/creditos/${credito.id}`} style={{ fontWeight: 'bold' }}>
           #{credito.id}
         </Link>
       </span>
@@ -20,9 +20,7 @@ const FichaCredito = ({ credito }) => {
       <span style={{ flex: 1 }}>{credito.cantidadCuotas} cuotas</span>
       <span style={{ flex: 1 }}>${credito.importeCuota?.toLocaleString()}</span>
       <span style={{ flex: 1 }}>
-        <span className="badge" style={{ backgroundColor: 'var(--success-light, #e3f2fd)', color: 'var(--success-color, #1e3a5f)', padding: '4px 8px', borderRadius: '4px' }}>
-          Activo
-        </span>
+        <span className="badge success">Activo</span>
       </span>
     </div>
   );

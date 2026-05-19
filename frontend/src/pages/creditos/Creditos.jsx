@@ -1,109 +1,67 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FichaCredito from "../../components/credito/FichaCredito";
-// Simulamos las importaciones de los componentes del grupo (asegurate de que las rutas existan)
-// import PaginatedContainer from "../../components/common/PaginatedContainer";
-// import LoadingWrapper from "../../components/common/LoadingWrapper";
+import ModalCrearCredito from "../../components/credito/ModalCrearCredito";
+import PaginatedContainer from "../../components/common/PaginatedContainer";
 
 export default function Creditos() {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-  
-  // Estados para los Modals
-  const [showModal1, setShowModal1] = useState(false);
-  const [showModal2, setShowModal2] = useState(false);
-  
-  // Datos simulados (Mock)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Mock Data requerida para renderizar el listado
   const mockCreditos = [
-    { id: 101, deudaOriginal: 55000, fecha: '2026-05-13', cantidadCuotas: 10, importeCuota: 6000 }
+    { id: 101, deudaOriginal: 55000, fecha: '2026-05-13', cantidadCuotas: 10, importeCuota: 6000 },
+    { id: 102, deudaOriginal: 120000, fecha: '2026-04-20', cantidadCuotas: 24, importeCuota: 7500 }
   ];
 
-  // Manejadores del flujo de creación
-  const handlePreview = (e) => {
-    e.preventDefault();
-    // Acá iría la llamada a /preview con los datos de CrearCreditoRequest
-    setShowModal1(false);
-    setShowModal2(true); // Saltamos al segundo modal
-  };
+  // Definimos los campos que el PaginatedContainer usará para filtrar/buscar
+  const camposBusqueda = ['id', 'deudaOriginal', 'fecha'];
 
-  const handleConfirmarCreacion = () => {
-    setIsLoading(true);
-    // Acá iría la llamada final para crear el crédito
-    setTimeout(() => {
-      setIsLoading(false);
-      setShowModal2(false);
-      navigate('/creditos/101'); // Redirige al detalle del nuevo crédito
-    }, 1000);
+  const handleConfirmarCreacion = (datosNuevoCredito) => {
+    // Acá sucedería el fetch real con las funciones de creditoApi.
+    // Al finalizar con éxito, redirige al detalle único de referencia (ej: ID 101) como pidió Agus:
+    navigate('/creditos/101');
   };
 
   return (
     <div style={{ padding: '20px' }}>
-      {/* 1. Título con la clase que pidió Agus */}
-      <h1 className="title" style={{ marginBottom: '20px' }}>Listado de Créditos</h1>
+      {/* Título con la clase solicitada */}
+      <h1 className="title">Listado de Créditos</h1>
 
-      {/* 2. LoadingWrapper rodeando el contenedor */}
-      {/* <LoadingWrapper isLoading={isLoading}> */}
-        
-        {/* 3. Reemplazar por <PaginatedContainer> cuando lo vincules */}
-        <div className="paginated-container" style={{ background: 'white', padding: '20px', borderRadius: '8px' }}>
-          
-          <div className="list-header" style={{ display: 'flex', fontWeight: 'bold', padding: '12px', borderBottom: '2px solid #eee' }}>
-            <span style={{ flex: 1 }}>ID</span>
-            <span style={{ flex: 1 }}>Deuda</span>
-            <span style={{ flex: 1 }}>Fecha</span>
-            <span style={{ flex: 1 }}>Cuotas</span>
-            <span style={{ flex: 1 }}>Monto Cuota</span>
-            <span style={{ flex: 1 }}>Estado</span>
-          </div>
-
-          {mockCreditos.map(c => <FichaCredito key={c.id} credito={c} />)}
+      {/* Uso de la última versión de PaginatedContainer enviándole las props solicitadas */}
+      <PaginatedContainer 
+        data={mockCreditos} 
+        fields={camposBusqueda}
+      >
+        <div className="list-header" style={{ display: 'flex', fontWeight: 'bold', padding: '12px', borderBottom: '2px solid #eee' }}>
+          <span style={{ flex: 1 }}>ID</span>
+          <span style={{ flex: 1 }}>Deuda Total</span>
+          <span style={{ flex: 1 }}>Fecha Inicio</span>
+          <span style={{ flex: 1 }}>Plazo</span>
+          <span style={{ flex: 1 }}>Monto Cuota</span>
+          <span style={{ flex: 1 }}>Estado</span>
         </div>
 
-      {/* </LoadingWrapper> */}
+        {mockCreditos.map(c => (
+          <FichaCredito key={c.id} credito={c} />
+        ))}
+      </PaginatedContainer>
 
-      {/* 4. Botón Crear debajo del contenedor */}
+      {/* Botón de crear abajo del contenedor paginado con ícono a la izquierda */}
       <button 
         className="btn" 
-        onClick={() => setShowModal1(true)}
-        style={{ marginTop: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}
+        onClick={() => setIsModalOpen(true)}
+        style={{ marginTop: '20px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
       >
         <span>➕</span> Crear Crédito
       </button>
 
-      {/* ---------------- MODAL 1: Formulario / Request ---------------- */}
-      {showModal1 && (
-        <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: 'white', padding: '30px', borderRadius: '8px', width: '400px' }}>
-            <h3>Crear Nuevo Crédito</h3>
-            <form onSubmit={handlePreview} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '15px' }}>
-              <input type="number" placeholder="Monto Solicitado" required className="form-control" />
-              <input type="number" placeholder="Cantidad de Cuotas" required className="form-control" />
-              <div style={{ display: 'flex', justifyContent: 'end', gap: '10px' }}>
-                <button type="button" className="btn-secondary" onClick={() => setShowModal1(false)}>Cancelar</button>
-                <button type="submit" className="btn">Ver Preview</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ---------------- MODAL 2: Plan de Cuotas / Review ---------------- */}
-      {showModal2 && (
-        <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: 'white', padding: '30px', borderRadius: '8px', width: '400px' }}>
-            <h3>Review del Plan de Cuotas</h3>
-            <div style={{ margin: '20px 0', lineHeight: '1.8' }}>
-              <p><strong>Monto Total:</strong> $55.000</p>
-              <p><strong>Monto por Cuota:</strong> $6.000</p>
-              <p><strong>Plazo:</strong> 10 meses</p>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'end', gap: '10px' }}>
-              <button type="button" className="btn-secondary" onClick={() => { setShowModal2(false); setShowModal1(true); }}>Atrás</button>
-              <button type="button" className="btn" onClick={handleConfirmarCreacion}>Confirmar y Crear</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modal separado encargado de la lógica funcional */}
+      <ModalCrearCredito 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onConfirm={handleConfirmarCreacion}
+      />
     </div>
   );
 }
