@@ -1,34 +1,34 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import FichaCredito from "../../components/credito/FichaCredito";
-import ModalCrearCredito from "../../components/credito/ModalCrearCredito";
+import FichaCredito from "../../components/creditos/FichaCredito";
+import ModalCrearCredito from "../../components/creditos/ModalCrearCredito";
 import PaginatedContainer from "../../components/common/PaginatedContainer";
 
 export default function Creditos() {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Mock Data requerida para renderizar el listado
+  // Volvemos a los números puros de forma limpia
   const mockCreditos = [
     { id: 101, deudaOriginal: 55000, fecha: '2026-05-13', cantidadCuotas: 10, importeCuota: 6000 },
     { id: 102, deudaOriginal: 120000, fecha: '2026-04-20', cantidadCuotas: 24, importeCuota: 7500 }
   ];
 
-  // Definimos los campos que el PaginatedContainer usará para filtrar/buscar
-  const camposBusqueda = ['id', 'deudaOriginal', 'fecha'];
+  // CONFIGURACIÓN CORRECTA: Array de objetos con key, label y type para FilterSearch
+  const camposBusqueda = [
+    { key: 'id', label: 'ID', type: 'text' },
+    { key: 'deudaOriginal', label: 'Deuda Total', type: 'number' },
+    { key: 'fecha', label: 'Fecha Inicio', type: 'date' }
+  ];
 
   const handleConfirmarCreacion = (datosNuevoCredito) => {
-    // Acá sucedería el fetch real con las funciones de creditoApi.
-    // Al finalizar con éxito, redirige al detalle único de referencia (ej: ID 101) como pidió Agus:
     navigate('/creditos/101');
   };
 
   return (
     <div style={{ padding: '20px' }}>
-      {/* Título con la clase solicitada */}
       <h1 className="title">Listado de Créditos</h1>
 
-      {/* Uso de la última versión de PaginatedContainer enviándole las props solicitadas */}
       <PaginatedContainer 
         data={mockCreditos} 
         fields={camposBusqueda}
@@ -47,7 +47,7 @@ export default function Creditos() {
         ))}
       </PaginatedContainer>
 
-      {/* Botón de crear abajo del contenedor paginado con ícono a la izquierda */}
+      {/* Botón de crear alineado */}
       <button 
         className="btn" 
         onClick={() => setIsModalOpen(true)}
@@ -56,7 +56,6 @@ export default function Creditos() {
         <span>➕</span> Crear Crédito
       </button>
 
-      {/* Modal separado encargado de la lógica funcional */}
       <ModalCrearCredito 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 

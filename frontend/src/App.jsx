@@ -48,10 +48,11 @@ function App() {
         <Route element={<Layout />}>
 
           {/* Públicas */}
-          <Route path="/" element={<Home />} />
-          <Route path="/test" element={<Test />} />
-
-          <Route element={<PrivateRoute />}>
+          {/* Públicas */}
+            <Route path="/" element={<Home />} />
+            <Route path="/test" element={<Test />} />
+            <Route path="/creditos" element={<Creditos />} /> {/* <-- Pegala acá temporalmente */}
+            <Route element={<PrivateRoute />}>
 
             <Route path="/clientes" element={<Clientes />} />
             <Route path="/clientes/:id" element={<ClientesDetail />} />
