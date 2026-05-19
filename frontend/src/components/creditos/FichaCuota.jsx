@@ -7,18 +7,18 @@ const ESTADO_BADGE = {
 };
 
 const COLUMNS = [
-    { key: "numeroCuota",     width: "40px", render: (c) => <strong>#{c.numeroCuota}</strong> },
-    { key: "fechaVencimiento",width: "1fr"  },
-    { key: "monto",           width: "1fr",  render: (c) => `$${c.monto.toLocaleString()}` },
-    { key: "estado",          width: "90px", render: (c) => (
+    { key: "numeroCuota",      width: "50px",  render: (c) => <strong>#{c.numeroCuota}</strong> },
+    { key: "fechaVencimiento", width: "120px" },
+    { key: "monto",            width: "100px", render: (c) => `$${c.monto.toLocaleString()}` },
+    { key: "estado",           width: "110px", render: (c) => (
         <span className={ESTADO_BADGE[c.estado] ?? "badge badge-warning"}>
             {c.estado}
         </span>
     )},
-    { key: "montoRecargo",    width: "90px", render: (c) =>
+    { key: "montoRecargo",     width: "100px", render: (c) =>
         c.estado === "PAGADA" || !c.montoRecargo || c.montoRecargo === 0
-            ? <span style={{ color: "var(--text-disabled)", fontSize: "var(--text-xs)" }}>N/A</span>
-            : <span style={{ color: "var(--danger)", fontSize: "var(--text-xs)", fontWeight: "var(--font-medium)" }}>
+            ? <span style={{ color: "var(--text-disabled)", fontSize: "var(--text-md)", paddingLeft: "var(--space-2)"}}>N/A</span>
+            : <span style={{ color: "var(--danger)", fontSize: "var(--text-md)", fontWeight: "var(--font-medium)" }}>
                 +${c.montoRecargo.toLocaleString()}
               </span>
     },

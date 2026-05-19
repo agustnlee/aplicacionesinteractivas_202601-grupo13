@@ -4,8 +4,8 @@
     gap: var(--space-stack-lg);
 }
 
-.titulo {
-    padding-left: var(--space-3);
+.seccion {
+    margin-top: var(--space-section-lg);
 }
 
 .card {
