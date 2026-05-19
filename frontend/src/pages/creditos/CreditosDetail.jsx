@@ -6,14 +6,16 @@ import PaginatedContainer from "../../components/common/PaginatedContainer";
 import FichaCuota from "../../components/creditos/FichaCuota";
 import DataField from "../../components/common/DataField";
 import Button from "../../components/ui/Button";
+import RowHeader from "../../components/common/RowHeader";
 import ModalCambiarCobrador from "../../components/creditos/ModalCambiarCobrador";
 import ModalCancelarCredito from "../../components/creditos/ModalCancelarCredito";
 import ModalPago from "../../components/creditos/ModalPago";
 import ModalCancelarPago from "../../components/creditos/ModalCancelarPago";
-import styles from "./CreditosDetail.module.css";
+import ModalDetallePago from "../../components/creditos/ModalDetallePago";
+import styles from "../PagesDetail.module.css";
 
 // import { getCreditoById, cambiarCobrador, cancelarCredito } from "../../api/creditoApi";
-// import { registrarPago, cancelarPago } from "../../api/pagoApi";
+// import { registrarPago, cancelarPago, getPagosPorCredito } from "../../api/pagoApi";
 
 const MOCK_CREDITO = {
     id: 101,
@@ -31,13 +33,20 @@ const MOCK_CREDITO = {
     cuotas: [
         { id: 1, numeroCuota: 1, fechaVencimiento: "2026-01-17", monto: 6325, montoRecargo: 632.5, montoTotal: 6957.5, estado: "PAGADA"   },
         { id: 2, numeroCuota: 2, fechaVencimiento: "2026-01-24", monto: 6325, montoRecargo: 632.5, montoTotal: 6957.5, estado: "PAGADA"   },
-        { id: 3, numeroCuota: 3, fechaVencimiento: "2026-02-01", monto: 6325, montoRecargo: 632.5, montoTotal: 6957.5, estado: "VENCIDA"  },
+        { id: 3, numeroCuota: 3, fechaVencimiento: "2026-02-01", monto: 6325, montoRecargo: 632.5, montoTotal: 6957.5, estado: "PENDIENTE"  },
         { id: 4, numeroCuota: 4, fechaVencimiento: "2026-05-01", monto: 6325, montoRecargo: 0,     montoTotal: 6325,   estado: "PENDIENTE"},
-        { id: 5, numeroCuota: 5, fechaVencimiento: "2026-06-15", monto: 6325, montoRecargo: 0,     montoTotal: 6325,   estado: "PENDIENTE"},
+        { id: 5, numeroCuota: 5, fechaVencimiento: "2026-06-15", monto: 6325, montoRecargo: 632.5,     montoTotal: 6325,   estado: "VENCIDA"},
     ],
 };
 
-const ESTADO_COLORS = {
+const MOCK_PAGOS = [
+    { id: 1, cuotaId: 1, numeroCuota: 1, monto: 6957.5,  metodo: "TRANSFERENCIA", cobradoPorNombre: "Nicolás", observaciones: "Llegó tarde pero pagó completo.", fechaPagado: "2026-01-17T10:30:00" },
+    { id: 2, cuotaId: 2, numeroCuota: 2, monto: 6957.5,  metodo: "EFECTIVO",      cobradoPorNombre: "Nicolás", observaciones: null,                                  fechaPagado: "2026-01-24T09:15:00" },
+];
+
+
+
+const ESTADO_CREDITO_BADGE = {
     ACTIVO:                  "badge badge-success",
     EN_MORA:                 "badge badge-danger",
     CANCELADO:               "badge badge-neutral",
@@ -47,14 +56,21 @@ const ESTADO_COLORS = {
 
 const ESTADOS_FINALES = ["CERRADO", "CANCELADO", "CANCELADO_REFINANCIACION"];
 
-
+const CUOTAS_HEADER = [
+    { label: "ID",          width: "40px" },
+    { label: "Vencimiento", width: "1fr"  },
+    { label: "Monto",       width: "1fr"  },
+    { label: "Estado",      width: "90px" },
+    { label: "Recargo",     width: "90px" },
+];
 
 export default function CreditosDetail() {
     const { id } = useParams();
-
     const { showToast } = useToast();
 
     const [credito, setCredito]     = useState(MOCK_CREDITO);
+    const [pagos, setPagos]             = useState(MOCK_PAGOS);
+
     const [isLoading]               = useState(false);
     const [error]                   = useState(null);
 
@@ -62,13 +78,12 @@ export default function CreditosDetail() {
     const [modalCancelar, setModalCancelar]     = useState(false);
     const [modalPago, setModalPago]             = useState({ open: false, cuota: null });
     const [modalCancelPago, setModalCancelPago] = useState({ open: false, cuota: null });
+    const [modalPagoDetalle, setModalPagoDetalle] = useState({ open: false, pago: null });
 
-    const esFinal     = ESTADOS_FINALES.includes(credito?.estado);
+    const esFinal = ESTADOS_FINALES.includes(credito?.estado);
 
     const handleCambiarCobrador = async (nuevoCobradorId) => {
         try {
-            // const updated = await cambiarCobrador(id, nuevoCobradorId);
-            // setCredito(updated);
             showToast("Cobrador actualizado correctamente", "success");
             setModalCobrador(false);
         } catch (e) {
@@ -78,8 +93,6 @@ export default function CreditosDetail() {
 
     const handleCancelarCredito = async (motivo) => {
         try {
-            // const updated = await cancelarCredito(id, motivo);
-            // setCredito(updated);
             showToast("Crédito cancelado", "success");
             setModalCancelar(false);
         } catch (e) {
@@ -89,7 +102,6 @@ export default function CreditosDetail() {
 
     const handlePagar = async (cuotaId, metodo, observaciones) => {
         try {
-            // await registrarPago(cuotaId, metodo, observaciones);
             showToast("Pago registrado correctamente", "success");
             setModalPago({ open: false, cuota: null });
         } catch (e) {
@@ -99,7 +111,6 @@ export default function CreditosDetail() {
 
     const handleCancelarPago = async (cuotaId) => {
         try {
-            // await cancelarPago(cuotaId);
             showToast("Pago cancelado", "success");
             setModalCancelPago({ open: false, cuota: null });
         } catch (e) {
@@ -107,20 +118,25 @@ export default function CreditosDetail() {
         }
     };
 
+    const handleVerDetalle = (cuota) => {
+        const pago = pagos.find(p => p.cuotaId === cuota.id);
+        setModalPagoDetalle({ open: true, pago });
+    };
+
+
     return (
         <div className={styles.page}>
             <h2 className={`title ${styles.titulo}`}>Detalle de Crédito</h2>
 
             <LoadingWrapper isLoading={isLoading} error={error} isEmpty={!credito}>
 
-                {/* card datos */}
                 <div className={styles.card}>
                     <div className={styles.filaData}>
-                       <DataField label="ID" value={`#${credito.id}`} />
-                       <DataField label="Cliente" value={
+                        <DataField label="ID"       value={`#${credito.id}`} />
+                        <DataField label="Cliente"  value={
                             <Link to={`/clientes/${credito.clienteId}`} className={styles.link}>
                                 {credito.clienteNombre}
-                            </Link> 
+                            </Link>
                         } />
                         <DataField label="Cobrador" value={
                             <Link to={`/usuarios/${credito.cobradorId}`} className={styles.link}>
@@ -132,16 +148,16 @@ export default function CreditosDetail() {
                                 {credito.creadoPorNombre}
                             </Link>
                         } />
-                        <DataField label="Monto"    value={`$${credito.monto.toLocaleString()}`} />
-                        <DataField label="Interés"  value={`${credito.interes}%`} />
+                        <DataField label="Monto"   value={`$${credito.monto.toLocaleString()}`} />
+                        <DataField label="Interés" value={`${credito.interes}%`} />
                     </div>
 
                     <div className={styles.filaData}>
-                        <DataField label="Cuotas"      value={credito.cantidadCuotas} />
+                        <DataField label="Cuotas"       value={credito.cantidadCuotas} />
                         <DataField label="Fecha inicio" value={credito.fechaCreacion} />
                         <DataField label="Estado" value={
-                            <span className={ESTADO_COLORS[credito?.estado] ?? ESTADO_COLORS.ACTIVO}>
-                                {credito.estado.replace("/_/g,", " ")}
+                            <span className={ESTADO_CREDITO_BADGE[credito.estado] ?? "badge badge-neutral"}>
+                                {credito.estado.replace(/_/g, " ")}
                             </span>
                         } />
                     </div>
@@ -158,7 +174,6 @@ export default function CreditosDetail() {
                     )}
                 </div>
 
-                {/* cuotas */}
                 <PaginatedContainer
                     title="Cuotas"
                     isLoading={isLoading}
@@ -173,6 +188,7 @@ export default function CreditosDetail() {
                             esFinalCredito={esFinal}
                             onPagar={() => setModalPago({ open: true, cuota })}
                             onCancelarPago={() => setModalCancelPago({ open: true, cuota })}
+                            onVerDetalle={handleVerDetalle}
                         />
                     ))}
                 </PaginatedContainer>
@@ -200,6 +216,11 @@ export default function CreditosDetail() {
                 cuota={modalCancelPago.cuota}
                 onClose={() => setModalCancelPago({ open: false, cuota: null })}
                 onConfirm={handleCancelarPago}
+            />
+            <ModalDetallePago
+                isOpen={modalPagoDetalle.open}
+                pago={modalPagoDetalle.pago}
+                onClose={() => setModalPagoDetalle({ open: false, pago: null })}
             />
         </div>
     );

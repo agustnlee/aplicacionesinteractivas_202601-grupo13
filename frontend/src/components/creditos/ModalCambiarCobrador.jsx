@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Modal from "../../components/common/Modal";
-import { Edit } from "lucide-react";
+import { ICONS } from "../../utils/icontypes";
 import styles from "./ModalCambiarCobrador.module.css";
 
 export default function ModalCambiarCobrador({ isOpen, onClose, onConfirm }) {
@@ -25,7 +25,7 @@ export default function ModalCambiarCobrador({ isOpen, onClose, onConfirm }) {
             onClose={handleClose}
             title="Modificar cobrador"
             description="Ingresá el ID del nuevo cobrador asignado a este crédito."
-            icon={Edit}
+            icon={ICONS.edit}
             iconVariant="default"
             size="sm"
             actions={[{ label: "Confirmar", onClick: handleConfirm, variant: "primary" }]}

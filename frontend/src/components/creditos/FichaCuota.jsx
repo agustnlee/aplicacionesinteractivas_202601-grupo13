@@ -1,47 +1,41 @@
-import styles from "./FichaCuota.module.css";
+import RowModels from "../common/RowModels";
 
-const ESTADO_STYLE = {
-    PAGADA:   { color: "var(--success)", bg: "var(--success-bg)", border: "var(--success-border)" },
-    PENDIENTE:{ color: "var(--warning)", bg: "var(--warning-bg)", border: "var(--warning-border)" },
-    VENCIDA:  { color: "var(--danger)",  bg: "var(--danger-bg)",  border: "var(--danger-border)"  },
+const ESTADO_BADGE = {
+    PAGADA:   "badge badge-success",
+    PENDIENTE:"badge badge-warning",
+    VENCIDA:  "badge badge-danger",
 };
 
-export default function FichaCuota({ cuota, esFinalCredito, onPagar, onCancelarPago }) {
-    const style = ESTADO_STYLE[cuota.estado] ?? ESTADO_STYLE.PENDIENTE;
+const COLUMNS = [
+    { key: "numeroCuota",     width: "40px", render: (c) => <strong>#{c.numeroCuota}</strong> },
+    { key: "fechaVencimiento",width: "1fr"  },
+    { key: "monto",           width: "1fr",  render: (c) => `$${c.monto.toLocaleString()}` },
+    { key: "estado",          width: "90px", render: (c) => (
+        <span className={ESTADO_BADGE[c.estado] ?? "badge badge-warning"}>
+            {c.estado}
+        </span>
+    )},
+    { key: "montoRecargo",    width: "90px", render: (c) =>
+        c.estado === "PAGADA" || !c.montoRecargo || c.montoRecargo === 0
+            ? <span style={{ color: "var(--text-disabled)", fontSize: "var(--text-xs)" }}>N/A</span>
+            : <span style={{ color: "var(--danger)", fontSize: "var(--text-xs)", fontWeight: "var(--font-medium)" }}>
+                +${c.montoRecargo.toLocaleString()}
+              </span>
+    },
+];
 
-    return (
-        <div className={styles.row}>
-            <div className={styles.datos}>
-                <span className={styles.numero}>#{cuota.numeroCuota}</span>
-                <span className={styles.dato}>Vence: {cuota.fechaVencimiento}</span>
-                <span className={styles.dato}>${cuota.monto.toLocaleString()}</span>
-                {cuota.montoRecargo > 0 && (
-                    <span className={styles.recargo}>
-                        +${cuota.montoRecargo.toLocaleString()} recargo
-                    </span>
-                )}
-                <span
-                    className={styles.badge}
-                    style={{ color: style.color, background: style.bg, border: `1px solid ${style.border}` }}
-                >
-                    {cuota.estado}
-                </span>
-            </div>
+export default function FichaCuota({ cuota, esFinalCredito, onPagar, onCancelarPago, onVerDetalle }) {
+    const acciones = [];
+    if (cuota.estado === "PAGADA")
+        acciones.push({ label: "Ver Detalle", variant: "ghost", onClick: () => onVerDetalle(cuota) });
 
-            {!esFinalCredito && (
-                <div className={styles.acciones}>
-                    {cuota.estado === "PENDIENTE" && (
-                        <button className="btn btn-success btn-sm" onClick={onPagar}>
-                            Pagar
-                        </button>
-                    )}
-                    {cuota.estado === "PAGADA" && (
-                        <button className="btn btn-danger btn-sm" onClick={onCancelarPago}>
-                            Anular pago
-                        </button>
-                    )}
-                </div>
-            )}
-        </div>
-    );
+    if (!esFinalCredito) {
+        if (cuota.estado === "PENDIENTE" || cuota.estado === "VENCIDA")
+            acciones.push({ label: "Pagar cuota", variant: "success", onClick: () => onPagar(cuota) });
+        if (cuota.estado === "PAGADA")
+            acciones.push({ label: "Anular pago", variant: "danger",  onClick: () => onCancelarPago(cuota) });
+    }
+    
+
+    return <RowModels item={cuota} columns={COLUMNS} actions={acciones} />;
 }
