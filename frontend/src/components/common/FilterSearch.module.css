@@ -1,0 +1,81 @@
+.filterContainer {
+    display: flex;
+    gap: var(--gap-sm);
+    align-items: center;
+    margin-bottom: var(--space-stack-md);
+    background-color: var(--surface);
+    padding: var(--space-component-sm);
+    border: none;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm); 
+}
+
+.selectField, .textInput {
+    padding: var(--space-inline-sm) var(--space-inline-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--font);
+    font-size: var(--text-sm);
+    color: var(--text);
+    background-color: var(--surface);
+    outline: none;
+    transition: border-color var(--anim-fast) var(--ease-standard), 
+                box-shadow var(--anim-fast) var(--ease-standard);
+}
+
+.selectField:focus, .textInput:focus {
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 2px var(--primary-100);
+}
+
+.textInput {
+    flex-grow: 1;
+}
+
+.btnCrear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-inline-sm);
+    border-radius: var(--radius);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    white-space: nowrap;
+    border: 1px solid transparent;
+    transition: background var(--anim-fast) var(--ease-standard), 
+                transform var(--anim-fast), 
+                box-shadow var(--anim-fast);
+    cursor: pointer;
+    padding: var(--space-1) var(--space-3);
+    
+    background-color: var(--primary-500);
+    color: var(--text-inverse);
+    margin-left: auto;
+}
+
+.btnCrear:hover {
+    background-color: var(--primary-600);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+
+.iconBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--touch-min); 
+    height: var(--touch-min);
+    border-radius: var(--radius);
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all var(--anim-fast) var(--ease-standard);
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
+}
+
+.iconBtn:hover {
+    background-color: var(--surface-2);
+    color: var(--danger); 
+}
