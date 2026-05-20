@@ -1,14 +1,14 @@
-import apiClient from "./apiClient"
+import apiClient from "./apiClient";
 
 export const crearEtiqueta = (data) =>
-    apiClient(`/etiquetas`, "POST", {data});
+    apiClient("/etiquetas", "POST", {data});
 
 
 export const modificarEtiqueta = (id, data)=> 
     apiClient(`/etiquetas/${id}`, "PUT", { data });
 
 export const obtenerEtiquetaPorId= (id)=>
-    apiClient(`/etiquetas/${id}`,"GET");
+    apiClient("/etiquetas/${id}","GET");
 
 export const buscarEtiquetas = (nombre = "", color = "") => {
     const query = new URLSearchParams({ nombre, color }).toString();

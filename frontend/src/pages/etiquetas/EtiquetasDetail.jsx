@@ -1,111 +1,151 @@
 import { useParams } from "react-router-dom";
-import { obtenerEtiquetaPorId} from "../../api/apiEtiqueta";
-import{obtenerResumenEtiquetas} from "../../api/apiClienteEtiquetas";
-import { useState } from "react";
+import { useState , useEffect, startTransition} from "react";
+import styles from "../PagesDetail.module.css";
+import { useToast } from "../../hooks/useToast";
+import LoadingWrapper from "../../components/common/LoadingWrapper";
+import PaginatedContainer from "../../components/common/PaginatedContainer";
+import DataField from "../../components/common/DataField";
+import Button from "../../components/ui/Button";
+import ColorPalette from "../../components/common/ColorPalette";
+
+import { obtenerEtiquetaPorId, modificarEtiqueta } from "../../api/apiEtiquetas";
+import {obtenerResumenEtiquetas} from "../../api/apiClienteEtiquetas";
+import ModalModifcarEtiquetaNombre from "../../components/etiquetas/ModalModificarEtiquetaNombre";
+import ModalModifcarEtiquetaDescripcion from "../../components/etiquetas/ModalModificarEtiquetaDescripcion";
+
+
+
 
 
 
 
 export default function EtiquetasDetail() {
     const { id } = useParams();
-    const mockEtiqueta ={Id:1, nombre: "mora", color: "#16a34a", descripcion: "blabla"}
+    const mockEtiqueta ={id:1, nombre: "mora", color: "#16a34a", descripcion: "blabla"}
     const mockcantUs=["12"];
 
-    const [etiquetaData, setEtiquetaData] = useState(null);
-    const [resumenData, setResumenData] = useState(null);
+    const [modalNombre, setModalNombre]     = useState(false);
+     const [modalDescripcion, setModalDescripcion]     = useState(false);
+     const [colorPalette, setColorPalette ] = useState(false);
+
+
     const{cantUsuarios}= useState(0);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    
-useEffect(() => {
-        const pedirEtiqueta = async () => {
-            try {
-                setIsLoading(true);
-                setError(null);
-              
-                const data = await obtenerEtiquetaPorId(id);
-                
-                
-                setEtiquetaData(data);
-            } catch (err) {
-                console.error( err);
-                setError(err);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        if (id) {
-            pedirEtiqueta();
-        }
-    }, [id]);
-  
-useEffect(() => {    
-        const fetchResumen = async () => {
-            try {
-                setIsLoading(true);
-                setError(null);
 
-                const data = await obtenerResumenEtiquetas();
+    const { showToast } = useToast();
+    const [etiqueta, setEtiqueta]   = useState(mockEtiqueta);
+
+
+
+
+
+    const handleCambiarNombre = async (nuevoNombre) => {
+        try {
+            showToast("Nombre actualizado correctamente", "success");
+            setModalNombre(false);
+            etiqueta.nombre = nuevoNombre;
+        } catch (e) {
+            showToast(e?.mensajes?.[0] ?? "Error al cambiar nombre", "error");
+        }
+    };
+
+    const handleCambiarcolor = async (color) => {
+        try {
+            showToast("Nombre actualizado correctamente", "success");
             
-                setResumenData(data);
-            } catch (err) {
-                console.error(err);
-                setError(err );
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        if (id) {
-            fetchResumen();
+            setEtiqueta(prev => ({ ...prev, color: color }));
+        } catch (e) {
+            showToast(e?.mensajes?.[0] ?? "Error al cambiar color", "error");
         }
-    }, [id]);
+    };
 
-    const etiquetaEncontrada = resumenData?.content?.find(
-        (item) => String(item.idEtiqueta) === String(id)
-    );
+    
 
-    cantUsuarios =  etiquetaEncontrada.cantidadClientes;
+    const handleCambiarDescripcion = async (nuevaDesc) => {
+        try {
+            showToast("Descripcion actualizado correctamente", "success");
+            setModalDescripcion(false);
+            etiqueta.descripcion = nuevaDesc;
+        } catch (e) {
+            showToast(e?.mensajes?.[0] ?? "Error al cambiar descripcion", "error");
+        }
+    };
 
+
+    
 
 
    
 
     return (<> 
+   
+    <div className={styles.page}>
+            <h2 className={`title  ${styles.seccion}`}>Detalle de Etiqueta</h2>
+    </div>    
 
-    <div>
-         <div className="card">
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th style={{padding:"15px"}}>ID</th>
-                                <th style={{padding:"15px"}}>Nombre</th>
-                                <th style={{padding:"15px"}}>descripcion</th>
-                                <th style={{padding:"15px"}}>color</th>
-                                <th style={{padding:"15px"}}>cantidad de usuarios asignados  </th>
-                            </tr>
-                        </thead>
+    
+    
+    <div className={styles.card}>
+      <div className={styles.filaData}>
+        <DataField label="ID"       value={`#${etiqueta.id}`} />
+        <DataField label="NOMBRE"  value={`#${etiqueta.nombre}`} />
+        <DataField label="DESCRIPCION" value={`#${etiqueta.descripcion}`} />
+        <div style={{ color: "var(--text-muted)" , fontSize: "var(--text-xs)" , fontWeight: "var(--font-medium)"}}  > COLOR 
+           <div style={{padding:"4px"}}/>
+            <div style={{ padding:"7px", width:"7px", backgroundColor:etiqueta.color,  borderRadius: "50%"}}/>
+           
+        </div>
+          <ColorPalette onConfirm={handleCambiarcolor} /> 
+      </div>
 
-                        <tbody>
-                            <td style={{padding:"15px"}}>{mockEtiqueta.Id}.</td>
-                            <td  style={{padding:"15px"}}>{mockEtiqueta.nombre}</td>
-                            <td  style={{padding:"15px"}}>{mockEtiqueta.descripcion}</td>
-                            <td  style={{padding:"15px", backgroundColor:"#16a34a "}}>{mockEtiqueta.color}</td>
-                        </tbody>
+    
 
-
-
-                    </table>
-                </div>
-
-        
+<LoadingWrapper isLoading={isLoading} error={error} isEmpty={!etiqueta}> 
+    
+        <div> cambiar nombre<Button icon="edit"  variant="ghost"  size="md"  onClick={() => setModalNombre(true)}/></div>
         
 
+       <div >Cambiar descripcion<Button icon="edit"  variant="ghost"  size="md"  onClick={() => setModalDescripcion(true)}/></div> 
+           
 
-    </div>
-        <p> funciona /EtiquetasDetail {id}</p>
+        <Button icon="trash" variant="danger" size="md" >
+            eliminar etiqueta
+        </Button>
+
+
+  
+  </LoadingWrapper>    
+
+
+
+
+        <ModalModifcarEtiquetaNombre   isOpen={modalNombre}
+                onClose={() => setModalNombre(false)}
+                onConfirm={handleCambiarNombre}>
+
+
+        </ModalModifcarEtiquetaNombre>
+
         
+
+
+        <ModalModifcarEtiquetaDescripcion isOpen={modalDescripcion}
+                onClose={() => s(false)}
+                onConfirm={handleCambiarDescripcion}>
+
+
+        </ModalModifcarEtiquetaDescripcion>
+
+
+        
+  
+  
+
+    
+        
+     </div>   
         
         
     </>);

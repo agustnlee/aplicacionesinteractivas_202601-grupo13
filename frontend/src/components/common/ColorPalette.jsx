@@ -7,10 +7,20 @@ import { useState } from "react";
 import { ICONS } from "../../utils/icontypes";
 
 
-export default function ColorPalette(){
+export default function ColorPalette({ onConfirm }){
 
        const [color, setColor]= useState("var(--border)");
        const [isOpen, setIsOpen] = useState(false);
+
+       
+ const handleConfirm = (colorElegido) => {
+     
+        if(onConfirm) {
+            onConfirm(colorElegido);
+        }
+        setIsOpen(false);
+    }
+
     
 
     
@@ -50,7 +60,8 @@ export default function ColorPalette(){
                             <div 
                                 key={index} // Importante para que React no se queje
                                 className={styles.ColorDisplay} 
-                                onClick={() => setColor(colorValue)} 
+                                onClick={() => [setColor(colorValue), handleConfirm(colorValue)]} 
+                                
                                 style={{ backgroundColor: colorValue }}
                             >
                                 
@@ -61,6 +72,7 @@ export default function ColorPalette(){
                             className={styles.container2} 
                             style={{ backgroundColor: color }}
                         >
+                            
                            
                         </div>
                     </div>
