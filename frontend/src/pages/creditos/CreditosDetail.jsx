@@ -6,7 +6,6 @@ import PaginatedContainer from "../../components/common/PaginatedContainer";
 import FichaCuota from "../../components/creditos/FichaCuota";
 import DataField from "../../components/common/DataField";
 import Button from "../../components/ui/Button";
-import RowHeader from "../../components/common/RowHeader";
 import ModalCambiarCobrador from "../../components/creditos/ModalCambiarCobrador";
 import ModalCancelarCredito from "../../components/creditos/ModalCancelarCredito";
 import ModalPago from "../../components/creditos/ModalPago";
@@ -57,11 +56,11 @@ const ESTADO_CREDITO_BADGE = {
 const ESTADOS_FINALES = ["CERRADO", "CANCELADO", "CANCELADO_REFINANCIACION"];
 
 const CUOTAS_HEADER = [
-    { label: "ID",          width: "40px" },
-    { label: "Vencimiento", width: "1fr"  },
-    { label: "Monto",       width: "1fr"  },
-    { label: "Estado",      width: "90px" },
-    { label: "Recargo",     width: "90px" },
+    { label: "ID",          width: "50px"  },
+    { label: "Vencimiento", width: "120px" },
+    { label: "Monto",       width: "100px" },
+    { label: "Estado",      width: "110px" },
+    { label: "Recargo",     width: "100px" },
 ];
 
 export default function CreditosDetail() {
@@ -126,7 +125,7 @@ export default function CreditosDetail() {
 
     return (
         <div className={styles.page}>
-            <h2 className={`title ${styles.titulo}`}>Detalle de Crédito</h2>
+            <h2 className={`title  ${styles.seccion}`}>Detalle de Crédito</h2>
 
             <LoadingWrapper isLoading={isLoading} error={error} isEmpty={!credito}>
 
@@ -173,11 +172,15 @@ export default function CreditosDetail() {
                         </div>
                     )}
                 </div>
+                
+                <h2 className={`title  ${styles.seccion}`}>Cuotas</h2>
 
                 <PaginatedContainer
-                    title="Cuotas"
+                    columns={CUOTAS_HEADER}
+                    hasActions
                     isLoading={isLoading}
                     isEmpty={!credito.cuotas?.length}
+                    error={error}
                     currentPage={0}
                     totalPages={1}
                 >
