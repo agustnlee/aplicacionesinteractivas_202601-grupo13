@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ICONS } from "../../utils/icontypes";
 
 function InputPassword({
   value,
@@ -6,6 +7,7 @@ function InputPassword({
   placeholder = "Contraseña",
 }) {
   const [showPassword, setShowPassword] = useState(false);
+  const IconComponent = showPassword ? ICONS.lockOpen : ICONS.lockClosed;
 
   return (
     <div
@@ -35,7 +37,7 @@ function InputPassword({
             cursor: "pointer"
         }}
       >
-        {showPassword ? "🔒" : "👁️"}
+        <IconComponent size={16} />
       </button>
     </div>
   )

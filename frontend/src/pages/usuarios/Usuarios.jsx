@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
 import { getUsuarios, crearUsuario } from "../../api/usuarioApi";
 import Button from "../../components/ui/Button";
-import LoadingWrapper from "../../components/common/LoadingWrapper";
 import ModalCrearUsuario from "../../components/usuarios/ModalCrearUsuario";
 import { useToast } from "../../hooks/useToast";
+import PaginatedContainer from "../../components/common/PaginatedContainer";
 
 const ROLES = [
   "ADMIN",
   "ANALISTA",
   "COBRADOR"
+];
+
+const USUARIO_FIELDS = [
+  { label: "ID", value: "id" },
+  { label: "Nombre", value: "nombre" },
+  { label: "Email", value: "email" },
+  { label: "Rol", value: "rol" },
 ];
 
 export default function Usuarios() {
@@ -103,44 +110,42 @@ export default function Usuarios() {
             <div className="page-header">
                 <div>
                     <h1>Usuarios</h1>
-                    <p className="text-muted">Listado de usuarios del sistema.</p>
                 </div>
                 <Button onClick={() => setIsModalOpen(true)}>
                     + Crear usuario
                 </Button>
             </div>
 
-            <LoadingWrapper
+            <PaginatedContainer
+                title="Listado de usuarios"
+                fields={USUARIO_FIELDS}
+                currentPage={0}
+                totalPages={1}
                 isLoading={isLoading}
-                error={error}
                 isEmpty={usuarios.length === 0}
-                emptyMessage="No hay usuarios cargados."
             >
-                <div className="card">
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Email</th>
-                                <th>Rol</th>
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {usuarios.map((usuario) => (
+                            <tr key={usuario.id}>
+                                <td>{usuario.id}</td>
+                                <td>{usuario.nombre}</td>
+                                <td>{usuario.email}</td>
+                                <td>{usuario.rol}</td>
                             </tr>
-                        </thead>
-
-                        <tbody>
-                            {usuarios.map((usuario) => (
-                                <tr key={usuario.id}>
-                                    <td>{usuario.id}</td>
-                                    <td>{usuario.nombre}</td>
-                                    <td>{usuario.email}</td>
-                                    <td>{usuario.rol}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-
-            </LoadingWrapper>
+                        ))}
+                    </tbody>
+                </table>
+            </PaginatedContainer>
 
             <ModalCrearUsuario
                 isOpen={isModalOpen}
