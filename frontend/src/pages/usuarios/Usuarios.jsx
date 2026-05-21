@@ -111,18 +111,17 @@ export default function Usuarios() {
                 <div>
                     <h1>Usuarios</h1>
                 </div>
-                <Button onClick={() => setIsModalOpen(true)}>
-                    + Crear usuario
-                </Button>
             </div>
 
+            <h2>Listado de usuarios</h2>
+
             <PaginatedContainer
-                title="Listado de usuarios"
                 fields={USUARIO_FIELDS}
                 currentPage={0}
                 totalPages={1}
                 isLoading={isLoading}
                 isEmpty={usuarios.length === 0}
+                onCreate={() => setIsModalOpen(true)}
             >
                 <table className="table">
                     <thead>

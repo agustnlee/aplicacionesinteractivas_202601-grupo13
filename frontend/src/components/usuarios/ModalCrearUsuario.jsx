@@ -49,7 +49,7 @@ export default function ModalCrearUsuario({
                     value={formData.rol}
                     onChange={onChange}
                 >
-                    {(roles ?? []).map((rol) => (
+                    {roles?.map((rol) => (
                         <option key={rol} value={rol}>
                             {rol}
                         </option>
