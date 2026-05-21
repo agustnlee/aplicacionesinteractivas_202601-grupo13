@@ -1,16 +1,19 @@
 import { useSearchParams } from 'react-router-dom';
 import FilterSearch from './FilterSearch';
+import RowHeader from './RowHeader';
+import LoadingWrapper from './LoadingWrapper';
 import styles from './PaginatedContainer.module.css';
-import Spinner from '../common/Spinner';
 
 export default function PaginatedContainer({ 
-    title, 
     fields, 
     currentPage, 
     totalPages, 
     isLoading,
     isEmpty,
-    children 
+    error,
+    children,
+    onCreate,
+    columns,
 }) {
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -23,23 +26,20 @@ export default function PaginatedContainer({
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                {title && <h2>{title}</h2>}
-                {fields && fields.length > 0 && <FilterSearch fields={fields} />}
+                {fields && fields.length > 0 && <FilterSearch fields={fields} onCreate={onCreate} />}
             </div>
 
             <div className={styles.content}>
-                {isLoading ? (
-                    <div className={styles.loadingState}>
-                        <Spinner size="lg" />
-                        <p>Cargando...</p>
-                    </div>
-                ) : isEmpty ? (
-                    <div className={styles.emptyState}>No se encontraron resultados.</div>
-                ) : (
+                <LoadingWrapper isLoading={isLoading} isEmpty={isEmpty} error={error}>
+
+                    {columns && (
+                        <RowHeader columns={columns} />
+                    )}
+
                     <div className={styles.list}>
                         {children}
                     </div>
-                )}
+                </LoadingWrapper>
             </div>
 
             {!isLoading && totalPages > 1 && (
@@ -47,15 +47,17 @@ export default function PaginatedContainer({
                     <button 
                         disabled={currentPage <= 0} 
                         onClick={() => handlePageChange(currentPage - 1)}
-                        className="btn btn-ghost"
+                        className={`btn ${styles.paginationBtn}`} 
                     >
                         Anterior
                     </button>
-                    <span>Página {currentPage + 1} de {totalPages}</span>
+                    <span className={styles.paginationText}>
+                        Página {currentPage + 1} de {totalPages}
+                    </span>
                     <button 
                         disabled={currentPage >= totalPages - 1} 
                         onClick={() => handlePageChange(currentPage + 1)}
-                        className="btn btn-ghost"
+                        className={`btn ${styles.paginationBtn}`}
                     >
                         Siguiente
                     </button>

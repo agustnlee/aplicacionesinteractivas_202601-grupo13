@@ -1,13 +1,13 @@
 import styles from './RowModels.module.css';
 
-export default function RowHeader({ columns, hasActions }) {
+export default function RowHeader({ columns}) {
     return (
         <div className={styles.fila} style={{ 
             backgroundColor: 'transparent', 
             border: 'none', 
-            borderBottom: '2px solid var(--border-subtle)', 
+            borderBottom: '1px solid var(--border)', 
             paddingBottom: '0.5rem', 
-            marginBottom: '0.5rem',
+            marginBottom: '1rem',
             boxShadow: 'none'
         }}>
             <div className={styles.columnasContainer}>
@@ -21,12 +21,7 @@ export default function RowHeader({ columns, hasActions }) {
                     </div>
                 ))}
             </div>
-            
-            {hasActions && (
-                <div className={styles.acciones} style={{ visibility: 'hidden' }}>
-                    <button className="btn btn-sm">Acciones</button>
-                </div>
-            )}
+
         </div>
     );
 }

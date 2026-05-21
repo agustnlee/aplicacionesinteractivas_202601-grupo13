@@ -1,18 +1,38 @@
-// Destinado para el listado de los models, exepto etiqueta
+import { Link } from 'react-router-dom';
 import styles from './RowModels.module.css';
 
-export default function RowModels({ item, columns, actions }) {
+export default function RowModels({ item, columns, basePath, actions, tags }) {
     return (
         <div className={styles.fila}>
             <div className={styles.columnasContainer}>
-                {columns.map((col, index) => (
-                    <div 
-                    key={`${col.key}-${index}`} 
-                    className={styles.celda} 
-                    style={{ width: col.width || 'auto' }}>
-                        {col.render ? col.render(item) : item[col.key]}
+                {columns.map(col => (
+                    <div key={col.key} className={styles.celda} style={{ width: col.width }}>
+                        {basePath && col.key === 'id' ? (
+                            <Link to={`${basePath}/${item.id}`} className={styles.linkPrimary}>
+                                {item[col.key]}
+                            </Link>
+                        ) : col.render ? (
+                            col.render(item)
+                        ) : (
+                            item[col.key]
+                        )}
                     </div>
                 ))}
+
+                {tags && (
+                    <div className={styles.tagsZone}>
+                        {(item[tags] ?? []).map(etiqueta => (
+                            <Link
+                                key={etiqueta.id}
+                                to={`/etiquetas/${etiqueta.id}`}
+                                className="badge"
+                                style={{ backgroundColor: etiqueta.color ?? 'transparent', flexShrink: 0, textDecoration: 'none' }}
+                            >
+                                {etiqueta.nombre}
+                            </Link>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {actions && actions.length > 0 && (
