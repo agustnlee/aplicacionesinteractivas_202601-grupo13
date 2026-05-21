@@ -7,7 +7,7 @@ import PrivateRoute from './components/layout/PrivateRoute';
 
 
 // import paginas
-import Home from './pages/Home';
+import Homepage from './pages/Homepage';
 import Login from './pages/auth/Login';
 import Clientes from './pages/clientes/Clientes';
 import ClientesDetail from './pages/clientes/ClientesDetail';
@@ -48,7 +48,7 @@ function App() {
         <Route element={<Layout />}>
 
           {/* Públicas */}
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Homepage />} />
           <Route path="/test" element={<Test />} />
 
           <Route element={<PrivateRoute />}>
