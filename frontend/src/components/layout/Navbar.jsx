@@ -55,7 +55,7 @@ export default function Navbar({ showToast }) {
                     {/* LEFT */}
                     <div className={styles.left}>
                         {isLoggedIn && (
-                            <IconButton icon="menu" onClick={handleOpen} size="lg" />
+                            <IconButton icon="menu" onClick={handleOpen} size="lg" bordered={false} />
                         )}
                         <div className={styles.logo}> <Logo /> </div>
                     </div>
@@ -67,6 +67,7 @@ export default function Navbar({ showToast }) {
                                 icon="login"
                                 onClick={() => navigate("/login")}
                                 size="lg"
+                                bordered={false}
                             />
                         ) : (
                             <>
@@ -75,7 +76,7 @@ export default function Navbar({ showToast }) {
                                 </span>
 
                                 <Dropdown
-                                    trigger={<IconButton icon="user" />}
+                                    trigger={<IconButton icon="user" size="lg" bordered={false}/>}
                                     items={[
                                         {
                                             icon: ICONS.circleArrow,
@@ -85,7 +86,7 @@ export default function Navbar({ showToast }) {
                                         {
                                             icon: ICONS.shieldCheck,
                                             label: user.rol,
-                                            variant= "info",
+                                            variant: "info",
                                             static: true,
                                         },
                                         "divider",
