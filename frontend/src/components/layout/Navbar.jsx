@@ -1,77 +1,101 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { LogOut, Menu, X } from "lucide-react";
-import { logoutThunk } from "../../store/authSlice";
-import Logo from "./Logo";
+import IconButton from "../ui/IconButton";
+import Modal from "../common/Modal";
+import { useLockBodyScroll } from "../../hooks/useLockBodyScroll";
+import { logout } from "../../api/authApi";
 import styles from "./Navbar.module.css";
 
-export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+export default function Navbar({ showToast }) {
+    const navigate = useNavigate();
 
-  const { user } = useSelector((state) => state.auth);
-  const isAdmin = String(user?.rol ?? "").toUpperCase() === "ADMIN";
+    const user = JSON.parse(localStorage.getItem("user") ?? "null");
 
-  const handleLogout = async () => {
-    await dispatch(logoutThunk());
-    navigate("/auth/login");
-  };
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [visible,     setVisible]     = useState(false);
+    const [logoutOpen,  setLogoutOpen]  = useState(false);
 
-  const linkClass = ({ isActive }) =>
-    isActive ? `${styles.navLink} ${styles.navLinkActive}` : styles.navLink;
+    useLockBodyScroll(sidebarOpen);
 
-  const adminLinkClass = ({ isActive }) =>
-    isActive 
-      ? `${styles.navLink} ${styles.adminLink} ${styles.adminLinkActive}` 
-      : `${styles.navLink} ${styles.adminLink}`;
+    const handleLogout = async () => {
+        try {
+            await logout();
+        } catch (_) {}
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        showToast?.({ message: "Sesión cerrada", type: "success" });
+        navigate("/login");
+    };
 
-  return (
-    <nav className={styles.bar}>
-      <div className={styles.inner}>
-        
-        {/* Bloque Izquierdo: Contiene Logo y Enlaces de Navegación */}
-        <div className={styles.leftSection}>
-          <Logo />
-          
-          {/* Menú de navegación de escritorio */}
-          <div className={styles.centerNav}>
-            <NavLink to="/clientes" className={linkClass}>
-              Clientes
-            </NavLink>
-            <NavLink to="/creditos" className={linkClass}>
-              Créditos
-            </NavLink>
-            
-            {/* Renderizado condicional exclusivo para el Administrador */}
-            {isAdmin && (
-              <>
-                <NavLink to="/etiquetas" className={adminLinkClass}>
-                  Etiquetas
-                </NavLink>
-                <NavLink to="/usuarios" className={adminLinkClass}>
-                  Usuarios
-                </NavLink>
-              </>
+    const handleOpen = () => {
+        setVisible(true);
+        requestAnimationFrame(() => setSidebarOpen(true));
+    };
+
+    const handleClose = () => {
+        setSidebarOpen(false);
+        setTimeout(() => setVisible(false), 200);
+    };
+
+    useEffect(() => {
+        if (sidebarOpen) setVisible(true);
+    }, [sidebarOpen]);
+
+    const linkClass = ({ isActive }) => isActive ? styles.active : "";
+
+    return (
+        <>
+            <nav className={styles.nav}>
+                <div className={styles.container}>
+
+                    <div className={styles.left}>
+                        <IconButton icon="menu" onClick={handleOpen} size="lg" />
+                        <span className={styles.logo}>App Insert Logo+Name</span>
+                    </div>
+
+                    <div className={styles.right}>
+                        {user && (
+                            <div className={styles.userBlock}>
+                                <span className={styles.userName}>
+                                    {user.nombre ?? "Operador"}
+                                </span>
+                                <span className={styles.roleLabel}>{user.rol}</span>
+                            </div>
+                        )}
+                        <IconButton icon="logout" size="lg" onClick={() => setLogoutOpen(true)} />
+                    </div>
+
+                </div>
+            </nav>
+
+            {visible && (
+                <div className={styles.overlay} onClick={handleClose}>
+                    <div
+                        className={`${styles.sidebar} ${!sidebarOpen ? styles.sidebarClosed : ""}`}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <NavLink to="/clientes" className={linkClass} onClick={handleClose}>Clientes</NavLink>
+                        <NavLink to="/creditos"  className={linkClass} onClick={handleClose}>Créditos</NavLink>
+                        <NavLink to="/etiquetas" className={linkClass} onClick={handleClose}>Etiquetas</NavLink>
+                        <NavLink to="/usuarios"  className={linkClass} onClick={handleClose}>Usuarios</NavLink>
+                    </div>
+                </div>
             )}
-          </div>
-        </div>
 
-        {/* Bloque Derecho: Información de perfil y botón de salida */}
-        <div className={styles.rightSection}>
-          {user && (
-            <div className={styles.userBlock}>
-              <span className={styles.userName}>{user.nombre ?? user.name ?? "Operador"}</span>
-              <span className={styles.roleLabel}>{user.rol}</span>
-            </div>
-          )}
-          <button onClick={handleLogout} className={styles.logoutBtn} title="Cerrar Sesión">
-            <LogOut className={styles.logoutIcon} />
-          </button>
-        </div>
-
-      </div>
-    </nav>
-  );
+            <Modal
+                isOpen={logoutOpen}
+                onClose={() => setLogoutOpen(false)}
+                title="Cerrar sesión"
+                description="¿Seguro que querés salir?"
+                actions={[{
+                    label: "Cerrar Sesión",
+                    variant: "danger",
+                    onClick: async () => {
+                        setLogoutOpen(false);
+                        await handleLogout();
+                    },
+                }]}
+            />
+        </>
+    );
 }
