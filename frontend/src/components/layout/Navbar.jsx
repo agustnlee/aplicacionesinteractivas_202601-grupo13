@@ -7,10 +7,12 @@ import Modal from "../common/Modal";
 import Logo from "./Logo";
 import { useLockBodyScroll } from "../../hooks/useLockBodyScroll";
 import { logout } from "../../api/authApi";
+import { useToast } from "../../hooks/useToast";
 import styles from "./Navbar.module.css";
 
-export default function Navbar({ showToast }) {
+export default function Navbar() {
     const navigate = useNavigate();
+    const { showToast } = useToast();
 
     const user        = JSON.parse(localStorage.getItem("user") ?? "null");
     const isLoggedIn  = !!user;
@@ -27,8 +29,8 @@ export default function Navbar({ showToast }) {
         } catch (_) {}
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        showToast?.({ message: "Sesión cerrada", type: "success" });
-        navigate("/login");
+        showToast("Sesión cerrada", "info" );
+        navigate("/");
     };
 
     const handleOpen = () => {
