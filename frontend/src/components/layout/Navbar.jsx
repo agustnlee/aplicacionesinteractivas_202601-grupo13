@@ -85,7 +85,8 @@ export default function Navbar({ showToast }) {
                                         {
                                             icon: ICONS.shieldCheck,
                                             label: user.rol,
-                                            disabled: true,
+                                            variant= "info",
+                                            static: true,
                                         },
                                         "divider",
                                         {

@@ -16,7 +16,7 @@
 .left {
     display: flex;
     align-items: center;
-    gap: var(--space-inline-sm);
+    gap: var(--space-inline-md);
 }
 
 .logo {
@@ -27,13 +27,17 @@
 .right {
     display: flex;
     align-items: center;
-    gap: var(--space-inline-sm);
+    gap: var(--space-inline-md);
 }
 
 .userName {
     font-size: var(--text-sm);
     font-weight: var(--font-semibold);
-    color: var(--text);
+    color: var(--primary-900);
+}
+
+.userName:hover {
+    color: var(--primary-800);
 }
 
 .overlay {
