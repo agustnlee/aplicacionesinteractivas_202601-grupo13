@@ -107,13 +107,14 @@ export default function Usuarios() {
     return (
         <div className="page">
 
-            <div className="page-header">
-                <div>
-                    <h1>Usuarios</h1>
-                </div>
-            </div>
-
-            <h2>Listado de usuarios</h2>
+            <h2 className={`title  ${styles.seccion}`}>Listado de Usuarios</h2>
+            
+            <LoadingWrapper
+                isLoading={isLoading}
+                error={error}
+                isEmpty={usuarios.length === 0}
+                emptyMessage="No hay usuarios registrados."
+            >
 
             <PaginatedContainer
                 fields={USUARIO_FIELDS}
@@ -145,6 +146,8 @@ export default function Usuarios() {
                     </tbody>
                 </table>
             </PaginatedContainer>
+
+            </LoadingWrapper>
 
             <ModalCrearUsuario
                 isOpen={isModalOpen}
