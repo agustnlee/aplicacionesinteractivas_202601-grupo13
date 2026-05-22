@@ -45,7 +45,6 @@ export default function Login() {
 
                 <form onSubmit={handleSubmit} style={{ display: "grid", gap: "16px", marginTop: "24px" }}>
                     <label>
-                        Email
                         <input
                             className="input"
                             type="email"
@@ -53,6 +52,7 @@ export default function Login() {
                             value={form.email}
                             onChange={handleChange}
                             required
+                            placeholder="Ingrese Email"
                         />
                     </label>
 
