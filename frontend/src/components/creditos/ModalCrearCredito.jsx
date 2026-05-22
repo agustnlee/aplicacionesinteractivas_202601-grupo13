@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import Modal from '../common/Modal'; // Asegurate de que la ruta a tu Modal.jsx sea la correcta
+import Modal from '../common/Modal'; 
 
 export default function ModalCrearCredito({ isOpen, onClose, onConfirm }) {
   const [step, setStep] = useState(1);
   const [monto, setMonto] = useState('');
   const [cuotas, setCuotas] = useState('');
 
-  // Al cerrar el flujo completo, reseteamos el paso a 1
+  // Corrección: Resetea todos los inputs de texto al cerrar el flujo completo
   const handleCloseFull = () => {
     setStep(1);
+    setMonto('');
+    setCuotas('');
     onClose();
   };
 
-  // Acciones para el PASO 1 (Formulario)
   const accionesPaso1 = [
     {
       label: "Ver Preview",
@@ -22,12 +23,10 @@ export default function ModalCrearCredito({ isOpen, onClose, onConfirm }) {
     }
   ];
 
-  // Acciones para el PASO 2 (Preview / Resumen)
   const accionesPaso2 = [
     {
       label: "Confirmar y Crear",
       onClick: () => {
-        // Ejecuta la función de confirmación pasándole los datos
         onConfirm({ monto, cuotas });
         handleCloseFull();
       },
@@ -35,8 +34,6 @@ export default function ModalCrearCredito({ isOpen, onClose, onConfirm }) {
     }
   ];
 
-  // APROVECHAMOS EL BOTÓN "VOLVER" DEL MODAL BASE:
-  // Si está en el paso 2, volver lo regresa al paso 1. Si está en el paso 1, cierra el modal.
   const handleVolverClick = step === 2 ? () => setStep(1) : handleCloseFull;
 
   if (step === 1) {
@@ -75,6 +72,8 @@ export default function ModalCrearCredito({ isOpen, onClose, onConfirm }) {
     );
   }
 
+  const montoCuotaCalculado = cuotas > 0 ? (Number(monto) / Number(cuotas)) : 0;
+
   return (
     <Modal
       isOpen={isOpen}
@@ -87,7 +86,7 @@ export default function ModalCrearCredito({ isOpen, onClose, onConfirm }) {
       <div style={{ lineHeight: '2', padding: '10px 0' }}>
         <p><strong>Monto Total Solicitado:</strong> ${Number(monto).toLocaleString()}</p>
         <p><strong>Plazo Estimado:</strong> {cuotas} meses</p>
-        <p><strong>Monto aproximado por cuota:</strong> ${(monto / cuotas).toFixed(2).toLocaleString()}</p>
+        <p><strong>Monto aproximado por cuota:</strong> ${montoCuotaCalculado.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
         <p style={{ color: 'var(--text-muted, #666)', fontSize: '0.85rem', marginTop: '15px' }}>
           * Al confirmar se impactará el registro en el sistema y se redirigirá al detalle único.
         </p>

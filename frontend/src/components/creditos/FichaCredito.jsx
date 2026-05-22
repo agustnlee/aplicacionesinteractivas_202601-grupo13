@@ -1,28 +1,39 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import RowModels from '../common/RowModels'; // Ajustá la ruta si RowModels está en otra carpeta
 
 const FichaCredito = ({ credito }) => {
+  // Definimos cómo se procesa y visualiza cada celda de la fila
+  const columnasConfig = [
+    { key: 'id', width: '16.6%' },
+    { 
+      key: 'deudaOriginal', 
+      width: '16.6%', 
+      render: (item) => `$${Number(item.deudaOriginal).toLocaleString()}` 
+    },
+    { key: 'fecha', width: '16.6%' },
+    { 
+      key: 'cantidadCuotas', 
+      width: '16.6%', 
+      render: (item) => `${item.cantidadCuotas} cuotas` 
+    },
+    { 
+      key: 'importeCuota', 
+      width: '16.6%', 
+      render: (item) => `$${Number(item.importeCuota).toLocaleString()}` 
+    },
+    { 
+      key: 'estado', 
+      width: '16.6%', 
+      render: () => <span className="badge success">Activo</span> 
+    }
+  ];
+
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'space-between', 
-      padding: '16px', 
-      borderBottom: '1px solid #eee', 
-      alignItems: 'center' 
-    }}>
-      <span style={{ flex: 1 }}>
-        <Link to={`/creditos/${credito.id}`} style={{ fontWeight: 'bold' }}>
-          #{credito.id}
-        </Link>
-      </span>
-      <span style={{ flex: 1 }}>${credito.deudaOriginal?.toLocaleString()}</span>
-      <span style={{ flex: 1 }}>{credito.fecha}</span>
-      <span style={{ flex: 1 }}>{credito.cantidadCuotas} cuotas</span>
-      <span style={{ flex: 1 }}>${credito.importeCuota?.toLocaleString()}</span>
-      <span style={{ flex: 1 }}>
-        <span className="badge success">Activo</span>
-      </span>
-    </div>
+    <RowModels 
+      item={credito} 
+      columns={columnasConfig} 
+      basePath="/creditos" 
+    />
   );
 };
 

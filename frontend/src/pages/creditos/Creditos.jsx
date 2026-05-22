@@ -8,13 +8,12 @@ export default function Creditos() {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Volvemos a los números puros de forma limpia
   const mockCreditos = [
     { id: 101, deudaOriginal: 55000, fecha: '2026-05-13', cantidadCuotas: 10, importeCuota: 6000 },
     { id: 102, deudaOriginal: 120000, fecha: '2026-04-20', cantidadCuotas: 24, importeCuota: 7500 }
   ];
 
-  // CONFIGURACIÓN CORRECTA: Array de objetos con key, label y type para FilterSearch
+  // Estructura de objetos requerida por el buscador dinámico 
   const camposBusqueda = [
     { key: 'id', label: 'ID', type: 'text' },
     { key: 'deudaOriginal', label: 'Deuda Total', type: 'number' },
@@ -27,7 +26,8 @@ export default function Creditos() {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1 className="title">Listado de Créditos</h1>
+      {/* Corrección de diseño: H2 en lugar de H1 */}
+      <h2 className="title" style={{ fontSize: '1.8rem', fontWeight: '600', marginBottom: '20px' }}>Listado de Créditos</h2>
 
       <PaginatedContainer 
         data={mockCreditos} 
@@ -47,7 +47,6 @@ export default function Creditos() {
         ))}
       </PaginatedContainer>
 
-      {/* Botón de crear alineado */}
       <button 
         className="btn" 
         onClick={() => setIsModalOpen(true)}
