@@ -4,6 +4,7 @@ import Button from "../../components/ui/Button";
 import ModalCrearUsuario from "../../components/usuarios/ModalCrearUsuario";
 import { useToast } from "../../hooks/useToast";
 import PaginatedContainer from "../../components/common/PaginatedContainer";
+import LoadingWrapper from "../../components/common/LoadingWrapper";
 
 const ROLES = [
   "ADMIN",
@@ -107,7 +108,7 @@ export default function Usuarios() {
     return (
         <div className="page">
 
-            <h2 className={`title  ${styles.seccion}`}>Listado de Usuarios</h2>
+            <h2 className={`title`}>Listado de Usuarios</h2>
             
             <LoadingWrapper
                 isLoading={isLoading}
