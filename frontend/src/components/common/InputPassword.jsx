@@ -7,7 +7,7 @@ function InputPassword({
   placeholder = "Contraseña",
 }) {
   const [showPassword, setShowPassword] = useState(false);
-  const IconComponent = showPassword ? ICONS.lockOpen : ICONS.lockClosed;
+  const IconComponent = showPassword ? ICONS.eye : ICONS.eyeOff;
 
   return (
     <div
