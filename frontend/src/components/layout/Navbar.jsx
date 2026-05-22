@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { ICONS } from "../../utils/icontypes";
+import Dropdown from "../common/Dropdown";
 import IconButton from "../ui/IconButton";
 import Modal from "../common/Modal";
+import Logo from "./Logo";
 import { useLockBodyScroll } from "../../hooks/useLockBodyScroll";
 import { logout } from "../../api/authApi";
 import styles from "./Navbar.module.css";
@@ -9,7 +12,8 @@ import styles from "./Navbar.module.css";
 export default function Navbar({ showToast }) {
     const navigate = useNavigate();
 
-    const user = JSON.parse(localStorage.getItem("user") ?? "null");
+    const user        = JSON.parse(localStorage.getItem("user") ?? "null");
+    const isLoggedIn  = !!user;
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [visible,     setVisible]     = useState(false);
@@ -48,27 +52,59 @@ export default function Navbar({ showToast }) {
             <nav className={styles.nav}>
                 <div className={styles.container}>
 
+                    {/* LEFT */}
                     <div className={styles.left}>
-                        <IconButton icon="menu" onClick={handleOpen} size="lg" />
-                        <span className={styles.logo}>App Insert Logo+Name</span>
+                        {isLoggedIn && (
+                            <IconButton icon="menu" onClick={handleOpen} size="lg" />
+                        )}
+                        <div className={styles.logo}> <Logo /> </div>
                     </div>
 
+                    {/* RIGHT */}
                     <div className={styles.right}>
-                        {user && (
-                            <div className={styles.userBlock}>
+                        {!isLoggedIn ? (
+                            <IconButton
+                                icon="login"
+                                onClick={() => navigate("/login")}
+                                size="lg"
+                            />
+                        ) : (
+                            <>
                                 <span className={styles.userName}>
                                     {user.nombre ?? "Operador"}
                                 </span>
-                                <span className={styles.roleLabel}>{user.rol}</span>
-                            </div>
+
+                                <Dropdown
+                                    trigger={<IconButton icon="user" />}
+                                    items={[
+                                        {
+                                            icon: ICONS.circleArrow,
+                                            label: "Mi perfil",
+                                            onClick: () => navigate(`/usuarios/${user.id}`),
+                                        },
+                                        {
+                                            icon: ICONS.shieldCheck,
+                                            label: user.rol,
+                                            disabled: true,
+                                        },
+                                        "divider",
+                                        {
+                                            icon: ICONS.logout,
+                                            label: "Cerrar sesión",
+                                            variant: "danger",
+                                            onClick: () => setLogoutOpen(true),
+                                        },
+                                    ]}
+                                />
+                            </>
                         )}
-                        <IconButton icon="logout" size="lg" onClick={() => setLogoutOpen(true)} />
                     </div>
 
                 </div>
             </nav>
 
-            {visible && (
+            {/* SIDEBAR — solo si autenticado */}
+            {isLoggedIn && visible && (
                 <div className={styles.overlay} onClick={handleClose}>
                     <div
                         className={`${styles.sidebar} ${!sidebarOpen ? styles.sidebarClosed : ""}`}
