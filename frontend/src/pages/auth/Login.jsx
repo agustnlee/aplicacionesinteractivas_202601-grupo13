@@ -1,15 +1,14 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { loginThunk, clearError } from "../../store/authSlice";
+import { login } from "../../api/authApi";
 import Button from "../../components/ui/Button";
 import InputPassword from "../../components/common/InputPassword";
 
 export default function Login() {
-    const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { loading, error } = useSelector((state) => state.auth);
+    const [loading, setLoading] = useState(false);
+    const [error, setError]     = useState(null);
 
     const [form, setForm] = useState({
         email: "admin@tp13.com",
@@ -19,8 +18,6 @@ export default function Login() {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        dispatch(clearError());
-
         setForm((prev) => ({
             ...prev,
             [name]: value
@@ -29,13 +26,24 @@ export default function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const result = await dispatch(loginThunk(form));
-
-        if (loginThunk.fulfilled.match(result)) {
-            navigate("/usuarios");
+        setLoading(true);
+        try {
+            const data = await login(form.email, form.password);
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify({
+                id:     data.id,
+                nombre: data.nombre,
+                email:  data.email,
+                rol:    data.rol,
+            }));
+            navigate("/");
+        } catch (err) {
+            setError(err?.mensajes?.[0] ?? "Credenciales incorrectas");
+        } finally {
+            setLoading(false);
         }
     };
+
 
     return (
         <div className="page">
