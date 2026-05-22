@@ -35,9 +35,6 @@ function Layout() {
 
 function App() {
   return (
-    <Routes>
-      {/* Rutas sin layout ni auth */}
-      <Route path="/auth/login" element={<Login />} />
 
       {/* Rutas con layout  */}
       <Route element={<Layout />}>

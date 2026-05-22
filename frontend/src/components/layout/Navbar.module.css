@@ -1,91 +1,125 @@
-.nav {
+.bar {
   position: sticky;
   top: 0;
   z-index: 100;
-
-  background: var(--surface);
-  border-bottom: 1.5px solid var(--border);
-}
-
-.container {
+  border-bottom: 1px solid var(--border-subtle, #e2e8f0);
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  height: var(--navbar-height, 64px);
+  box-shadow: var(--shadow-sm);
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: var(--space-inline-md);
+  align-items: center; /* Fuerza a que todo el contenedor comparta la misma línea central */
+  width: 100%;
 }
 
-.left {
-  display: flex;
-  align-items: center;
-  gap: var(--space-inline-sm);
-}
-
-.logo {
-  font-size: var(--text-lg);
-  font-weight: var(--font-semibold);
-}
-
-.right {
+.inner {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
   display: flex;
   align-items: center;
-}
-
-/* sidebar */
-
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  z-index: 999;
-  backdrop-filter: blur(4px);
-  
-  opacity: 1;
-  transition: opacity 200ms ease;
-}
-
-.overlayClosing {
-  opacity: 0;
-}
-
-.sidebar {
-  width: 360px;
+  justify-content: space-between; /* Distribuye proporcionalmente izquierda y derecha */
   height: 100%;
-  background: var(--surface);
-  border-right: 1px solid var(--border);
+}
 
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem; /* Separación prudente entre el logo y los primeros enlaces */
+  height: 100%;
+}
+
+.centerNav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; /* Ajuste estrecho para mantener los enlaces agrupados de manera elegante */
+  height: 100%;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #64748b;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  border-bottom: 2px solid transparent;
+  padding: 0 0.25rem;
+}
+
+.navLink:hover {
+  color: var(--primary-600, #1e3a5f);
+}
+
+.navLinkActive {
+  color: var(--primary-600, #1e3a5f);
+  font-weight: 600;
+  border-bottom-color: var(--primary-600, #1e3a5f); /* Barra baja indicadora activa */
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  height: 100%;
+}
+
+.userBlock {
   display: flex;
   flex-direction: column;
-  gap: var(--space-stack-lg);
-  padding: var(--space-4);
-
-  transform: translateX(0);
-  transition: transform 200ms ease;
-
+  text-align: right;
+  justify-content: center;
 }
 
-.sidebar a {
-  font-size: var(--text-xl);
-  text-decoration: none;
-  color: var(--text);
-  padding: var(--space-4);
-
-  border-left: 3px solid transparent;
-  transition: color var(--anim-fast) var(--ease-standard), border-color var(--anim-fast) var(--ease-standard), background var(--anim-fast);
+.userName {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.2;
 }
 
-.sidebar a:hover {
-  color: var(--primary-600);
-  background: rgba(0,0,0,0.04);
+.roleLabel {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 2px;
 }
 
-.sidebarClosed {
-    transform: translateX(-100%);
+.logoutBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  border-radius: 0.5rem;
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.sidebar a.active {
-  border-left: 3px solid var(--primary-600);
-  color: var(--primary-600);
-  font-weight: var(--font-medium);
+.logoutBtn:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
 }
 
+.logoutIcon {
+  width: 1rem;
+  height: 1rem;
+  color: #475569;
+}
+
+/* Clases específicas para enlaces de Administración (Destacan sutilmente) */
+.adminLink {
+  color: #dc2626;
+}
+
+.adminLink:hover {
+  color: #b91c1c;
+}
+
+.adminLinkActive {
+  font-weight: 700;
+  border-bottom-color: #dc2626;
+}
