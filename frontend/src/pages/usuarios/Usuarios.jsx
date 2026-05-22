@@ -12,10 +12,10 @@ const ROLES = [
 ];
 
 const USUARIO_FIELDS = [
-  { label: "ID", value: "id" },
-  { label: "Nombre", value: "nombre" },
-  { label: "Email", value: "email" },
-  { label: "Rol", value: "rol" },
+  { label: "ID", key: "id" },
+  { label: "Nombre", key: "nombre" },
+  { label: "Email", key: "email" },
+  { label: "Rol", key: "rol" },
 ];
 
 export default function Usuarios() {
