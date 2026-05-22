@@ -4,6 +4,7 @@ import Button from "../../components/ui/Button";
 import ModalCrearUsuario from "../../components/usuarios/ModalCrearUsuario";
 import { useToast } from "../../hooks/useToast";
 import PaginatedContainer from "../../components/common/PaginatedContainer";
+import LoadingWrapper from "../../components/common/LoadingWrapper";
 
 const ROLES = [
   "ADMIN",
@@ -12,10 +13,10 @@ const ROLES = [
 ];
 
 const USUARIO_FIELDS = [
-  { label: "ID", value: "id" },
-  { label: "Nombre", value: "nombre" },
-  { label: "Email", value: "email" },
-  { label: "Rol", value: "rol" },
+  { label: "ID", key: "id" },
+  { label: "Nombre", key: "nombre" },
+  { label: "Email", key: "email" },
+  { label: "Rol", key: "rol" },
 ];
 
 export default function Usuarios() {
@@ -107,13 +108,14 @@ export default function Usuarios() {
     return (
         <div className="page">
 
-            <div className="page-header">
-                <div>
-                    <h1>Usuarios</h1>
-                </div>
-            </div>
-
-            <h2>Listado de usuarios</h2>
+            <h2 className={`title`}>Listado de Usuarios</h2>
+            
+            <LoadingWrapper
+                isLoading={isLoading}
+                error={error}
+                isEmpty={usuarios.length === 0}
+                emptyMessage="No hay usuarios registrados."
+            >
 
             <PaginatedContainer
                 fields={USUARIO_FIELDS}
@@ -145,6 +147,8 @@ export default function Usuarios() {
                     </tbody>
                 </table>
             </PaginatedContainer>
+
+            </LoadingWrapper>
 
             <ModalCrearUsuario
                 isOpen={isModalOpen}

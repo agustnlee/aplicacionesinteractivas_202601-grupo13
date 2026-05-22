@@ -4,10 +4,10 @@ import { ICONS } from "../../utils/icontypes";
 function InputPassword({
   value,
   onChange,
-  placeholder = "Contraseña",
+  placeholder = "Ingrese Contraseña",
 }) {
   const [showPassword, setShowPassword] = useState(false);
-  const IconComponent = showPassword ? ICONS.lockOpen : ICONS.lockClosed;
+  const IconComponent = showPassword ? ICONS.eye : ICONS.eyeOff;
 
   return (
     <div
