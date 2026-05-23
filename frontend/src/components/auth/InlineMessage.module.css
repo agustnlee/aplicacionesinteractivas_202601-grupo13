@@ -1,0 +1,54 @@
+.message {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    border: 1px solid transparent;
+}
+
+.text {
+    flex: 1;
+    line-height: var(--leading-normal);
+}
+
+.closeBtn {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0.6;
+    transition: opacity var(--anim-fast);
+    flex-shrink: 0;
+    color: inherit;
+}
+.closeBtn:hover { opacity: 1; }
+
+/* tipos */
+.error {
+    background: var(--danger-bg);
+    border-color: var(--danger-border);
+    color: var(--danger);
+}
+
+.warning {
+    background: var(--warning-bg);
+    border-color: var(--warning-border);
+    color: var(--warning);
+}
+
+.info {
+    background: var(--primary-50);
+    border-color: var(--primary-100);
+    color: var(--primary-700);
+}
+
+.success {
+    background: var(--success-bg);
+    border-color: var(--success-border);
+    color: var(--success);
+}
