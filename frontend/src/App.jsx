@@ -5,9 +5,8 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import PrivateRoute from './components/layout/PrivateRoute';
 
-
 // import paginas
-import Home from './pages/Home';
+import Homepage from './pages/Homepage';
 import Login from './pages/auth/Login';
 import Clientes from './pages/clientes/Clientes';
 import ClientesDetail from './pages/clientes/ClientesDetail';
@@ -20,33 +19,37 @@ import UsuariosDetail from './pages/usuarios/UsuariosDetail';
 
 import Test from './pages/Test';
 
-
 function Layout() {
- return (
+  return (
     <div className="app">
       <Navbar />
-
       <div className="app-body">
         <main className="main-content">
           <Outlet />
         </main>
       </div>
-
       <Footer />
     </div>
   );
 }
 
-
 function App() {
   return (
-      <Routes>
-        {/* Rutas sin layout ni auth */}
-        <Route path="/auth/login" element={<Login />} />
 
-        {/* Rutas con layout  */}
-        <Route element={<Layout />}>
+    <Routes>
+      {/* Rutas con layout  */}
+      <Route element={<Layout />}>
 
+        {/* Públicas */}
+        {/* Públicas (Mantenemos el /login oficial de develop) */}
+        <Route path="/" element={<Homepage />} />
+        <Route path="/test" element={<Test />} />
+        <Route path="/login" element={<Login />} />
+
+        {/* Privadas protegidas con autenticación */}
+        <Route element={<PrivateRoute />}>
+          <Route path="/clientes" element={<Clientes />} />
+          <Route path="/clientes/:id" element={<ClientesDetail />} />
           {/* Públicas */}
           <Route path="/" element={<Home />} />
           <Route path="/test" element={<Test />} />
@@ -57,25 +60,22 @@ function App() {
             <Route path="/clientes" element={<Clientes />} />
             <Route path="/clientes/:id" element={<ClientesDetail />} />
 
-            <Route path="/creditos" element={<Creditos />} />
-            <Route path="/creditos/:id" element={<CreditosDetail />} />
+          <Route path="/creditos" element={<Creditos />} />
+          <Route path="/creditos/:id" element={<CreditosDetail />} />
 
+          <Route path="/etiquetas" element={<Etiquetas />} />
+          <Route path="/etiquetas/:id" element={<EtiquetasDetail />} />
             
 
-            <Route path="/usuarios" element={<Usuarios />} />
-            <Route path="/usuarios/:id" element={<UsuariosDetail />} />
-          </Route>
-
-          {/* Cualquier otra ruta */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/usuarios" element={<Usuarios />} />
+          <Route path="/usuarios/:id" element={<UsuariosDetail />} />
         </Route>
 
-        
-        
-
-      </Routes>
+        {/* Cualquier otra ruta redirige al Home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
   );
 }
-
 
 export default App;

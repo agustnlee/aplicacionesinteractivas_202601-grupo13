@@ -29,9 +29,12 @@ export default function Dropdown({ trigger, items }) { // items: [{ label, onCli
                                 <button
                                     key={i}
                                     type="button"
-                                    className={`${styles.item} ${styles[item.variant ?? "default"]}`}
-                                    onClick={() => { item.onClick(); setOpen(false); }}
                                     disabled={item.disabled}
+                                    className={`${styles.item} ${styles[item.variant ?? "default"]}  ${item.static ? styles.static : ""}`}
+                                    onClick={() => {
+                                        if (item.disabled || item.static) { return; } 
+                                        item.onClick(); setOpen(false); 
+                                    }}
                                 >
                                     {item.icon && <item.icon size={15} />}
                                     {item.label}
