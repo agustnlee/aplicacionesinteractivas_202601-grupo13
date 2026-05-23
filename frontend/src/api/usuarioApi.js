@@ -1,7 +1,7 @@
 import apiClient from "./apiClient";
 
-export const getUsuarios = () =>
-    apiClient("/usuarios");
+export const getUsuarios = (params = {}) =>
+    apiClient(`/usuarios?${new URLSearchParams(params)}`);
 
 export const getUsuarioById = (id) =>
     apiClient(`/usuarios/${id}`);
