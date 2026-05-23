@@ -1,32 +1,37 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { login } from "../../api/authApi";
+import { useToast } from "../../hooks/useToast";
 import Button from "../../components/ui/Button";
-import InputPassword from "../../components/common/InputPassword";
+import InlineMessage from "../../components/auth/InlineMessage";
+import { ICONS } from "../../utils/icontypes";
+import styles from "./Login.module.css";
 
 export default function Login() {
     const navigate = useNavigate();
+    const { showToast } = useToast();
+    const token = localStorage.getItem("token");
 
-    const [loading, setLoading] = useState(false);
-    const [error, setError]     = useState(null);
+    if (token) return <Navigate to="/" replace />;
+
+    const [loading,      setLoading]      = useState(false);
+    const [error,        setError]        = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
 
     const [form, setForm] = useState({
-        email: "admin@tp13.com",
-        password: "admin123"
+        email:    "admin@tp13.com",
+        password: "admin123",
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
-        setForm((prev) => ({
-            ...prev,
-            [name]: value
-        }));
+        setForm(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        setError(null);
         try {
             const data = await login(form.email, form.password);
             localStorage.setItem("token", data.token);
@@ -36,53 +41,89 @@ export default function Login() {
                 email:  data.email,
                 rol:    data.rol,
             }));
+            showToast("Sesión iniciada correctamente", "success");
             navigate("/");
         } catch (err) {
-            setError(err?.mensajes?.[0] ?? "Credenciales incorrectas");
+            const msg = err?.mensajes?.[0] ?? "Credenciales incorrectas";
+            setError(msg.length > 80 ? "Error al iniciar Sesión. Ingresá nuevamente sus datos." : msg);
         } finally {
             setLoading(false);
         }
     };
 
+    const EyeIcon = showPassword ? ICONS.eye : ICONS.eyeOff;
 
     return (
-        <div className="page">
-            <section className="card" style={{ maxWidth: "420px", margin: "80px auto" }}>
-                <h1>Iniciar sesión</h1>
-                <p className="text-muted">Ingresá con tu usuario para acceder al sistema.</p>
+        <div className={styles.wrapper}>
+            <div className={styles.card}>
 
-                <form onSubmit={handleSubmit} style={{ display: "grid", gap: "16px", marginTop: "24px" }}>
-                    <label>
+                <div className={styles.header}>
+                    <h1>Iniciar sesión</h1>
+                    <ICONS.user size={28} color="var(--primary-900)" />
+                </div>
+
+                <p className={styles.subtitle}>
+                    Ingresá con tu usuario para acceder al sistema.
+                </p>
+
+                <form onSubmit={handleSubmit} className={styles.form}>
+
+                    {/* Email */}
+                    <div className={styles.inputRow}>
+                        <span className={styles.inputIcon}>
+                            <ICONS.mail size={18} />
+                        </span>
                         <input
-                            className="input"
+                            className={styles.input}
                             type="email"
                             name="email"
                             value={form.email}
                             onChange={handleChange}
                             required
-                            placeholder="Ingrese Email"
+                            placeholder="Email"
                         />
-                    </label>
+                    </div>
 
-                    <label>
-                        Contraseña
-                        <InputPassword
-                            value={form.password}
-                            onChange={handleChange}
-                        />
-                    </label>
+                    {/* Password */}
+                    <div className={styles.inputRow}>
+                        <span className={styles.inputIcon}>
+                            <ICONS.lockClosed size={18} />
+                        </span>
+                        <div className={styles.passwordWrapper}>
+                            <input
+                                className={styles.passwordInner}
+                                type={showPassword ? "text" : "password"}
+                                name="password"
+                                value={form.password}
+                                onChange={handleChange}
+                                required
+                                placeholder="Contraseña"
+                            />
+                            <button
+                                type="button"
+                                className={styles.eyeBtn}
+                                onClick={() => setShowPassword(p => !p)}
+                            >
+                                <EyeIcon size={16} />
+                            </button>
+                        </div>
+                    </div>
 
                     {error && (
-                        <p className="text-danger">
+                        <InlineMessage type="error" onClose={() => setError(null)}>
                             {error}
-                        </p>
+                        </InlineMessage>
                     )}
 
-                    <Button type="submit" disabled={loading}>
+                    <Button
+                        type="submit"
+                        disabled={loading}
+                        className={styles.submitBtn}
+                    >
                         {loading ? "Ingresando..." : "Iniciar sesión"}
                     </Button>
                 </form>
-            </section>
+            </div>
         </div>
     );
 }
