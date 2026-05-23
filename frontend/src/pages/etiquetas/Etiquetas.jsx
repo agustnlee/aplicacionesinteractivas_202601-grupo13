@@ -14,9 +14,7 @@ export default function CreadorEtiquetaMock() {
     const [isOpen, setIsOpen] = useState(false);
 
 const mockEtiqueta = { 
-            nombreEtiqueta: "vip",
-	        colorEtiqueta: "16a34a",
-	        descripcionEtiqueta: "clientes importantes"};
+           id:1, nombre: "mora", color: "#16a34a", descripcion: "blabla"};
    
     const handleCrearEtiqueta = async () => {
         
