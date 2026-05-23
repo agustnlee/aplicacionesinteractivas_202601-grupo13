@@ -6,12 +6,14 @@ import com.uade.tp13.repository.UsuarioRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class AdminInitializerConfig {
 
     @Bean
+    @Order(1)
     CommandLineRunner initDatabase(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         return args -> {
             String emailAdmin = "admin@tp13.com";
