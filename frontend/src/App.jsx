@@ -36,15 +36,13 @@ function Layout() {
 function App() {
   return (
     <Routes>
-      {/* Rutas sin layout ni auth */}
-      <Route path="/auth/login" element={<Login />} />
-
       {/* Rutas con layout  */}
       <Route element={<Layout />}>
 
-        {/* Públicas */}
+        {/* Públicas (Mantenemos el /login oficial de develop) */}
         <Route path="/" element={<Homepage />} />
         <Route path="/test" element={<Test />} />
+        <Route path="/login" element={<Login />} />
 
         {/* Privadas protegidas con autenticación */}
         <Route element={<PrivateRoute />}>

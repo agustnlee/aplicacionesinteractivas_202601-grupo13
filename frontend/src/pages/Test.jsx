@@ -1,3 +1,14 @@
+
+import ColorPalette from "../components/common/ColorPalette";
+
+
 export default function Test() {
-    return(<> Limpiar version limpia para commit </>);
+    return(<> 
+
+  
+    <ColorPalette/>
+    
+rsion limpia para commit </>);
+    
+    
 }

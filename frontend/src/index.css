@@ -1,6 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'); /* Import de fuente */
+@import "tailwindcss";
 
 /* == Variables Globales ==  */
 
@@ -89,6 +89,7 @@
   --space-8:          2rem;
   --space-10:         2.5rem;
   --space-12:         3rem;
+  --space-16:         4rem;
 
   /* IMPORTANTE =============================== ESPACIADO POR CONTEXTO */
 
@@ -129,6 +130,7 @@
   --gap-md: var(--space-4);
   --gap-lg: var(--space-6);
   --gap-xl: var(--space-8);
+  --gap-2xl: var(--space-16);
 
   /* Espaciado para botones */
   --btn-padding-y-sm: var(--space-1);
@@ -276,6 +278,7 @@ input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
   font-weight: var(--font-semibold);
   color: var(--primary-900);
   border-left: 3px solid var(--primary-600);
+  padding-left: var(--space-3);
 }
 
 .btn {

@@ -1,5 +1,6 @@
 import styles from "./Footer.module.css";
 import { ICONS } from "../../utils/icontypes";
+import Logo from "./Logo"
 
 export default function Footer() {
   const GithubIcon = ICONS.github;
@@ -20,7 +21,7 @@ export default function Footer() {
 
         {/* LEFT */}
         <div className={styles.left}>
-          App
+          <Logo className={styles.footerLogo} />
         </div>
 
         {/* MIDDLE */}

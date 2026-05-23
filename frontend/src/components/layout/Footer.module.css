@@ -25,6 +25,14 @@
   gap: var(--space-6);
 }
 
+.footerLogo {
+  align-items: center;
+  display: flex;
+  opacity: 0.9;
+  margin-top: 0.2rem;
+  opacity: 0.85;
+}
+
 .left {
   font-weight: var(--font-semibold);
 }
