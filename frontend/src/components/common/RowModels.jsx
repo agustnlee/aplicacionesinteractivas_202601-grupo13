@@ -9,7 +9,7 @@ export default function RowModels({ item, columns, basePath, actions, tags }) {
                     <div key={col.key} className={styles.celda} style={{ width: col.width }}>
                         {basePath && col.key === 'id' ? (
                             <Link to={`${basePath}/${item.id}`} className={styles.linkPrimary}>
-                                {item[col.key]}
+                                <strong>#{item[col.key]}</strong>
                             </Link>
                         ) : col.render ? (
                             col.render(item)

@@ -7,6 +7,9 @@ import styles from '../PagesDetail.module.css';
 
 
 const FIELDS = [
+    { key: "creditoId",  label: "ID",  type: "number" },
+    { key: "cobradorId",   label: "ID Cobrador",  type: "number" },
+    { key: "clienteId",    label: "ID Cliente",   type: "number" },
     { key: "estado", label: "Estado", type: "select", options: [
         { value: "ACTIVO",                   label: "Activo"                   },
         { value: "EN_MORA",                  label: "En mora"                  },
@@ -40,6 +43,9 @@ export default function Creditos() {
 
   const page   = parseInt(searchParams.get("pagina") ?? "0", 10);
   const estado = searchParams.get("estado") ?? undefined;
+  const cobradorId  = searchParams.get("cobradorId")  ?? undefined;
+  const clienteId   = searchParams.get("clienteId")   ?? undefined;
+  const creadoPorId = searchParams.get("creadoPorId") ?? undefined;
 
   // carga inicial
   useEffect(() => {
@@ -48,9 +54,12 @@ export default function Creditos() {
             setError(null);
             try {
                 const data = await getCreditos({
-                    ...(estado && { estado }),
-                    pagina:  page,
-                    tamanio: 10,
+                ...(estado      && { estado      }),
+                ...(cobradorId  && { cobradorId  }),
+                ...(clienteId   && { clienteId   }),
+                ...(creadoPorId && { creadoPorId }),
+                pagina:  page,
+                tamanio: 10,
                 });
                 setCreditos(data.contenido);
                 setTotalPages(data.totalPaginas);
@@ -61,7 +70,7 @@ export default function Creditos() {
             }
         };
         cargar();
-    }, [page, estado]);
+    }, [page, estado, cobradorId, clienteId, creadoPorId]);
 
 
   return (

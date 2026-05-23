@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import RowModels from '../common/RowModels'; // Ajustá la ruta si RowModels está en otra carpeta
+import styles from '../../pages/PagesDetail.module.css';
 
 
 const ESTADO_BADGE = {
@@ -11,11 +12,12 @@ const ESTADO_BADGE = {
 };
 
 const columnasConfig = [
-    { key: "id",             label: "ID",       width: "60px"  },
+    { key: "id",             label: "ID",       width: "60px",
+        render: (c) => <strong>#{c.id}</strong> },
     { key: "clienteNombre",  label: "Cliente",  width: "130px",
-        render: (c) => <Link to={`/clientes/${c.clienteId}`}>{c.clienteNombre}</Link> },
+        render: (c) => <Link to={`/clientes/${c.clienteId}`} className={styles.link}>{c.clienteNombre}</Link> },
     { key: "cobradorNombre", label: "Cobrador", width: "130px",
-        render: (c) => <Link to={`/usuarios/${c.cobradorId}`}>{c.cobradorNombre}</Link> },
+        render: (c) => <Link to={`/usuarios/${c.cobradorId}`} className={styles.link}>{c.cobradorNombre}</Link> },
     { key: "monto",          label: "Monto",    width: "110px",
         render: (c) => `$${Number(c.monto).toLocaleString()}` },
     { key: "cantidadCuotas", label: "Cuotas",   width: "80px",
