@@ -35,10 +35,12 @@ function Layout() {
 
 function App() {
   return (
+
     <Routes>
       {/* Rutas con layout  */}
       <Route element={<Layout />}>
 
+        {/* Públicas */}
         {/* Públicas (Mantenemos el /login oficial de develop) */}
         <Route path="/" element={<Homepage />} />
         <Route path="/test" element={<Test />} />
