@@ -45,7 +45,7 @@ export default function Login() {
             navigate("/");
         } catch (err) {
             const msg = err?.mensajes?.[0] ?? "Credenciales incorrectas";
-            setError(msg.length > 80 ? "Error al iniciar Sesión. Ingresá nuevamente sus datos." : msg);
+            setError(msg);
         } finally {
             setLoading(false);
         }
@@ -108,6 +108,8 @@ export default function Login() {
                             </button>
                         </div>
                     </div>
+
+                    <hr className={styles.divider} />
 
                     {error && (
                         <InlineMessage type="error" onClose={() => setError(null)}>
