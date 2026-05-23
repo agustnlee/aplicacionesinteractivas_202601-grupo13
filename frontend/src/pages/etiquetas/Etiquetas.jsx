@@ -60,13 +60,9 @@ const mockEtiqueta = {
             setIsLoading(true);
             setError(null);
             try {
-                const data = await buscarEtiquetas({
-                ...(nombreEtiqueta      && { nombre      }),
-                ...(descripcionEtiqueta  && { descripcion  }),
-                ...(colorEtiqueta   && { color   }),
-                pagina:  page,
-                tamanio: 10,
-                });
+                const data = await buscarEtiquetas({  pagina:  page,
+                tamanio: 10 }
+                );
                 setetiquetas(data.contenido);
                 setTotalPages(data.totalPaginas);
             } catch (e) {
@@ -76,8 +72,7 @@ const mockEtiqueta = {
             }
         };
         cargar();
-    }, [page, nombre, descripcionEtiqueta, colorEtiqueta]);
-
+    }, [page]);
 
 
 
@@ -133,13 +128,13 @@ const handleObtenerEtiquetaPorId = async () => {
 
     return (
       <div style={{ padding: "20px", border: "1px dashed var(--border)", borderRadius: "var(--radius)" }}>
-        {/* <div className={styles.page}>
+        { <div className={styles.page}>
                 <h2 className="title">Listado de Etiquetas</h2>
                 <PaginatedContainer
                     fields={FIELDS}
                     columns={COLUMNS}
                     isLoading={isLoading}
-                    isEmpty={!etiquetas.length}
+                   // isEmpty={!etiquetas.length}
                     error={error}
                     currentPage={page}
                     totalPages={totalPages}
@@ -150,7 +145,7 @@ const handleObtenerEtiquetaPorId = async () => {
                         ) : null
                     )}
                 </PaginatedContainer>
-         </div> */}   
+         </div> }   
 
 
 
