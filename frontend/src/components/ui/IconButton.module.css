@@ -6,7 +6,8 @@
   border-radius: var(--radius);
   border: 1px solid var(--border);
   background: transparent;
-  color: var(--text-muted);
+  color: var(--primary-700);
+  opacity: 0.9;
   cursor: pointer;
   transition:
     background var(--anim-fast) var(--ease-standard),
@@ -17,6 +18,7 @@
 }
 
 .iconBtn:disabled {
+  color: var(--text-muted);
   opacity: var(--opacity-hover);
   cursor: not-allowed;
   transform: none !important;
@@ -29,6 +31,7 @@
 
 /* variantes al estar hovered*/
 .default:hover:not(:disabled) {
+  opacity: 0.8;
   background: var(--surface-2);
   border-color: var(--primary-500);
   color: var(--text);
@@ -65,5 +68,5 @@
 
 
 .noBorder {
-    border: none !important;
+    border-color: transparent;
 }
