@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import RowModels from "../common/RowModels";
 import { ICONS } from "../../utils/icontypes";
+import styles from "../../pages/PagesDetail.module.css";
+
 
 const ROL_BADGE = {
     ADMIN:    { clase: "badge badge-danger",  icono: "shieldCheck" },
@@ -12,7 +14,9 @@ const columnasConfig = [
     { key: "id",     label: "ID",     width: "60px"  },
     { key: "nombre", label: "Nombre", width: "160px",
         render: (u) => (
-            <Link to={`/usuarios/${u.id}`}>{u.nombre}</Link>
+            <Link to={`/usuarios/${u.id}`} className={styles.link}>
+                {u.nombre}
+            </Link>
         )
     },
     { key: "email",  label: "Email",  width: "200px" },
