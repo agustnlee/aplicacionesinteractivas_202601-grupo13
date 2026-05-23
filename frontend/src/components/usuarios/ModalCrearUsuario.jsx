@@ -1,15 +1,38 @@
+import { useState, useEffect } from "react";
 import Modal from "../common/Modal";
 import Button from "../ui/Button";
 import InputPassword from "../common/InputPassword";
 
+const INITIAL_FORM = {
+    nombre:   "",
+    email:    "",
+    password: "",
+    rol:      "COBRADOR",
+};
+
+
 export default function ModalCrearUsuario({
     isOpen,
     onClose,
-    formData,
-    onChange,
-    onSubmit,
-    roles = [],
+    onConfirm
 }) {
+
+    const [formData, setFormData] = useState("");
+
+    useEffect(() => {
+        if (!isOpen) setFormData(INITIAL_FORM);
+    }, [isOpen]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = () => {
+        onConfirm(formData);        // datos al padre
+    };
+
+
     return (
         <Modal
             isOpen={isOpen}
@@ -28,7 +51,7 @@ export default function ModalCrearUsuario({
                     name="nombre"
                     placeholder="Nombre"
                     value={formData.nombre}
-                    onChange={onChange}
+                    onChange={handleChange}
                 />
 
                 <input
@@ -36,27 +59,25 @@ export default function ModalCrearUsuario({
                     name="email"
                     placeholder="Email"
                     value={formData.email}
-                    onChange={onChange}
+                    onChange={handleChange}
                 />
 
                 <InputPassword
                     value={formData.password}
-                    onChange={onChange}
+                    onChange={handleChange}
                 />
 
                 <select
                     name="rol"
                     value={formData.rol}
-                    onChange={onChange}
+                    onChange={handleChange}
                 >
-                    {roles?.map((rol) => (
-                        <option key={rol} value={rol}>
-                            {rol}
-                        </option>
-                    ))}
+                        <option value="ADMIN">Admin</option>
+                        <option value="ANALISTA">Analista</option>
+                        <option value="COBRADOR">Cobrador</option>
                 </select>
 
-                <Button onClick={onSubmit}>
+                <Button onClick={handleSubmit}>
                     Crear usuario
                 </Button>
             </div>
