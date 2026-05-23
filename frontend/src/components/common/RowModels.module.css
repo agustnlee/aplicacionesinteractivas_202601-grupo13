@@ -33,7 +33,7 @@
 }
 
 .linkPrimary {
-    color: var(--primary-600);
+    color: var(--primary-900);
     font-weight: var(--font-semibold);
     text-decoration: none; 
     transition: opacity var(--anim-fast) var(--ease-standard);

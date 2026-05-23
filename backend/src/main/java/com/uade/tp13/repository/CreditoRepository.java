@@ -16,13 +16,14 @@ public interface CreditoRepository extends JpaRepository<Credito, Long> {
 
 
     // para endpoints + Logica interna
-    @Query
-    ("""
+
+    @Query("""
         SELECT c FROM Credito c
-        WHERE (:estado IS NULL OR c.estado = :estado)
+        WHERE (CAST(:estado AS string) IS NULL OR c.estado = :estado)
         AND (:clienteId IS NULL OR c.cliente.id = :clienteId)
         AND (:cobradorId IS NULL OR c.cobrador.id = :cobradorId)
         AND (:creadoPorId IS NULL OR c.creadoPor.id = :creadoPorId)
+        ORDER BY c.fechaCreacion
     """)
     Page<Credito> buscarConFiltros(
             @Param("estado") EstadoCredito estado,
