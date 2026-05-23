@@ -6,28 +6,6 @@ import PaginatedContainer from "../../components/common/PaginatedContainer";
 import { getCreditos } from '../../api/creditoApi';
 
 
-const FIELDS = [
-    { key: "estado", label: "Estado", type: "select", options: [
-        { value: "ACTIVO",                   label: "Activo"                   },
-        { value: "EN_MORA",                  label: "En mora"                  },
-        { value: "CERRADO",                  label: "Cerrado"                  },
-        { value: "CANCELADO",                label: "Cancelado"                },
-        { value: "CANCELADO_REFINANCIACION", label: "Cancelado refinanciación" },
-    ]},
-];
-
-const COLUMNS = [
-    { label: "ID",          width: "60px"  },
-    { label: "Cliente",     width: "130px" },
-    { label: "Cobrador",    width: "130px" },
-    { label: "Monto",       width: "110px" },
-    { label: "Cuotas",      width: "80px"  },
-    { label: "Interés",     width: "80px"  },
-    { label: "Fecha",       width: "110px" },
-    { label: "Estado",      width: "140px" },
-];
-
-
 export default function Creditos() {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
