@@ -5,18 +5,21 @@ function InputPassword({
   value,
   onChange,
   placeholder = "Ingrese Contraseña",
+  className = "",
+  style = {},
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const IconComponent = showPassword ? ICONS.eye : ICONS.eyeOff;
 
   return (
     <div
-        className="password-input-container"
+        className={className}
         style={{
             display: "flex",
             alignItems: "center",
             gap: "8px",
-            width: "100%"
+            width: "100%",
+            ...style,
         }}
     >
       <input
