@@ -52,6 +52,7 @@ export default function CreditosDetail() {
 
     // Carga inicia
     useEffect(() => {
+        if (!id) return;
         const cargar = async () => {
             setIsLoading(true);
             setError(null);

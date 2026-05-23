@@ -1,64 +1,84 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import FichaCredito from "../../components/creditos/FichaCredito";
-import ModalCrearCredito from "../../components/creditos/ModalCrearCredito";
 import PaginatedContainer from "../../components/common/PaginatedContainer";
 import { getCreditos } from '../../api/creditoApi';
+import styles from '../PagesDetail.module.css';
+
+
+const FIELDS = [
+    { key: "estado", label: "Estado", type: "select", options: [
+        { value: "ACTIVO",                   label: "Activo"                   },
+        { value: "EN_MORA",                  label: "En mora"                  },
+        { value: "CERRADO",                  label: "Cerrado"                  },
+        { value: "CANCELADO",                label: "Cancelado"                },
+        { value: "CANCELADO_REFINANCIACION", label: "Cancelado refinanciación" },
+    ]},
+];
+
+const COLUMNS = [
+    { label: "ID",       width: "60px"  },
+    { label: "Cliente",  width: "130px" },
+    { label: "Cobrador", width: "130px" },
+    { label: "Monto",    width: "110px" },
+    { label: "Cuotas",   width: "80px"  },
+    { label: "Interés",  width: "80px"  },
+    { label: "Fecha",    width: "110px" },
+    { label: "Estado",   width: "140px" },
+];
+
 
 
 export default function Creditos() {
-  const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchParams] = useSearchParams();
   
   // Estado para el cargador (en false para que muestre los datos de una en la captura)
   const [isLoading, setIsLoading] = useState(false);
+  const [creditos,   setCreditos]   = useState([]);
+  const [error,      setError]      = useState(null);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const mockCreditos = [
-    { id: 101, deudaOriginal: 55000, fecha: '2026-05-13', cantidadCuotas: 10, importeCuota: 6000 },
-    { id: 102, deudaOriginal: 120000, fecha: '2026-04-20', cantidadCuotas: 24, importeCuota: 7500 }
-  ];
+  const page   = parseInt(searchParams.get("pagina") ?? "0", 10);
+  const estado = searchParams.get("estado") ?? undefined;
 
-  const camposBusqueda = [
-    { key: 'id', label: 'ID', type: 'text' },
-    { key: 'deudaOriginal', label: 'Deuda Total', type: 'number' },
-    { key: 'fecha', label: 'Fecha Inicio', type: 'date' }
-  ];
+  // carga inicial
+  useEffect(() => {
+        const cargar = async () => {
+            setIsLoading(true);
+            setError(null);
+            try {
+                const data = await getCreditos({
+                    ...(estado && { estado }),
+                    pagina:  page,
+                    tamanio: 10,
+                });
+                setCreditos(data.contenido);
+                setTotalPages(data.totalPaginas);
+            } catch (e) {
+                setError(e?.mensajes?.[0] ?? "Error al cargar créditos");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        cargar();
+    }, [page, estado]);
 
-  const handleConfirmarCreacion = (datosNuevoCredito) => {
-    navigate('/creditos/101');
-  };
 
   return (
-    <div style={{ padding: '20px' }}>
-      {/* El título fuera del loading*/}
-      <h2 className="title" style={{ fontSize: '1.8rem', fontWeight: '600', marginBottom: '20px' }}>Listado de Créditos</h2>
-
-
-        {/*prop onCreate*/}
-        <PaginatedContainer 
-          data={mockCreditos} 
-          fields={camposBusqueda}
-          onCreate={() => setIsModalOpen(true)}
+    <div className={styles.page}>
+        <h2 className="title">Listado de Créditos</h2>
+        <PaginatedContainer
+            fields={FIELDS}
+            columns={COLUMNS}
+            isLoading={isLoading}
+            isEmpty={!creditos.length}
+            error={error}
+            currentPage={page}
+            totalPages={totalPages}
         >
-          <div className="list-header" style={{ display: 'flex', fontWeight: 'bold', padding: '12px', borderBottom: '2px solid #eee' }}>
-            <span style={{ flex: 1 }}>ID</span>
-            <span style={{ flex: 1 }}>Deuda Total</span>
-            <span style={{ flex: 1 }}>Fecha Inicio</span>
-            <span style={{ flex: 1 }}>Plazo</span>
-            <span style={{ flex: 1 }}>Monto Cuota</span>
-            <span style={{ flex: 1 }}>Estado</span>
-          </div>
-
-          {mockCreditos.map(c => (
-            <FichaCredito key={c.id} credito={c} />
-          ))}
+            {creditos?.map(c => c?.id ? <FichaCredito key={c.id} credito={c} /> : null)}
         </PaginatedContainer>
-
-      <ModalCrearCredito 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onConfirm={handleConfirmarCreacion}
-      />
     </div>
   );
+
 }
