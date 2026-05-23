@@ -1,4 +1,4 @@
-import React from 'react';
+import { Link } from 'react-router-dom';
 import RowModels from '../common/RowModels'; // Ajustá la ruta si RowModels está en otra carpeta
 
 

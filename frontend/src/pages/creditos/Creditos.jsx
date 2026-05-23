@@ -1,9 +1,32 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import FichaCredito from "../../components/creditos/FichaCredito";
 import ModalCrearCredito from "../../components/creditos/ModalCrearCredito";
 import PaginatedContainer from "../../components/common/PaginatedContainer";
-import LoadingWrapper from "../../components/common/LoadingWrapper"; 
+import { getCreditos } from '../../api/creditoApi';
+
+
+const FIELDS = [
+    { key: "estado", label: "Estado", type: "select", options: [
+        { value: "ACTIVO",                   label: "Activo"                   },
+        { value: "EN_MORA",                  label: "En mora"                  },
+        { value: "CERRADO",                  label: "Cerrado"                  },
+        { value: "CANCELADO",                label: "Cancelado"                },
+        { value: "CANCELADO_REFINANCIACION", label: "Cancelado refinanciación" },
+    ]},
+];
+
+const COLUMNS = [
+    { label: "ID",          width: "60px"  },
+    { label: "Cliente",     width: "130px" },
+    { label: "Cobrador",    width: "130px" },
+    { label: "Monto",       width: "110px" },
+    { label: "Cuotas",      width: "80px"  },
+    { label: "Interés",     width: "80px"  },
+    { label: "Fecha",       width: "110px" },
+    { label: "Estado",      width: "140px" },
+];
+
 
 export default function Creditos() {
   const navigate = useNavigate();
@@ -32,9 +55,7 @@ export default function Creditos() {
       {/* El título fuera del loading*/}
       <h2 className="title" style={{ fontSize: '1.8rem', fontWeight: '600', marginBottom: '20px' }}>Listado de Créditos</h2>
 
-      {/* 2. Envolvemos todo el contenido dinámico con el LoadingWrapper */}
-      <LoadingWrapper loading={isLoading}>
-        
+
         {/*prop onCreate*/}
         <PaginatedContainer 
           data={mockCreditos} 
@@ -54,8 +75,6 @@ export default function Creditos() {
             <FichaCredito key={c.id} credito={c} />
           ))}
         </PaginatedContainer>
-
-      </LoadingWrapper>
 
       <ModalCrearCredito 
         isOpen={isModalOpen} 
