@@ -22,20 +22,20 @@ import ModalModifcarEtiquetaDescripcion from "../../components/etiquetas/ModalMo
 export default function EtiquetasDetail() {
     const { id } = useParams();
     const mockEtiqueta ={id:1, nombre: "mora", color: "#16a34a", descripcion: "blabla"}
-    const mockcantUs=["12"];
+    const mockcantUs={cant: 12};
 
     const [modalNombre, setModalNombre]     = useState(false);
      const [modalDescripcion, setModalDescripcion]     = useState(false);
      const [colorPalette, setColorPalette ] = useState(false);
 
 
-    const{cantUsuarios}= useState(0);
+  
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-
-
     const { showToast } = useToast();
+    
     const [etiqueta, setEtiqueta]   = useState(mockEtiqueta);
+    const [cantUsuarios]= useState(mockcantUs);
 
 
 
@@ -53,7 +53,7 @@ export default function EtiquetasDetail() {
 
     const handleCambiarcolor = async (color) => {
         try {
-            showToast("Nombre actualizado correctamente", "success");
+            showToast("Color actualizado correctamente", "success");
             
             setEtiqueta(prev => ({ ...prev, color: color }));
         } catch (e) {
@@ -92,6 +92,7 @@ export default function EtiquetasDetail() {
         <DataField label="ID"       value={`#${etiqueta.id}`} />
         <DataField label="NOMBRE"  value={`#${etiqueta.nombre}`} />
         <DataField label="DESCRIPCION" value={`#${etiqueta.descripcion}`} />
+         <DataField label="USUARIOS ASIGNADOS"  value={`#${cantUsuarios.cant}`} />
         <div style={{ color: "var(--text-muted)" , fontSize: "var(--text-xs)" , fontWeight: "var(--font-medium)"}}  > COLOR 
            <div style={{padding:"4px"}}/>
             <div style={{ padding:"7px", width:"7px", backgroundColor:etiqueta.color,  borderRadius: "50%"}}/>

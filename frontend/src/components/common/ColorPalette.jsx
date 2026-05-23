@@ -58,7 +58,7 @@ export default function ColorPalette({ onConfirm }){
                     <div className={styles.container}>
                         {colorArray?.map((colorValue, index) => (
                             <div 
-                                key={index} // Importante para que React no se queje
+                                key={index} 
                                 className={styles.ColorDisplay} 
                                 onClick={() => [setColor(colorValue), handleConfirm(colorValue)]} 
                                 
