@@ -22,7 +22,7 @@ public class ClienteRequest {
     private String email;
 
     @NotBlank(message = "El telefono es obligatorio")
-    @Pattern(regexp = "\\d{8,9}",message = "El telefono debe tener 8 numeros")
+    @Pattern(regexp = "\\d{8,10}",message = "El telefono debe tener 8 a 10 numeros")
     private String telefono;
 
     @NotBlank(message = "El domicilio es obligatorio")
