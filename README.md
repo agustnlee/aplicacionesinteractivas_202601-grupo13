@@ -61,7 +61,25 @@ proyecto/
 │               ├── service/
 │               └── TpGrupo13.java
 └── frontend/
-    └── (por definir)
+    └── src/
+        ├── api/                             
+        ├── components/
+        │      ├── common/              
+        │      ├── creditos/
+        │      ├── usuarios/
+        │      ├── layout/
+        │      └── ui/
+        ├── hooks/
+        ├── pages/
+        │   ├── auth/
+        │   ├── clientes/
+        │   ├── creditos/
+        │   ├── etiquetas/
+        │   └── usuarios/
+        ├── store/                       
+        └── utils/
+
+
 ```
 
 ---
@@ -232,8 +250,10 @@ proyecto/
 
 
 
-## Frontend React + Redux (POR DEFINIR)
+## Frontend React 
 
+
+## Estados Redux (POR DEFINIR)
 
 ## Cómo correr el proyecto
 
