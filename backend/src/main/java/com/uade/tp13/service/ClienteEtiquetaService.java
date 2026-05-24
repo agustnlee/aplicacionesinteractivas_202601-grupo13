@@ -132,6 +132,7 @@ public Page<EtiquetaResumenResponse> obtenerResumenEtiquetas(Pageable pageable) 
     //
     private ClienteEtiquetaResponse mapToResponse(ClienteEtiqueta ce) {
         return ClienteEtiquetaResponse.builder()
+                .id(ce.getId())
                 .etiquetaId(ce.getEtiqueta().getId())
                 .clienteId(ce.getCliente().getId()) 
                 .asignadoPorId(ce.getAsignadoPorId().getId())

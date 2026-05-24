@@ -8,7 +8,7 @@ import lombok.Data;
 @Builder
 
 public class ClienteEtiquetaResponse {
-
+     private Long id; 
      private Long etiquetaId;
      private Long clienteId;
      private Long asignadoPorId;

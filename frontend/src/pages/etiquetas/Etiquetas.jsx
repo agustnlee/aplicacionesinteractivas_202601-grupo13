@@ -10,7 +10,6 @@ import styles from '../PagesDetail.module.css';
 
 const FIELDS = [
     { key: "nombre", label: "Nombre", type: "text" },
-    { key: "color",  label: "Color",  type: "text" },
 ];
 
 const COLUMNS = [
@@ -32,7 +31,7 @@ export default function Etiquetas() {
     const [isLoading, setIsLoading] = useState(false);
     const [error,      setError]      = useState(null);
     const [totalPages, setTotalPages] = useState(1);
-     const [modalCrear, setModalCrear] = useState(false);
+    const [modalCrear, setModalCrear] = useState(false);
 
 
     const page   = parseInt(searchParams.get("pagina") ?? "0", 10);
@@ -40,8 +39,8 @@ export default function Etiquetas() {
     const color  = searchParams.get("color")  ?? undefined;  
 
     // carga inicial + triggers
-    const cargar = async () => {
-        setIsLoading(true);
+    const cargar = async  (showLoader = true) => {
+        if (showLoader) setIsLoading(true);
         setError(null);
         try {
             const data = await buscarEtiquetas({
@@ -54,7 +53,7 @@ export default function Etiquetas() {
         } catch (e) {
             setError(e?.mensajes?.[0] ?? "Error al cargar etiquetas");
         } finally {
-            setIsLoading(false);
+            if (showLoader) setIsLoading(false);
         }
     };
 
@@ -62,7 +61,6 @@ export default function Etiquetas() {
 
    
     const handleCrearEtiqueta = async (form) => {
-        setIsLoading(true);
         try {
             await crearEtiqueta({
                 nombreEtiqueta:      form.nombre,
@@ -72,18 +70,16 @@ export default function Etiquetas() {
             showToast("Etiqueta creada correctamente", "success");
             setModalCrear(false);
             //refetch
-            await cargar();
+            await cargar(false); 
 
-        } catch (error) {
+        } catch (e) {
             showToast(e?.mensajes?.[0] ?? "Error al crear etiqueta", "error");
-        } finally {
-            setIsLoading(false);
         }
     }
 
 
     return (
-         <div className={styles.page}>
+         <div className={`${styles.page} ${!isLoading ? "" : "is-loading"}`}>
             <h2 className="title">Etiquetas</h2>
             <PaginatedContainer
                 fields={FIELDS}

@@ -88,11 +88,11 @@ public class UsuarioService {
  
    
     @Transactional(readOnly = true)
-    public PaginatedResponse<UsuarioResponse> buscarUsuarios(String nombre, ROL_USUARIO rol, Boolean estado, int p, int s) {
+    public PaginatedResponse<UsuarioResponse> buscarUsuarios( Long id, String nombre, ROL_USUARIO rol, Boolean estado, int p, int s) {
         String nombreLimpio = (nombre != null && !nombre.isBlank()) ? nombre : null;        
         Pageable pageable = buildPageable(p, s);
        
-        Page<Usuario> page = usuarioRepository.buscarUsuariosConFiltro(nombreLimpio, rol, estado, pageable);
+        Page<Usuario> page = usuarioRepository.buscarUsuariosConFiltro(id, nombreLimpio, rol, estado, pageable);
         return PaginatedResponse.<UsuarioResponse>builder()
                 .contenido(page.getContent().stream().map(this::mapToResponse).toList())
                 .paginaActual(page.getNumber())

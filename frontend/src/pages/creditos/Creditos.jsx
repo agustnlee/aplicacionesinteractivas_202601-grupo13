@@ -7,7 +7,7 @@ import styles from '../PagesDetail.module.css';
 
 
 const FIELDS = [
-    { key: "creditoId",  label: "ID",  type: "number" },
+    { key: "id",         label: "ID",          type: "number" },
     { key: "cobradorId",   label: "ID Cobrador",  type: "number" },
     { key: "clienteId",    label: "ID Cliente",   type: "number" },
     { key: "estado", label: "Estado", type: "select", options: [
@@ -74,7 +74,7 @@ export default function Creditos() {
 
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ${!isLoading ? "" : "is-loading"}`}>
         <h2 className="title">Listado de Créditos</h2>
         <PaginatedContainer
             fields={FIELDS}

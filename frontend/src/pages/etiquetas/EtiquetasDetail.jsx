@@ -90,6 +90,7 @@ export default function EtiquetasDetail() {
         }
     };
 
+
     const handleDesasignar = async (clienteId) => {
         try {
             const data = await obtenerEtiquetaPorCliente(clienteId, { pagina: 0, tamanio: 50 });
@@ -98,11 +99,11 @@ export default function EtiquetasDetail() {
                 showToast("Este cliente no tiene esta etiqueta asignada", "warning");
                 return;
             }
-            await eliminarAsignacion(asignacion.id);
+            await eliminarAsignacion(asignacion.id);  // ← ahora sí existe
             showToast(`Etiqueta desasignada del cliente #${clienteId}`, "success");
             setModalGestionar(false);
             const cant = await contarClientesPorEtiqueta(id);
-            setCantClientes(cant);
+            setCantClientes(cant);  // ← actualiza contador
         } catch (e) {
             showToast(e?.mensajes?.[0] ?? "Error al desasignar etiqueta", "error");
         }

@@ -19,10 +19,12 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     boolean existsByEmail(String email);
     //REVISAR HU22
     @Query("SELECT u FROM Usuario u WHERE " +
+           "(:id IS NULL OR u.id = :id) AND " +
            "(:nombre IS NULL OR LOWER(u.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))) AND " +
            "(:rol IS NULL OR u.rol = :rol) AND " +
            "(:estado IS NULL OR u.estado = :estado)")
     Page<Usuario> buscarUsuariosConFiltro(
+            @Param("id")     Long id,
             @Param("nombre") String nombre,
             @Param("rol") ROL_USUARIO rol,
             @Param("estado") Boolean estado,
