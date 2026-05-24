@@ -5,13 +5,13 @@
   padding: var(--space-6) var(--space-4);
 }
 
-.footer a {
+.footer a:not(.footerLogo) {
   text-decoration: none;
   color: var(--text-muted);
   transition: transform var(--anim-fast) var(--ease-standard);
 }
 
-.footer a:hover {
+.footer a:not(.footerLogo):hover {
   color: var(--primary-600);
   transform: translateY(-1px);
   text-decoration: underline;
@@ -28,10 +28,16 @@
 .footerLogo {
   align-items: center;
   display: flex;
-  opacity: 0.9;
-  margin-top: 0.2rem;
-  opacity: 0.85;
+  opacity: 0.5;
+  margin-top: 2rem;
 }
+
+.footerLogo svg {
+  width: 50px;
+  height: 50px;
+}
+
+
 
 .left {
   font-weight: var(--font-semibold);
@@ -43,6 +49,7 @@
   gap: var(--gap-md);
   text-align: center;
   align-items: center;
+  margin-top: 1.5rem;
 }
 
 

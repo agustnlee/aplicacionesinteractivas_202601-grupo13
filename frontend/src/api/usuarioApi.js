@@ -1,7 +1,7 @@
 import apiClient from "./apiClient";
 
-export const getUsuarios = () =>
-    apiClient("/usuarios");
+export const getUsuarios = (params = {}) =>
+    apiClient(`/usuarios?${new URLSearchParams(params)}`);
 
 export const getUsuarioById = (id) =>
     apiClient(`/usuarios/${id}`);
@@ -14,3 +14,6 @@ export const editarUsuario = (id, data) =>
 
 export const cambiarEstadoUsuario = (id) =>
     apiClient(`/usuarios/${id}/estado`, "PATCH");
+
+export const resetearPassword = (id, password) =>
+    apiClient(`/usuarios/${id}/password`, "PATCH", { password });

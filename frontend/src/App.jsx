@@ -37,6 +37,8 @@ function App() {
   return (
 
     <Routes>
+      <Route path="/login" element={<Login />} />
+      
       {/* Rutas con layout  */}
       <Route element={<Layout />}>
 
@@ -44,7 +46,7 @@ function App() {
         {/* Públicas (Mantenemos el /login oficial de develop) */}
         <Route path="/" element={<Homepage />} />
         <Route path="/test" element={<Test />} />
-        <Route path="/login" element={<Login />} />
+        
 
         {/* Privadas protegidas con autenticación */}
         <Route element={<PrivateRoute />}>

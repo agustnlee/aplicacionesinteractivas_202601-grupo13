@@ -7,7 +7,7 @@ const ESTADO_BADGE = {
 };
 
 const COLUMNS = [
-    { key: "numeroCuota",      width: "50px",  render: (c) => <strong>#{c.numeroCuota}</strong> },
+    { key: "numeroCuota", width: "50px", render: (c) => <strong>#{c.numeroCuota}</strong> },
     { key: "fechaVencimiento", width: "120px" },
     { key: "monto",            width: "100px", render: (c) => `$${c.monto.toLocaleString()}` },
     { key: "estado",           width: "110px", render: (c) => (
