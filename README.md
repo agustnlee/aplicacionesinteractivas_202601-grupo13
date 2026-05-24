@@ -291,7 +291,7 @@ Cabe destacar que no se iplementó teniendo en cuenta la responsividad para dife
 
 ## Paginas Implementadas
 | Concepto | Ruta  | Funcionalidad  |
-|------|-----------|
+|---|---|---|
 | Formulario Login | `/login` | Autenticación mediante JWT, acceso al sistema y guarda de token |
 | Página Inicio | `/` | Navegación principal, página de landing principal |
 | Listado de Clientes | `/clientes` | Búsqueda, filtros y listado paginado de clientes + creación |
@@ -346,10 +346,10 @@ Cabe destacar que no se iplementó teniendo en cuenta la responsividad para dife
 ---
 ## Justificación de Dependencias adicionales
 
-#Lucide React
+### Lucide React
 Utilizada para mejorar la visualización de acciones e iconografía del sistema mediante íconos SVG modernos y reutilizables.
 
-#TailwindCSS
+### TailwindCSS
 Utilizado parcialmente en la Home para acelerar el desarrollo visual y facilitar la construcción de layouts, con proyección de crecimiento constante de secciones.
 
 ---
