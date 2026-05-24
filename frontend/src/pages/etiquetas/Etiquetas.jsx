@@ -24,7 +24,7 @@ const FIELDS = [
 const COLUMNS = [
     { label: "ID",       width: "60px"  },
     { label: "nombre",  width: "130px" },
-    { label: "descripcion", width: "130px" },
+    { label: "descripcion", width: "420px" },
     { label: "color",    width: "110px" },
    
 ];
@@ -32,38 +32,34 @@ const COLUMNS = [
 
 
 
-export default function CreadorEtiquetaMock() {
+export default function Etiquetas() {
+    const [searchParams] = useSearchParams();
+    
+
+    const [etiquetas,   setEtiquetas]   = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [mensaje, setMensaje] = useState(null);
     const [etiquetaData, setEtiquetaData] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
+    const [error,      setError]      = useState(null);
+    const [totalPages, setTotalPages] = useState(1);
+    const page   = parseInt(searchParams.get("pagina") ?? "0", 10);
 
-const mockEtiqueta = { 
+    const nombre = searchParams.get("nombre") ?? undefined; 
+    const color  = searchParams.get("color")  ?? undefined;  
 
-	nombreEtiqueta: "vip", descripcionEtiqueta: "clientes importantes", colorEtiqueta: "#16a34a"};
-
-
- const [searchParams] = useSearchParams();
-  
-  // Estado para el cargador (en false para que muestre los datos de una en la captura)
- 
-  const [etiquetas,   setetiquetas]   = useState([]);
-  const [error,      setError]      = useState(null);
-  const [totalPages, setTotalPages] = useState(1);
-
-  const page   = parseInt(searchParams.get("pagina") ?? "0", 10);
-
-
-  // carga inicial
-  useEffect(() => {
+    // carga inicial + triggers
+    useEffect(() => {
         const cargar = async () => {
             setIsLoading(true);
             setError(null);
             try {
-                const data = await buscarEtiquetas({  pagina:  page,
-                tamanio: 10 }
-                );
-                setetiquetas(data.contenido);
+                const data = await buscarEtiquetas({
+                    pagina:  page,
+                    tamanio: 10,
+                    ...(nombre && { nombre }),
+                    ...(color  && { color  }),
+                });
+                setEtiquetas(data.contenido);
                 setTotalPages(data.totalPaginas);
             } catch (e) {
                 setError(e?.mensajes?.[0] ?? "Error al cargar etiquetas");
@@ -72,11 +68,7 @@ const mockEtiqueta = {
             }
         };
         cargar();
-    }, [page]);
-
-
-
-
+    }, [page, nombre, color]);
 
    
     const handleCrearEtiqueta = async () => {
@@ -86,15 +78,10 @@ const mockEtiqueta = {
         try {
             setIsLoading(true);
             
-        
-            const respuesta = await crearEtiqueta(mockEtiqueta);
-            
-            console.log("Etiqueta creada exitosamente:", respuesta);
-            setMensaje("sss");
+            // fetch
             
         } catch (error) {
             console.error("Falló la creación:", error);
-            setMensaje("nnn")
             
         } finally {
             setIsLoading(false);
@@ -111,12 +98,10 @@ const handleObtenerEtiquetaPorId = async () => {
 
             
             
-            console.log("Etiqueta creada exitosamente:", res);
-            setMensaje("sss");
+            console.log("Etiqueta Obtenida:", res);
             
         } catch (error) {
-            console.error("Falló la creación:", error);
-            setMensaje("nnn")
+            console.error("Falló la obtencion unica de etiqueta:", error);
             
         } finally {
             setIsLoading(false);
@@ -134,7 +119,7 @@ const handleObtenerEtiquetaPorId = async () => {
                     fields={FIELDS}
                     columns={COLUMNS}
                     isLoading={isLoading}
-                   // isEmpty={!etiquetas.length}
+                    isEmpty={!etiquetas.length}
                     error={error}
                     currentPage={page}
                     totalPages={totalPages}
