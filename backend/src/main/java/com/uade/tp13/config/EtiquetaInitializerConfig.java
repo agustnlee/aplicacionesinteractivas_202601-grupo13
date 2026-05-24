@@ -45,7 +45,7 @@ public class EtiquetaInitializerConfig {
             Etiqueta etiqueta = Etiqueta.builder()
                     .nombre(nombre)
                     .color(color)
-                    .descripcion(descripcion)
+                    .descripcion(descripcion)x
                     .build();
 
             etiquetaRepository.save(etiqueta);
