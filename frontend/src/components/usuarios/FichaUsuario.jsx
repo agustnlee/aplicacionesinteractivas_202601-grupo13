@@ -11,7 +11,9 @@ const ROL_BADGE = {
 };
 
 const columnasConfig = [
-    { key: "id",     label: "ID",     width: "60px"  },
+    { key: "id", label: "ID", width: "60px",
+        render: (u) => <strong>#{u.id}</strong>   
+    },
     { key: "nombre", label: "Nombre", width: "160px",
         render: (u) => (
             <Link to={`/usuarios/${u.id}`} className={styles.link}>
@@ -46,7 +48,6 @@ const FichaUsuario = ({ usuario }) => (
     <RowModels
         item={usuario}
         columns={columnasConfig}
-        basePath="/usuarios"
     />
 );
 

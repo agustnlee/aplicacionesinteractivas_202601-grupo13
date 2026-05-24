@@ -141,6 +141,10 @@ public Page<EtiquetaResumenResponse> obtenerResumenEtiquetas(Pageable pageable) 
     
     }
 
+    public long contarPorEtiqueta(Long etiquetaId) {
+        return clienteEtiquetaRepository.countByEtiquetaId(etiquetaId);
+    }
+
 
 
 }

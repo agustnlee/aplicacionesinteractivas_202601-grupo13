@@ -5,7 +5,7 @@ import com.uade.tp13.repository.EtiquetaRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+/* 
 @Configuration
 public class EtiquetaInitializerConfig {
 
@@ -45,7 +45,7 @@ public class EtiquetaInitializerConfig {
             Etiqueta etiqueta = Etiqueta.builder()
                     .nombre(nombre)
                     .color(color)
-                    .descripcion(descripcion)
+                    .descripcion(descripcion)x
                     .build();
 
             etiquetaRepository.save(etiqueta);
@@ -54,3 +54,5 @@ public class EtiquetaInitializerConfig {
         }
     }
 }
+
+*/
