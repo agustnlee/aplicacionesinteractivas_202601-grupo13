@@ -3,12 +3,13 @@ package com.uade.tp13.controller;
 import com.uade.tp13.dto.request.ClienteEtiquetaRequest;
 import com.uade.tp13.dto.response.ClienteEtiquetaResponse;
 import com.uade.tp13.dto.response.EtiquetaResumenResponse;
+import com.uade.tp13.dto.response.PaginatedResponse;
 import com.uade.tp13.model.Usuario;
 import com.uade.tp13.service.ClienteEtiquetaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -41,19 +42,23 @@ public class ClienteEtiquetaController {
     
     // --- HU47: Obtener resumen estadístico de etiquetas (Paginado) ---
     @GetMapping("/resumen")
-    public ResponseEntity<Page<EtiquetaResumenResponse>> obtenerResumenEtiquetas(
-            @PageableDefault(size = 10) Pageable pageable) {
-        Page<EtiquetaResumenResponse> resumen = clienteEtiquetaService.obtenerResumenEtiquetas(pageable);
-        return ResponseEntity.ok(resumen);
+    public ResponseEntity<PaginatedResponse<EtiquetaResumenResponse>> obtenerResumenEtiquetas(
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamanio) {
+        Pageable pageable = PageRequest.of(pagina, tamanio);
+        Page<EtiquetaResumenResponse> page = clienteEtiquetaService.obtenerResumenEtiquetas(pageable);
+        return ResponseEntity.ok(toPaginatedResponse(page));
     }
 
     // --- HU48: Obtener etiquetas asignadas a un cliente específico (Paginado) ---
     @GetMapping("/cliente/{clienteId}")
-    public ResponseEntity<Page<ClienteEtiquetaResponse>> obtenerEtiquetasPorCliente(
+    public ResponseEntity<PaginatedResponse<ClienteEtiquetaResponse>> obtenerEtiquetasPorCliente(
             @PathVariable Long clienteId,
-            @PageableDefault(size = 10) Pageable pageable) {
-        Page<ClienteEtiquetaResponse> etiquetasCliente = clienteEtiquetaService.obtenerEtiquetasPorCliente(clienteId, pageable);
-        return ResponseEntity.ok(etiquetasCliente);
+            @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "10") int tamanio) {
+        Pageable pageable = PageRequest.of(pagina, tamanio);
+        Page<ClienteEtiquetaResponse> page = clienteEtiquetaService.obtenerEtiquetasPorCliente(clienteId, pageable);
+        return ResponseEntity.ok(toPaginatedResponse(page));
     }
 
     // --- ELIMINAR: Quitar etiqueta de un cliente por el ID de la asignación ---
@@ -62,4 +67,17 @@ public class ClienteEtiquetaController {
         clienteEtiquetaService.eliminarPorId(idAsignacion);
         return ResponseEntity.noContent().build();
     }
+
+
+    private <T> PaginatedResponse<T> toPaginatedResponse(Page<T> page) {
+    return PaginatedResponse.<T>builder()
+            .contenido(page.getContent())
+            .paginaActual(page.getNumber())
+            .totalPaginas(page.getTotalPages())
+            .totalElementos(page.getTotalElements())
+            .tamanioPagina(page.getSize())
+            .esUltima(page.isLast())
+            .build();
+    }
+
 }
