@@ -10,6 +10,7 @@ import PaginatedContainer from "../../components/common/PaginatedContainer";
 import DataField from "../../components/common/DataField";
 import Button from "../../components/ui/Button";
 import ColorPalette from "../../components/common/ColorPalette";
+import ModalAsignarEtiqueta from "../../components/etiquetas/ModalAsignarEtiqueta";
 
 import styles from "../PagesDetail.module.css";
 
@@ -24,6 +25,7 @@ export default function EtiquetasDetail() {
 
     const [modalNombre, setModalNombre]     = useState(false);
     const [modalDescripcion, setModalDescripcion]     = useState(false);
+    const[modalAsignar, setModalAsignar]= useState(false);
     const [colorPalette, setColorPalette ] = useState(false);
 
     const [isLoading, setIsLoading] = useState(false);
@@ -129,7 +131,7 @@ export default function EtiquetasDetail() {
 
             <div> cambiar nombre<Button icon="edit"  variant="ghost"  size="md"  onClick={() => setModalNombre(true)}/></div>
             <div >Cambiar descripcion<Button icon="edit"  variant="ghost"  size="md"  onClick={() => setModalDescripcion(true)}/></div> 
-            <Button icon="trash" variant="danger" size="md" >
+            <Button icon="trash" variant="danger" size="md"  >
                 eliminar etiqueta
             </Button>
         </div>
@@ -140,6 +142,8 @@ export default function EtiquetasDetail() {
                 onClose={() => setModalNombre(false)}
                 onConfirm={handleCambiarNombre}>
         </ModalModifcarEtiquetaNombre>
+
+        <ModalAsignarEtiqueta isOpen={modalAsignar} onClose={()=> setModalAsignar(false)}></ModalAsignarEtiqueta>
 
         <ModalModifcarEtiquetaDescripcion isOpen={modalDescripcion}
                 onClose={() => setModalDescripcion(false)}
