@@ -1,11 +1,11 @@
 import apiClient from "./apiClient";
 
 export const crearEtiqueta = (data) =>
-    apiClient("/etiquetas", "POST", {data});
+    apiClient("/etiquetas", "POST", data);
 
 
 export const modificarEtiqueta = (id, data)=> 
-    apiClient(`/etiquetas/${id}`, "PUT", { data });
+    apiClient(`/etiquetas/${id}`, "PUT", data);
 
 export const obtenerEtiquetaPorId= (id)=>
     apiClient(`/etiquetas/${id}`,"GET");
