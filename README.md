@@ -35,6 +35,8 @@ Incluye la gestión de etiquetas y asignaciones de las mismas a los clientes. El
 | Frontend | React 18 + Vite 7 |
 | Routing | React Router v7 |
 | Estado global | Redux Toolkit + React-Redux |
+| UI / Estilos | CSS Modules + TailwindCSS |
+| Iconografía | Lucide React |
 
 ---
 
@@ -248,12 +250,116 @@ proyecto/
 ---
 
 
+---
+## Estética
+
+La interfaz fue diseñada utilizando una combinación de tonos blancos, grises suaves y acentos azules con el objetivo de transmitir claridad visual, confianza y profesionalismo.
+
+La elección del color azul responde tanto a criterios estéticos como psicológicos y contextuales del dominio financiero y de gestión de créditos, siendo estos:
 
 
-## Frontend React 
+### Justificación visual y contextual
 
+| Elemento | Justificación |
+|---|---|
+| Azul principal | Asociado a confianza, seguridad y estabilidad |
+| Blanco y grises claros | Mejoran legibilidad y reducen fatiga visual |
+| Contrastes suaves | Favorecen lectura prolongada y uso administrativo |
+| Íconos e indicadores azules | Refuerzan navegación y jerarquía visual |
+
+
+### Relación con el dominio
+
+Al tratarse de un sistema interno de gestión de créditos y cobranzas, se buscó mantener una estética sobria y profesional similar a plataformas bancarias y financieras modernas.
+
+El uso de acentos azules permite:
+- transmitir sensación de seguridad
+- irradiar confiabilidad
+- evitar una interfaz visualmente agresiva
+- mantener foco en los datos y operaciones
+
+### Diseño responsive
+
+La interfaz fue desarrollada priorizando:
+- distribución clara de información
+- navegación simple
+- reutilización visual y familiaridad
+
+Cabe destacar que no se iplementó teniendo en cuenta la responsividad para diferentes dispositivos dado que en el contexto del proyecto, la aplicación va a ser utilizada exclusivamente en una computadora
+
+---
+
+## Paginas Implementadas
+| Concepto | Ruta  | Funcionalidad  |
+|------|-----------|
+| Formulario Login | `/login` | Autenticación mediante JWT, acceso al sistema y guarda de token |
+| Página Inicio | `/` | Navegación principal, página de landing principal |
+| Listado de Clientes | `/clientes` | Búsqueda, filtros y listado paginado de clientes + creación |
+| Cliente Único | `/clientes/:id` | Visualización y gestión completa del cliente, etiquetas y créditos |
+| Listado de Créditos | `/creditos` | Listado paginado con filtros por estado y cobrador |
+| Crédito Único | `/creditos/:id` | Detalle y gestión del crédito, cuotas y pagos asociados |
+| Listado de Usuarios | `/usuarios` | Administración y visualización de usuarios internos + creación |
+| Usuario Único | `/usuarios/:id` | Información detallada y edición de usuario |
+| Listado de Etiquetas | `/etiquetas` | Listado y búsqueda de etiquetas |
+| Etiqueta Única | `/etiquetas/:id` | Detalle y gestión de etiquetas + asignación/desasignación de etiquetas a clientes |
+
+---
+
+---
+
+## Componentes Reutilizables
+| Componente | Responsabilidad |
+|---|---|
+| `PaginatedContainer` | Manejo reutilizable de paginación, filtros y gestión de estados |
+| `LoadingWrapper` | Estados de carga, error y vacío |
+| `Modal` | Ventanas modales reutilizables |
+| `ModalForm` | Formularios reutilizables dentro de modales |
+| `Button` | Botones textuales reutilizables con/sin íconos |
+| `IconButton` | Botones visuales con solo íconos |
+| `FilterSearch` | Búsqueda con debounce |
+| `Spinner` | Indicador visual de carga |
+| `Dropdown` | Selectores reutilizables |
+| `DataField` | Visualización label/valor para paginas de detalle |
+| `ShowToast` | Sistema global de notificaciones visuales |
+
+
+---
+
+---
+
+## Manejo de Estados Visuales
+| Estado | Implementación | Objetivo |
+|---|---|---|
+| Loading | `LoadingWrapper` / `PaginatedContainer` / `Spinner` | Mostrar feedback visual durante cargas |
+| Error | `LoadingWrapper` / `PaginatedContainer` | Centralizar errores de fetch |
+| Empty State | `LoadingWrapper` / `PaginatedContainer` | Mostrar ausencia de datos de forma consistente |
+| Paginación | `PaginatedContainer` | Navegación reutilizable entre páginas para listado paginado |
+| Búsqueda | `FilterSearch` | Optimizar búsquedas mediante debounce |
+| Feedback visual | `ShowToast` | Mostrar confirmaciones y errores globales |
+| Modal abierto | `useLockBodyScroll` | Evitar scroll de fondo |
+| Navegación protegida | `PrivateRoute` | Restringir acceso sin JWT |
+| Render condicional | React conditional rendering | Mostrar contenido según estado |
+
+---
+
+
+---
+## Justificación de Dependencias adicionales
+
+#Lucide React
+Utilizada para mejorar la visualización de acciones e iconografía del sistema mediante íconos SVG modernos y reutilizables.
+
+#TailwindCSS
+Utilizado parcialmente en la Home para acelerar el desarrollo visual y facilitar la construcción de layouts, con proyección de crecimiento constante de secciones.
+
+---
+
+
+---
 
 ## Estados Redux (POR DEFINIR)
+
+---
 
 ## Cómo correr el proyecto
 
