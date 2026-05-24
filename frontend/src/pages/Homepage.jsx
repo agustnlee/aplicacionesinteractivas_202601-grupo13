@@ -1,138 +1,142 @@
-import { Link } from "react-router-dom";
-import { Landmark, Users, Wallet, AlertCircle, Tags, ShieldCheck } from "lucide-react";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { CheckCircle2, Wallet, Users, Tags } from "lucide-react"; 
 
 export default function Homepage() {
   const user = useSelector((state) => state.auth?.user);
-
   const displayName = user?.nombre ?? user?.name ?? "Operador";
   const roleLabel = user?.rol ?? null;
   const isAdmin = String(user?.rol ?? "").toUpperCase() === "ADMIN";
 
   return (
-    <div className="flex-1 w-full max-w-[90rem] mx-auto py-[var(--space-8)] px-[var(--space-6)] md:py-[var(--space-10)] md:px-[var(--space-8)]">
+    <div className="max-w-[90rem] w-full mx-auto px-6 py-6 flex flex-col min-h-[calc(100vh-4rem)] bg-transparent items-center">
       
-      {/* Banner Principal */}
-      <div className="bg-[var(--primary-600)] rounded-[var(--radius-xl)] p-[var(--space-6)] md:p-[var(--space-10)] text-white shadow-lg mb-[var(--space-stack-xl)] relative overflow-hidden flex flex-col justify-between">
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-[var(--gap-sm)] bg-white/10 px-[var(--space-4)] py-[var(--space-2)] rounded-[var(--radius-full)] backdrop-blur-md border border-white/20 mb-[var(--space-stack-md)]">
-            <ShieldCheck size={18} className="text-blue-100" />
-            <span className="text-[length:var(--text-xs)] font-[number:var(--font-semibold)] uppercase tracking-widest text-blue-50">
-              Sistema Interno
-            </span>
-          </div>
-          <h1 className="text-[length:var(--text-3xl)] md:text-[length:var(--text-3xl)] font-[number:var(--font-bold)] mb-[var(--space-stack-sm)] tracking-tight">
-            ¡Bienvenido de vuelta, {displayName}!
-          </h1>
-          <p className="text-blue-100 max-w-2xl text-[length:var(--text-base)] leading-[var(--leading-relaxed)] mb-[var(--space-stack-md)]">
-            Panel central de operaciones. Gestioná la cartera de clientes, visualizá créditos otorgados y monitoreá el estado de mora para priorizar la gestión de cobro.
-          </p>
-          {roleLabel && (
-            <div className="inline-flex items-center gap-[var(--gap-sm)] bg-[var(--primary-800)]/50 px-[var(--space-4)] py-[var(--space-2)] rounded-[var(--radius)] border border-white/10">
-              <span className="text-blue-200 text-[length:var(--text-xs)] uppercase tracking-wider">Rol Activo:</span>
-              <span className="font-[number:var(--font-bold)] text-white">{roleLabel}</span>
-            </div>
-          )}
-        </div>
-        
-        {/* Decoración de fondo corregida (Sin romper el Flexbox) */}
-        <Landmark 
-          size={300} 
-          className="absolute -right-12 -bottom-12 text-white/10 pointer-events-none" 
-          strokeWidth={1} 
-        />
-      </div>
-
-      {/* Grid de Métricas */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-[var(--gap-lg)] mb-[var(--space-stack-xl)]">
-        {/* Metrica 1 */}
-        <div className="bg-white p-[var(--space-6)] rounded-[var(--radius-lg)] border border-[var(--border-subtle)] shadow-sm hover:shadow-md transition-shadow flex items-start gap-[var(--gap-md)]">
-          <div className="p-[var(--space-3)] bg-blue-50 text-[var(--primary-600)] rounded-[var(--radius)]">
-            <Users size={28} />
-          </div>
-          <div>
-            <p className="text-[length:var(--text-xs)] text-[var(--text-muted)] font-[number:var(--font-semibold)] uppercase tracking-wider mb-1">Clientes Activos</p>
-            <div className="flex items-baseline gap-[var(--gap-sm)] mb-1">
-                <p className="text-[length:var(--text-2xl)] font-[number:var(--font-bold)] text-[var(--text)]">1,248</p>
-                <span className="text-[length:var(--text-xs)] font-[number:var(--font-medium)] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">+4.2%</span>
-            </div>
-            <p className="text-[length:var(--text-xs)] text-[var(--text-alt)]">Total registrados en base</p>
-          </div>
-        </div>
-        
-        {/* Metrica 2 */}
-        <div className="bg-white p-[var(--space-6)] rounded-[var(--radius-lg)] border border-[var(--border-subtle)] shadow-sm hover:shadow-md transition-shadow flex items-start gap-[var(--gap-md)]">
-          <div className="p-[var(--space-3)] bg-emerald-50 text-emerald-600 rounded-[var(--radius)]">
-            <Wallet size={28} />
-          </div>
-          <div>
-            <p className="text-[length:var(--text-xs)] text-[var(--text-muted)] font-[number:var(--font-semibold)] uppercase tracking-wider mb-1">Créditos Otorgados</p>
-            <div className="flex items-baseline gap-[var(--gap-sm)] mb-1">
-                <p className="text-[length:var(--text-2xl)] font-[number:var(--font-bold)] text-[var(--text)]">384</p>
-                <span className="text-[length:var(--text-xs)] font-[number:var(--font-medium)] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">+12.8%</span>
-            </div>
-            <p className="text-[length:var(--text-xs)] text-[var(--text-alt)]">En amortización corriente</p>
-          </div>
-        </div>
-        
-        {/* Metrica 3 */}
-        <div className="bg-white p-[var(--space-6)] rounded-[var(--radius-lg)] border border-[var(--border-subtle)] shadow-sm hover:shadow-md transition-shadow flex items-start gap-[var(--gap-md)]">
-          <div className="p-[var(--space-3)] bg-amber-50 text-[var(--warning)] rounded-[var(--radius)]">
-            <AlertCircle size={28} />
-          </div>
-          <div>
-            <p className="text-[length:var(--text-xs)] text-[var(--text-muted)] font-[number:var(--font-semibold)] uppercase tracking-wider mb-1">Alertas de Mora</p>
-            <div className="flex items-baseline gap-[var(--gap-sm)] mb-1">
-                <p className="text-[length:var(--text-2xl)] font-[number:var(--font-bold)] text-[var(--text)]">24</p>
-                <span className="text-[length:var(--text-xs)] font-[number:var(--font-medium)] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md">Acción Req.</span>
-            </div>
-            <p className="text-[length:var(--text-xs)] text-[var(--text-alt)]">Cuotas vencidas sin conciliar</p>
-          </div>
+      {/* Etiqueta Sistema Interno */}
+      <div className="mb-4">
+        <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 rounded-full border border-blue-200 w-max shadow-sm text-sm font-bold uppercase tracking-wide px-6 py-2">
+          <CheckCircle2 size={18} />
+          <span>Sistema Interno</span>
         </div>
       </div>
 
-      {/* Tarjetas de Información */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-[var(--gap-lg)]">
-        <article className="bg-white rounded-[var(--radius-xl)] p-[var(--space-8)] border border-[var(--border-subtle)] shadow-sm flex flex-col justify-between">
-          <div>
-            <div className="flex items-center gap-[var(--gap-md)] mb-[var(--space-stack-md)]">
-              <div className="p-[var(--space-3)] bg-blue-50 text-[var(--primary-600)] rounded-[var(--radius)]">
-                <Landmark size={24} />
-              </div>
-              <div>
-                  <p className="text-[length:var(--text-xs)] font-[number:var(--font-bold)] uppercase tracking-widest text-[var(--primary-600)] mb-1">Módulo Financiero</p>
-                  <h2 className="text-[length:var(--text-xl)] font-[number:var(--font-semibold)] text-[var(--text)]">Control de Créditos y Cuotas</h2>
-              </div>
-            </div>
-            <p className="text-[length:var(--text-base)] leading-[var(--leading-relaxed)] text-[var(--text-alt)]">
-              CrediGest automatiza la generación de calendarios de cuotas al otorgar un crédito y registra cada pago contra el saldo pendiente. Cuando una cuota vence sin cancelarse, el sistema la marca en mora y la expone en los listados de créditos para priorizar la gestión de cobro.
-            </p>
-          </div>
-        </article>
-
-        {isAdmin && (
-          <article className="bg-white rounded-[var(--radius-xl)] p-[var(--space-8)] border border-[var(--border-subtle)] shadow-sm flex flex-col justify-between">
-            <div>
-              <div className="flex items-center gap-[var(--gap-md)] mb-[var(--space-stack-md)]">
-                <div className="p-[var(--space-3)] bg-purple-50 text-purple-600 rounded-[var(--radius)]">
-                  <Tags size={24} />
-                </div>
-                <div>
-                    <p className="text-[length:var(--text-xs)] font-[number:var(--font-bold)] uppercase tracking-widest text-purple-600 mb-1">Panel Avanzado</p>
-                    <h2 className="text-[length:var(--text-xl)] font-[number:var(--font-semibold)] text-[var(--text)]">Segmentación con Etiquetas</h2>
-                </div>
-              </div>
-              <p className="text-[length:var(--text-base)] leading-[var(--leading-relaxed)] text-[var(--text-alt)] mb-[var(--space-stack-lg)]">
-                Herramienta exclusiva de administradores. Creá etiquetas personalizadas (ej. zona, nivel de riesgo, producto) y asignalas a tus clientes para filtrar la cartera en campañas y reportes sin perder el contexto de cada relación comercial.
+      <div className="w-full max-w-5xl flex flex-col items-center gap-6">
+        
+        <section className="flex flex-col gap-6 w-full">
+          {/* Banner Principal Flotante */}
+          <div className="flex flex-col shadow-lg rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-xl bg-[var(--primary-600)] text-[var(--primary-50)]">
+            
+            <h1 
+              className="m-0 text-3xl md:text-4xl font-bold tracking-tight text-center"
+              style={{ padding: "1.5rem 2rem" }}
+            >
+              ¡Bienvenido de vuelta, {displayName}!
+            </h1>
+            
+            <div 
+              className="bg-white text-[var(--text)] border-x border-b border-[var(--border-subtle)] rounded-b-3xl flex flex-col items-center text-center gap-4"
+              style={{ padding: "1.5rem 2rem" }}
+            >
+              <p className="text-base md:text-lg leading-relaxed max-w-3xl m-0 text-[var(--text-alt)]">
+                Panel central de operaciones. Gestioná la cartera de clientes, visualizá créditos otorgados y monitoreá el estado de mora para priorizar la gestión.
               </p>
+              {roleLabel && (
+                <div className="inline-flex items-center gap-2 bg-[var(--primary-50)] rounded-lg border border-[var(--primary-200)] w-max text-blue-800 text-sm uppercase tracking-wider font-extrabold px-6 py-2 mt-1 shadow-sm">
+                  Rol Activo: {roleLabel}
+                </div>
+              )}
             </div>
-            <div>
-              <Link to="/etiquetas" className="btn btn-primary px-[var(--space-6)] py-[var(--space-3)] rounded-[var(--radius)] shadow-sm hover:shadow-md transition-all">
-                Gestionar Etiquetas
-              </Link>
-            </div>
-          </article>
-        )}
+          </div>
+
+          {/* Bloques en grid 2x2 - Tarjetas Flotantes */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+            
+            {/* Créditos */}
+            <article 
+              className="bg-white rounded-3xl border border-[var(--border-subtle)] shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-center text-left"
+              style={{ padding: "1.5rem 2rem" }}
+            >
+              {/* Forzamos el margen inferior con style para evitar bloqueos de Tailwind */}
+              <div className="flex items-center gap-4" style={{ marginBottom: "2rem" }}>
+                <Wallet size={36} strokeWidth={2} className="text-[var(--primary-600)]" />
+                <div className="flex flex-col">
+                  <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--primary-600)] m-0">
+                    Créditos
+                  </h2>
+                  <h3 className="text-lg md:text-xl font-bold leading-tight text-[var(--text)] m-0">
+                    Gestión de Créditos
+                  </h3>
+                </div>
+              </div>
+              <p className="text-[var(--text-alt)] text-sm md:text-base leading-relaxed m-0">
+                CrediGest automatiza la generación y seguimiento de cuotas al otorgar créditos.
+              </p>
+            </article>
+
+            {/* Mora */}
+            <article 
+              className="bg-white rounded-3xl border border-[var(--border-subtle)] shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-center text-left"
+              style={{ padding: "1.5rem 2rem" }}
+            >
+              <div className="flex items-center gap-4" style={{ marginBottom: "2rem" }}>
+                <CheckCircle2 size={36} strokeWidth={2} className="text-[var(--warning)]" />
+                <div className="flex flex-col">
+                  <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--warning)] m-0">
+                    Mora
+                  </h2>
+                  <h3 className="text-lg md:text-xl font-bold leading-tight text-[var(--text)] m-0">
+                    Monitoreo Automático
+                  </h3>
+                </div>
+              </div>
+              <p className="text-[var(--text-alt)] text-sm md:text-base leading-relaxed m-0">
+                El sistema detecta automáticamente cuotas vencidas y actualiza estados de mora.
+              </p>
+            </article>
+
+            {/* Usuarios */}
+            <article 
+              className="bg-white rounded-3xl border border-[var(--border-subtle)] shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-center text-left"
+              style={{ padding: "1.5rem 2rem" }}
+            >
+              <div className="flex items-center gap-4" style={{ marginBottom: "2rem" }}>
+                <Users size={36} strokeWidth={2} className="text-[var(--primary-600)]" />
+                <div className="flex flex-col">
+                  <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--primary-600)] m-0">
+                    Usuarios
+                  </h2>
+                  <h3 className="text-lg md:text-xl font-bold leading-tight text-[var(--text)] m-0">
+                    Gestión de Usuarios
+                  </h3>
+                </div>
+              </div>
+              <p className="text-[var(--text-alt)] text-sm md:text-base leading-relaxed m-0">
+                Maneja los usuarios que acceden al sistema con distintos roles y permisos.
+              </p>
+            </article>
+
+            {/* Etiqueta */}
+            <article 
+              className="bg-white rounded-3xl border border-[var(--border-subtle)] shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-center text-left"
+              style={{ padding: "1.5rem 2rem" }}
+            >
+              <div className="flex items-center gap-4" style={{ marginBottom: "2rem" }}>
+                <Tags size={36} strokeWidth={2} className="text-[var(--primary-600)]" />
+                <div className="flex flex-col">
+                  <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--primary-600)] m-0">
+                    Etiquetas
+                  </h2>
+                  <h3 className="text-lg md:text-xl font-bold leading-tight text-[var(--text)] m-0">
+                    Gestión de Etiquetas
+                  </h3>
+                </div>
+              </div>
+              <p className="text-[var(--text-alt)] text-sm md:text-base leading-relaxed m-0">
+                Clasifica y segmenta clientes para facilitar campañas y reportes personalizados.
+              </p>
+            </article>
+
+          </div>
+        </section>
       </div>
     </div>
   );

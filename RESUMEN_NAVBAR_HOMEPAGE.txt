@@ -1,0 +1,53 @@
+================================================================================
+RESUMEN — Vista principal CrediGest (Navbar, Logo, Homepage, Tailwind)
+================================================================================
+
+CONTEXTO
+--------
+Aplicación web interna (gestión de créditos) en React, con roles ADMIN,
+ANALISTA y COBRADOR. Autenticación vía Redux (authSlice: user con id, nombre,
+rol, email; token en localStorage). Layout global en App.jsx: Navbar + Outlet
++ Footer.
+
+ARCHIVOS TOCADOS
+----------------
+1. frontend/vite.config.js
+   - Añadido plugin @tailwindcss/vite para compilar utilidades Tailwind.
+
+2. frontend/src/index.css
+   - @import de fuente Inter primero, luego @import "tailwindcss" (orden válido
+     para evitar warnings de CSS).
+
+3. frontend/src/components/layout/Logo.jsx
+   - Ícono Landmark (finanzas), texto "CrediGest", enlace al inicio (/).
+
+4. frontend/src/components/layout/Navbar.jsx
+   - Lógica preservada: logoutThunk, Modal de confirmación, sidebar móvil,
+     useLockBodyScroll, NavLink, useNavigate, useDispatch, useLocation.
+   - UI: barra superior con Tailwind; enlaces centrados en desktop; perfil con
+     nombre y botón logout; "Etiquetas" y "Usuarios" solo si rol es ADMIN
+     (comparación en mayúsculas), en texto rojo; drawer lateral para móvil con
+     la misma regla de roles.
+   - useSelector / useToast como respaldo si no se pasan props user/showToast.
+
+5. frontend/src/pages/Homepage.jsx (nuevo)
+   - Panel de bienvenida amplio con Tailwind; saludo con nombre si hay sesión.
+
+6. frontend/src/App.jsx
+   - Ruta "/" usa Homepage en lugar de Home (Home.jsx no estaba presente en
+     pages/ en el entorno de trabajo).
+
+NOTAS
+-----
+- El navbar sigue el nombre Navbar.jsx (convención React / repo), no navbar.jsx.
+- Homepage no incluye un segundo Navbar: el Layout ya renderiza Navbar arriba
+  del Outlet.
+- Rutas de login: el Navbar navega a "/login" y PrivateRoute redirige a "/login";
+  en App la ruta de Login está como "/auth/login". Conviene unificar paths en
+  un cambio futuro si el equipo lo desea.
+- El PDF de API referenciado en el chat no se analizó desde archivos del repo;
+  los requisitos se tomaron del mensaje de especificación y del código existente.
+
+Fecha de referencia del trabajo: mayo 2026.
+
+================================================================================

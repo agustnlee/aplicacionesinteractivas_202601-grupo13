@@ -1,0 +1,38 @@
+================================================================================
+RESUMEN — Corrección botón login / redirección post-logout (Navbar)
+================================================================================
+
+PROBLEMA
+--------
+El ícono de login en la esquina superior derecha parecía no hacer nada al
+hacer clic. La causa era la ruta de navegación: se usaba `/login`, pero en
+`App.jsx` la pantalla de login está definida como `/auth/login`. Al navegar a
+`/login`, React Router no encontraba una coincidencia directa y el catch-all
+redirigía a `/`, dando la sensación de que el clic no tenía efecto.
+
+ARCHIVO TOCADO
+--------------
+• frontend/src/components/layout/Navbar.jsx
+
+CAMBIOS REALIZADOS (resumen)
+----------------------------
+1. Ícono de login (cuando NO hay sesión):
+   - onClick: de `navigate("/login")` a `navigate("/auth/login")`.
+
+2. Tras cerrar sesión desde el modal (función handleLogout):
+   - Tras `logoutThunk` y el toast, la redirección pasó de `navigate("/login")`
+     a `navigate("/auth/login")` para alinear el flujo con la ruta real.
+
+NOTAS
+-----
+• El botón de logout ya tenía `onClick={() => setLogoutOpen(true)}` sobre el
+  componente IconButton (que delega en un `<button>` nativo); no fue necesario
+  modificar ese bloque para el comportamiento de “abrir modal de confirmación”.
+
+• `PrivateRoute.jsx` sigue redirigiendo a `/login` si no hay token; si en
+  pruebas ves redirecciones incorrectas al intentar rutas protegidas, conviene
+  unificar esa ruta con `/auth/login` en un cambio aparte.
+
+• Fecha de referencia: mayo 2026.
+
+================================================================================
