@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "../common/Modal";
 import { ICONS } from "../../utils/icontypes";
 import styles from "../creditos/ModalCambiarCobrador.module.css";
 import ColorPalette from "../common/ColorPalette";
+
 
 
 export default function ModalCrearEtiqueta({isOpen, onClose, onConfirm })
@@ -31,7 +32,7 @@ export default function ModalCrearEtiqueta({isOpen, onClose, onConfirm })
 
   const handleCambiarcolor = async (colorN) => {
 
-        setFormData({...prev,[color]: colorN})
+        setFormData(prev=> ({...prev,[color]: colorN}))
     
         
     };
@@ -64,7 +65,7 @@ export default function ModalCrearEtiqueta({isOpen, onClose, onConfirm })
               actions={[{ label: "Confirmar", onClick: handleConfirm, variant: "primary" }]}
           >
               <div className={styles.body}>
-                  <label className={styles.label}> DESCRIPCION ETIQUETA</label>
+                  <label className={styles.label}> nueva etiqueta</label>
                   <input
                      type="text"
                     name="nombre"
