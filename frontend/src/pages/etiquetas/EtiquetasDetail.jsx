@@ -1,53 +1,44 @@
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState , useEffect, startTransition} from "react";
 import { useToast } from "../../hooks/useToast";
-import { obtenerEtiquetaPorId, modificarEtiqueta } from "../../api/apiEtiquetas";
-import { contarClientesPorEtiqueta } from "../../api/apiClienteEtiquetas";
-import ModalModifcarEtiquetaNombre from "../../components/etiquetas/ModalModificarEtiquetaNombre";
-import ModalModifcarEtiquetaDescripcion from "../../components/etiquetas/ModalModificarEtiquetaDescripcion";
 import LoadingWrapper from "../../components/common/LoadingWrapper";
-import PaginatedContainer from "../../components/common/PaginatedContainer";
 import DataField from "../../components/common/DataField";
 import Button from "../../components/ui/Button";
+import ModalEditarEtiqueta from "../../components/etiquetas/ModalEditarEtiqueta";
+import ModalAsignarDesasignarEtiqueta from "../../components/etiquetas/ModalAsignarDesasignarEtiqueta";
+import ModalEliminarEtiqueta from "../../components/etiquetas/ModalEliminarEtiqueta";
 import ColorPalette from "../../components/common/ColorPalette";
-import ModalAsignarEtiqueta from "../../components/etiquetas/ModalAsignarEtiqueta";
-
 import styles from "../PagesDetail.module.css";
 
+import { obtenerEtiquetaPorId, modificarEtiqueta, eliminarEtiqueta } from "../../api/apiEtiquetas";
+import { contarClientesPorEtiqueta, asignarEtiqueta, eliminarAsignacion, obtenerEtiquetaPorCliente } from "../../api/apiClienteEtiquetas";
 
 export default function EtiquetasDetail() {
-    const { id } = useParams();
-    const navigate = useNavigate();
+    const { id }        = useParams();
+    const navigate      = useNavigate();
     const { showToast } = useToast();
 
-    const mockEtiqueta ={id:1, nombre: "mora", color: "#16a34a", descripcion: "blabla"}
-    const mockcantUs={cant: 12};
+    const [etiqueta,      setEtiqueta]      = useState(null);
+    const [cantClientes,  setCantClientes]  = useState(0);
+    const [isLoading,     setIsLoading]     = useState(true);
+    const [error,         setError]         = useState(null);
 
-    const [modalNombre, setModalNombre]     = useState(false);
-    const [modalDescripcion, setModalDescripcion]     = useState(false);
-    const[modalAsignar, setModalAsignar]= useState(false);
-    const [colorPalette, setColorPalette ] = useState(false);
+    const [modalEditar,   setModalEditar]   = useState(false);
+    const [modalGestionar,setModalGestionar]= useState(false);
+    const [modalEliminar, setModalEliminar] = useState(false);
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
-
-    
-    const [etiqueta, setEtiqueta]   = useState(mockEtiqueta);
-    const [cantUsuarios, setCantUsuarios] = useState(0);
-
-    /* carga inicial o redireccionamiento */
     useEffect(() => {
-        if (!id) return;
+        if (!id || id === "undefined") return;
         const cargar = async () => {
             setIsLoading(true);
             setError(null);
             try {
-                const [data, cantidad] = await Promise.all([
+                const [data, cant] = await Promise.all([
                     obtenerEtiquetaPorId(id),
                     contarClientesPorEtiqueta(id),
                 ]);
                 setEtiqueta(data);
-                setCantUsuarios(cantidad);
+                setCantClientes(cant);
             } catch (e) {
                 showToast("Etiqueta no encontrada", "warning");
                 navigate("/etiquetas", { replace: true });
@@ -58,34 +49,18 @@ export default function EtiquetasDetail() {
         cargar();
     }, [id]);
 
-
-    const handleCambiarNombre = async (nuevoNombre) => {
+    const handleEditar = async ({ nombre, descripcion }) => {
         try {
             const updated = await modificarEtiqueta(id, {
-                nombreEtiqueta:      nuevoNombre,
+                nombreEtiqueta:      nombre,
                 colorEtiqueta:       etiqueta.colorEtiqueta,
-                descripcionEtiqueta: etiqueta.descripcionEtiqueta,
+                descripcionEtiqueta: descripcion,
             });
             setEtiqueta(updated);
-            showToast("Nombre actualizado correctamente", "success");
-            setModalNombre(false);
+            showToast("Etiqueta actualizada correctamente", "success");
+            setModalEditar(false);
         } catch (e) {
-            showToast(e?.mensajes?.[0] ?? "Error al cambiar nombre", "error");
-        }
-    };  
-
-    const handleCambiarDescripcion = async (nuevaDesc) => {
-        try {
-            const updated = await modificarEtiqueta(id, {
-                nombreEtiqueta:      etiqueta.nombreEtiqueta,
-                colorEtiqueta:       etiqueta.colorEtiqueta,
-                descripcionEtiqueta: nuevaDesc,
-            });
-            setEtiqueta(updated);
-            showToast("Descripción actualizada correctamente", "success");
-            setModalDescripcion(false);
-        } catch (e) {
-            showToast(e?.mensajes?.[0] ?? "Error al cambiar descripción", "error");
+            showToast(e?.mensajes?.[0] ?? "Error al editar etiqueta", "error");
         }
     };
 
@@ -103,52 +78,119 @@ export default function EtiquetasDetail() {
         }
     };
 
+    const handleAsignar = async (clienteId) => {
+        try {
+            await asignarEtiqueta(clienteId, id);
+            showToast(`Etiqueta asignada al cliente #${clienteId}`, "success");
+            setModalGestionar(false);
+            const cant = await contarClientesPorEtiqueta(id);
+            setCantClientes(cant);
+        } catch (e) {
+            showToast(e?.mensajes?.[0] ?? "Error al asignar etiqueta", "error");
+        }
+    };
 
-    return (<> 
+    const handleDesasignar = async (clienteId) => {
+        try {
+            const data = await obtenerEtiquetaPorCliente(clienteId, { pagina: 0, tamanio: 50 });
+            const asignacion = data.contenido?.find(a => a.etiquetaId === Number(id));
+            if (!asignacion) {
+                showToast("Este cliente no tiene esta etiqueta asignada", "warning");
+                return;
+            }
+            await eliminarAsignacion(asignacion.id);
+            showToast(`Etiqueta desasignada del cliente #${clienteId}`, "success");
+            setModalGestionar(false);
+            const cant = await contarClientesPorEtiqueta(id);
+            setCantClientes(cant);
+        } catch (e) {
+            showToast(e?.mensajes?.[0] ?? "Error al desasignar etiqueta", "error");
+        }
+    };
+
+    const handleEliminar = async () => {
+        try {
+            await eliminarEtiqueta(id, true);
+            showToast("Etiqueta eliminada", "success");
+            navigate("/etiquetas", { replace: true });
+        } catch (e) {
+            showToast(e?.mensajes?.[0] ?? "Error al eliminar etiqueta", "error");
+        }
+    };
+
+    return (
         <div className={styles.page}>
-            <h2 className={`title  ${styles.seccion}`}>Detalle de Etiqueta</h2>
-        </div>    
+            <h2 className={`title ${styles.seccion}`}>Detalle de Etiqueta</h2>
 
-        <LoadingWrapper isLoading={isLoading} error={error} isEmpty={!etiqueta}> 
-    
-        <div className={styles.card}>
-            <div className={styles.filaData}>
-                <DataField label="ID"          value={`#${etiqueta.etiquetaId}`} />
-                <DataField label="Nombre"      value={etiqueta.nombreEtiqueta} />
-                <DataField label="Descripción" value={etiqueta.descripcionEtiqueta} />
-                <DataField label="Usuarios asignados" value={cantUsuarios} />
-                <div style={{ color: "var(--text-muted)", fontSize: "var(--text-xs)", fontWeight: "var(--font-medium)" }}>
-                    COLOR
-                    <div style={{ padding: "4px" }} />
-                    <div style={{ padding: "7px", width: "7px", backgroundColor: etiqueta.colorEtiqueta, borderRadius: "50%" }} />
-                </div>
-            <div style={{ color: "var(--text-muted)" , fontSize: "var(--text-xs)" , fontWeight: "var(--font-medium)"}}  > 
-            <div style={{padding:"4px"}}/>
-           
-            </div>
-                <ColorPalette onConfirm={handleCambiarColor} /> 
-            </div>
+            <LoadingWrapper isLoading={isLoading} error={error} isEmpty={!etiqueta}>
+                {etiqueta && (
+                    <div className={styles.card}>
+                        <div className={styles.filaData}>
+                            <DataField label="ID"     value={`#${etiqueta.etiquetaId}`} />
+                            <DataField label="Nombre" value={etiqueta.nombreEtiqueta}   />
+                            <DataField label="Descripción" value={
+                                etiqueta.descripcionEtiqueta?.trim()
+                                    ? etiqueta.descripcionEtiqueta
+                                    : <span style={{ color: "var(--text-muted)", fontStyle: "italic" }}>Sin descripción</span>
+                            } />
+                            <DataField label="Clientes asignados" value={cantClientes} />
+                        </div>
 
-            <div> cambiar nombre<Button icon="edit"  variant="ghost"  size="md"  onClick={() => setModalNombre(true)}/></div>
-            <div >Cambiar descripcion<Button icon="edit"  variant="ghost"  size="md"  onClick={() => setModalDescripcion(true)}/></div> 
-            <Button icon="trash" variant="danger" size="md"  >
-                eliminar etiqueta
-            </Button>
+                        <div className={styles.filaData}>
+                            <DataField label="Color actual" value={
+                                <div style={{
+                                    width: "28px", height: "28px",
+                                    backgroundColor: etiqueta.colorEtiqueta,
+                                    borderRadius: "50%",
+                                    border: "1px solid rgba(0,0,0,0.15)",
+                                    marginTop: "var(--space-1)",
+                                }} />
+                            } />
+                            <div style={{ display: "flex", flexDirection: "column", gap: "var(--gap-xs)" }}>
+                                <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)", fontWeight: "var(--font-medium)" }}>
+                                    Cambiar color
+                                </span>
+                                <ColorPalette onConfirm={handleCambiarColor} />
+                            </div>
+                        </div>
+
+                        <div className={styles.acciones}>
+                            <Button icon="edit" variant="ghost" size="md"
+                                onClick={() => setModalEditar(true)}>
+                                Editar etiqueta
+                            </Button>
+                            <Button icon="user" variant="ghost" size="md"
+                                onClick={() => setModalGestionar(true)}>
+                                Gestionar Asignaciones
+                            </Button>
+                            <Button icon="trash" variant="danger" size="md"
+                                onClick={() => setModalEliminar(true)}>
+                                Eliminar etiqueta
+                            </Button>
+                        </div>
+                    </div>
+                )}
+            </LoadingWrapper>
+
+            <ModalEditarEtiqueta
+                isOpen={modalEditar}
+                etiqueta={etiqueta}
+                onClose={() => setModalEditar(false)}
+                onConfirm={handleEditar}
+            />
+            <ModalAsignarDesasignarEtiqueta
+                isOpen={modalGestionar}
+                onClose={() => setModalGestionar(false)}
+                onAsignar={handleAsignar}
+                onDesasignar={handleDesasignar}
+            />
+            <ModalEliminarEtiqueta
+                isOpen={modalEliminar}
+                etiqueta={etiqueta}
+                cantClientes={cantClientes}
+                onClose={() => setModalEliminar(false)}
+                onConfirm={handleEliminar}
+            />
         </div>
-  
-        </LoadingWrapper>    
-
-        <ModalModifcarEtiquetaNombre   isOpen={modalNombre}
-                onClose={() => setModalNombre(false)}
-                onConfirm={handleCambiarNombre}>
-        </ModalModifcarEtiquetaNombre>
-
-        <ModalAsignarEtiqueta isOpen={modalAsignar} onClose={()=> setModalAsignar(false)}></ModalAsignarEtiqueta>
-
-        <ModalModifcarEtiquetaDescripcion isOpen={modalDescripcion}
-                onClose={() => setModalDescripcion(false)}
-                onConfirm={handleCambiarDescripcion}>
-        </ModalModifcarEtiquetaDescripcion>
-
-    </>);
+    );
 }

@@ -1,32 +1,23 @@
-
-import React, { useState , useEffect} from "react";
-import { buscarEtiquetas, crearEtiqueta, obtenerEtiquetaPorId } from "../../api/apiEtiquetas";
-import Button from "../../components/ui/Button";
-import Spinner from "../../components/common/Spinner";
-
-
+import { useState, useEffect } from "react";
 import { useSearchParams } from 'react-router-dom';
-
+import { buscarEtiquetas, crearEtiqueta } from "../../api/apiEtiquetas";
 import FichaEtiqueta from "../../components/etiquetas/FichaEtiqueta";
 import PaginatedContainer from "../../components/common/PaginatedContainer";
-
+import ModalCrearEtiqueta from "../../components/etiquetas/ModalCrearEtiqueta";
+import { useToast } from "../../hooks/useToast";
 import styles from '../PagesDetail.module.css';
 
 
 const FIELDS = [
-    { key: "etiquetaId",  label: "ID",  type: "number" },
-    { key: "nombre",   label: "NOMBRE",  type: "String" },
-    { key: "descripcion",    label: "DESCRIPCION",   type: "String" },
-    { key: "color",    label: "COLOR",   type: "String" },
-   
+    { key: "nombre", label: "Nombre", type: "text" },
+    { key: "color",  label: "Color",  type: "text" },
 ];
 
 const COLUMNS = [
-    { label: "ID",       width: "60px"  },
-    { label: "nombre",  width: "130px" },
-    { label: "descripcion", width: "420px" },
-    { label: "color",    width: "110px" },
-   
+    { label: "ID",          width: "60px"  },
+    { label: "Nombre",      width: "130px" },
+    { label: "Descripción", width: "420px" },
+    { label: "Color",       width: "80px"  },
 ];
 
 
@@ -34,135 +25,86 @@ const COLUMNS = [
 
 export default function Etiquetas() {
     const [searchParams] = useSearchParams();
+    const { showToast }  = useToast();
     
 
     const [etiquetas,   setEtiquetas]   = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [etiquetaData, setEtiquetaData] = useState(null);
-    const [isOpen, setIsOpen] = useState(false);
     const [error,      setError]      = useState(null);
     const [totalPages, setTotalPages] = useState(1);
-    const page   = parseInt(searchParams.get("pagina") ?? "0", 10);
+     const [modalCrear, setModalCrear] = useState(false);
 
+
+    const page   = parseInt(searchParams.get("pagina") ?? "0", 10);
     const nombre = searchParams.get("nombre") ?? undefined; 
     const color  = searchParams.get("color")  ?? undefined;  
 
     // carga inicial + triggers
-    useEffect(() => {
-        const cargar = async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const data = await buscarEtiquetas({
-                    pagina:  page,
-                    tamanio: 10,
-                    ...(nombre && { nombre }),
-                    ...(color  && { color  }),
-                });
-                setEtiquetas(data.contenido);
-                setTotalPages(data.totalPaginas);
-            } catch (e) {
-                setError(e?.mensajes?.[0] ?? "Error al cargar etiquetas");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        cargar();
-    }, [page, nombre, color]);
-
-   
-    const handleCrearEtiqueta = async () => {
-        
-       
-
+    const cargar = async () => {
+        setIsLoading(true);
+        setError(null);
         try {
-            setIsLoading(true);
-            
-            // fetch
-            
-        } catch (error) {
-            console.error("Falló la creación:", error);
-            
+            const data = await buscarEtiquetas({
+                pagina: page, tamanio: 10,
+                ...(nombre && { nombre }),
+                ...(color  && { color  }),
+            });
+            setEtiquetas(data.contenido);
+            setTotalPages(data.totalPaginas);
+        } catch (e) {
+            setError(e?.mensajes?.[0] ?? "Error al cargar etiquetas");
         } finally {
             setIsLoading(false);
         }
     };
 
+    useEffect(() => { cargar(); }, [page, nombre, color]);
 
-const handleObtenerEtiquetaPorId = async () => {
-                try {
-            setIsLoading(true);
-            
-        
-            const res = await obtenerEtiquetaPorId(1);
+   
+    const handleCrearEtiqueta = async (form) => {
+        setIsLoading(true);
+        try {
+            await crearEtiqueta({
+                nombreEtiqueta:      form.nombre,
+                colorEtiqueta:       form.color,
+                descripcionEtiqueta: form.descripcion,
+            });
+            showToast("Etiqueta creada correctamente", "success");
+            setModalCrear(false);
+            //refetch
+            await cargar();
 
-            
-            
-            console.log("Etiqueta Obtenida:", res);
-            
         } catch (error) {
-            console.error("Falló la obtencion unica de etiqueta:", error);
-            
+            showToast(e?.mensajes?.[0] ?? "Error al crear etiqueta", "error");
         } finally {
             setIsLoading(false);
         }
-            }; 
-  
-
+    }
 
 
     return (
-      <div style={{ padding: "20px", border: "1px dashed var(--border)", borderRadius: "var(--radius)" }}>
-        { <div className={styles.page}>
-                <h2 className="title">Listado de Etiquetas</h2>
-                <PaginatedContainer
-                    fields={FIELDS}
-                    columns={COLUMNS}
-                    isLoading={isLoading}
-                    isEmpty={!etiquetas.length}
-                    error={error}
-                    currentPage={page}
-                    totalPages={totalPages}
-                >
-                    {etiquetas?.map(c => 
-                        (c?.id || c?.etiquetaId) ? (
-                            <FichaEtiqueta key={c.id || c.etiquetaId} etiqueta={c} />
-                        ) : null
-                    )}
-                </PaginatedContainer>
-         </div> }   
+         <div className={styles.page}>
+            <h2 className="title">Etiquetas</h2>
+            <PaginatedContainer
+                fields={FIELDS}
+                columns={COLUMNS}
+                isLoading={isLoading}
+                isEmpty={!etiquetas.length}
+                error={error}
+                currentPage={page}
+                totalPages={totalPages}
+                onCreate={() => setModalCrear(true)}
+            >
+                {etiquetas.map(e => (
+                    <FichaEtiqueta key={e.etiquetaId} etiqueta={e} />
+                ))}
+            </PaginatedContainer>
 
-
-
-            
-            <h3>Probar Creación de Etiqueta</h3>
-            
-            <div style={{ display: "flex", alignItems: "center", gap: "15px", marginTop: "15px" }}>
-                <Button 
-                    variant="primary" 
-                    onClick={handleCrearEtiqueta}
-                    disabled={isLoading}
-                >
-                    {isLoading ? "Creando..." : "Enviar Mock Data"}
-                </Button>
-
-                {isLoading && <Spinner size="sm" />}
-            
-
-
-                <div>
-            <Button variant="primary" onClick={handleObtenerEtiquetaPorId, () => setIsOpen(!isOpen)} ><div><p>this</p></div></Button>
-                                     
-                   {isOpen && (
-                        <div style={{ marginTop: '15px' }}>
-
-                            
-
-                        </div>)}
-                     
-                    
-                </div>  
-            </div>
-        </div>
+            <ModalCrearEtiqueta
+                isOpen={modalCrear}
+                onClose={() => setModalCrear(false)}
+                onConfirm={handleCrearEtiqueta}
+            />
+         </div>
     );
 }

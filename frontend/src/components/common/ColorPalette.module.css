@@ -1,48 +1,38 @@
-
-
-.container{
-    
+.container {
+    position: absolute;
+    z-index: 1100;       
     width: 150px;
     padding: 15px;
-    display:flex;
+    display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    align-items:center;
-    gap:10px;
-    border-radius:2px;
-    
-    box-shadow: 5px 5px 20px rgba(0,0,0,0.5) ;
-
+    align-items: center;
+    gap: 10px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
 }
 
-.container2{
-    
-    width: 120px;
-    padding: 20px;
-    display: flex;
-    flex-wrap: wrap;
-
-    
-    border-radius: var(--radius-xl);
-   
-    
-
-}
-
-
-.ColorDisplay{
-    height: 20px;
-    width: 20px;
+.container2 {
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-
-     
-
-
+    border: 1px solid rgba(0,0,0,0.15);
+    flex-shrink: 0;
 }
-.ColorDisplay:hover{
+
+.ColorDisplay {
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform var(--anim-fast) var(--ease-standard),
+                opacity var(--anim-fast);
+}
+
+.ColorDisplay:hover {
     transform: scale(1.15);
-    transition: 1.4s ease-in-out;
-    opacity: 70%;
-    cursor: pointer
+    opacity: 0.85;
+    cursor: pointer;
 }
-

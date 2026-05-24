@@ -1,0 +1,37 @@
+.body { 
+    display: flex; 
+    flex-direction: column; 
+    gap: var(--space-4); 
+}
+
+.label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--text);
+}
+
+.colorGroup { 
+    display: flex; 
+    flex-direction: column; 
+    gap: var(--space-2); 
+}
+
+.colorRow {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-md);
+}
+
+.colorDot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.15);
+    flex-shrink: 0;
+}
+
+.colorHint {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    font-style: italic;
+}
