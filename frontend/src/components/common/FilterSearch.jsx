@@ -10,7 +10,7 @@ export default function FilterSearch({ fields , onCreate}) {
     const [selectedKey, setSelectedKey] = useState(activeKeyInUrl || fields[0]?.key);
     const [inputValue, setInputValue] = useState(searchParams.get(activeKeyInUrl) || '');
 
-    const debouncedValue = useDebounce(inputValue, 0);
+    const debouncedValue = useDebounce(inputValue, 400);
 
     const fieldKeysString = fields.map(f => f.key).join(',');
 

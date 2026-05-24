@@ -12,15 +12,16 @@ const apiClient = async (endpoint, method = "GET", body = null) => {
         ...(body && { body: JSON.stringify(body) })
     });
 
-     // 204 no content 
-    if (res.status === 204) return null;
+    if (res.status === 204 || res.status === 201 && res.headers.get("content-length") === "0") 
+        return null;
 
     if (!res.ok) {
         const error = await res.json().catch(() => ({ mensajes: ["Error desconocido"] }));
         throw error;
     }
 
-    return res.json();
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
 };
 
 export default apiClient;

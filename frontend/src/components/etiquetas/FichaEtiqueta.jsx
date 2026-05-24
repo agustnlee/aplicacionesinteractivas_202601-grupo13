@@ -1,67 +1,35 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import RowModels from '../common/RowModels'; 
+import RowModels from '../common/RowModels';
 import styles from '../../pages/PagesDetail.module.css';
 
-const columnasConfig = [
-    { 
-        key: "id", 
-        label: "ID", 
-        width: "60px",
-        render: (c) => <strong>#{c.id || c.etiquetaId || c.idEtiqueta}</strong> 
+const COLUMNS = [
+    { key: "etiquetaId", label: "ID", width: "60px",
+        render: (c) => <strong>#{c.etiquetaId}</strong>
     },
-    { 
-        key: "nombre", 
-        label: "Nombre", 
-        width: "130px",
-        render: (c) => {
-            const idSeguro = c.id || c.etiquetaId || c.idEtiqueta;
-            const nombreSeguro = c.nombre || c.nombreEtiqueta;
-            return (
-                <Link to={`/etiquetas/${idSeguro}`} className={styles.link}>
-                    {nombreSeguro}
-                </Link>
-            );
-        } 
+    { key: "nombreEtiqueta", label: "Nombre", width: "130px",
+        render: (c) => (
+            <Link to={`/etiquetas/${c.etiquetaId}`} className={styles.link}>
+                {c.nombreEtiqueta}
+            </Link>
+        )
     },
-    { 
-        key: "descripcion", 
-        label: "Descripción", 
-        width: "420px",
-        render: (c) => {
-            const descSegura = c.descripcion || c.descripcionEtiqueta;
-            return descSegura ? descSegura : <span style={{ color: 'var(--text-muted)' }}>Sin descripción</span>;
-        }
+    { key: "descripcionEtiqueta", label: "Descripción", width: "420px",
+        render: (c) => c.descripcionEtiqueta?.trim()
+            ? c.descripcionEtiqueta
+            : <span style={{ color: "var(--text-muted)", fontStyle: "italic" }}>Sin descripción</span>
     },
-    { 
-        key: "color", 
-        label: "Color", 
-        width: "110px",
-        render: (c) => {
-            const colorSeguro = c.color || c.colorEtiqueta || "var(--border)";
-            return (
-                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <div style={{ 
-                        width: "12px", 
-                        height: "12px", 
-                        backgroundColor: colorSeguro, 
-                        borderRadius: "50%",
-                        border: "1px solid rgba(0,0,0,0.1)"
-                    }}/>
-                    <span style={{ fontSize: "var(--text-sm)" }}>{colorSeguro}</span>
-                </div>
-            );
-        } 
+    { key: "colorEtiqueta", label: "Color", width: "80px",
+        render: (c) => (
+            <div style={{
+                width: "24px", height: "24px",
+                backgroundColor: c.colorEtiqueta ?? "var(--border)",
+                borderRadius: "50%",
+                border: "1px solid rgba(0,0,0,0.15)",
+            }} />
+        )
     },
 ];
 
-const FichaEtiqueta = ({ etiqueta }) => {
-    return (
-        <RowModels 
-            item={etiqueta} 
-            columns={columnasConfig} 
-        />
-    );
-};
-
-export default FichaEtiqueta;
+export default function FichaEtiqueta({ etiqueta }) {
+    return <RowModels item={etiqueta} columns={COLUMNS} />;
+}

@@ -14,10 +14,17 @@ const ROLES = [
 ];
 
 const USUARIO_FIELDS = [
-  { label: "ID", key: "id" },
-  { label: "Nombre", key: "nombre" },
-  { label: "Email", key: "email" },
-  { label: "Rol", key: "rol" },
+  { key: "id",     label: "ID",     type: "number" },
+  { key: "nombre", label: "Nombre", type: "text" },
+  { key: "rol",    label: "Rol",    type: "select", options: [
+    { value: "ADMIN",    label: "Admin"    },
+    { value: "ANALISTA", label: "Analista" },
+    { value: "COBRADOR", label: "Cobrador" },
+  ]},
+  { key: "estado", label: "Estado", type: "select", options: [
+    { value: "true",  label: "Activo"   },
+    { value: "false", label: "Inactivo" },
+  ]},
 ];
 
 const COLUMNS = [
@@ -40,16 +47,18 @@ export default function Usuarios() {
 
     const page = parseInt(searchParams.get("pagina") ?? "0", 10);
 
-    const fetchUsuarios = async () => {
-        setIsLoading(true);
+    const id     = searchParams.get("id")     ?? undefined;
+    const nombre = searchParams.get("nombre") ?? undefined;
+    const rol    = searchParams.get("rol")    ?? undefined;
+    const estado = searchParams.get("estado") ?? undefined;
+
+    const fetchUsuarios = async (showLoader = true) => {
+        if (showLoader) setIsLoading(true);
         setError(null);
 
         try {
 
-            const data = await getUsuarios({ pagina: page, tamanio: 10 });
-
-            console.log(data);
-
+            const data = await getUsuarios({...(id     && { id     }), ...(nombre && { nombre }), ...(rol    && { rol    }), ...(estado && { estado }), pagina: page, tamanio: 10 });
             setUsuarios(data.contenido ?? []);
             setTotalPages(data.totalPaginas ?? 1);
 
@@ -59,7 +68,7 @@ export default function Usuarios() {
 
         } finally {
 
-            setIsLoading(false);
+            if (showLoader) setIsLoading(false);
 
         }
 
@@ -69,7 +78,7 @@ export default function Usuarios() {
 
         fetchUsuarios();
 
-    }, [page]); // si cambia pagina se hace refetch
+    }, [page, id, nombre, rol, estado]); // si cambia pagina se hace refetch
 
 
     const handleCrearUsuario = async (formData) => {
@@ -81,7 +90,7 @@ export default function Usuarios() {
 
             setIsModalOpen(false);
 
-            fetchUsuarios();
+            fetchUsuarios(false);
 
         } catch (err) {
 
@@ -95,7 +104,7 @@ export default function Usuarios() {
     };
 
     return (
-        <div className={styles.page}>
+        <div className={`${styles.page} ${!isLoading ? "" : "is-loading"}`}>
 
             <h2 className={`title`}>Listado de Usuarios</h2>
 

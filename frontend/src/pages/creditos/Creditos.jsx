@@ -7,10 +7,8 @@ import styles from '../PagesDetail.module.css';
 
 
 const FIELDS = [
-    { key: "creditoId",  label: "ID",  type: "number" },
-    { key: "cobradorId",   label: "ID Cobrador",  type: "number" },
-    { key: "clienteId",    label: "ID Cliente",   type: "number" },
-    { key: "estado", label: "Estado", type: "select", options: [
+    { key: "id",         label: "ID",          type: "number" },
+    { key: "estado",     label: "Estado",       type: "select", options: [
         { value: "ACTIVO",                   label: "Activo"                   },
         { value: "EN_MORA",                  label: "En mora"                  },
         { value: "CERRADO",                  label: "Cerrado"                  },
@@ -18,6 +16,7 @@ const FIELDS = [
         { value: "CANCELADO_REFINANCIACION", label: "Cancelado refinanciación" },
     ]},
 ];
+
 
 const COLUMNS = [
     { label: "ID",       width: "60px"  },
@@ -42,10 +41,11 @@ export default function Creditos() {
   const [totalPages, setTotalPages] = useState(1);
 
   const page   = parseInt(searchParams.get("pagina") ?? "0", 10);
-  const estado = searchParams.get("estado") ?? undefined;
-  const cobradorId  = searchParams.get("cobradorId")  ?? undefined;
+  const id          = searchParams.get("id")   ?? undefined;
+  const estado      = searchParams.get("estado")  ?? undefined;
+  const cobradorId  = searchParams.get("cobradorId") ?? undefined;
   const clienteId   = searchParams.get("clienteId")   ?? undefined;
-  const creadoPorId = searchParams.get("creadoPorId") ?? undefined;
+  const creadoPorId = searchParams.get("creadoPorId") ?? undefined;   
 
   // carga inicial
   useEffect(() => {
@@ -54,12 +54,13 @@ export default function Creditos() {
             setError(null);
             try {
                 const data = await getCreditos({
-                ...(estado      && { estado      }),
-                ...(cobradorId  && { cobradorId  }),
-                ...(clienteId   && { clienteId   }),
-                ...(creadoPorId && { creadoPorId }),
-                pagina:  page,
-                tamanio: 10,
+                    ...(id  && { id }),
+                    ...(estado && { estado}),
+                    ...(cobradorId  && { cobradorId  }),
+                    ...(clienteId   && { clienteId   }),
+                    ...(creadoPorId && { creadoPorId }),
+                    pagina:  page,
+                    tamanio: 10,
                 });
                 setCreditos(data.contenido);
                 setTotalPages(data.totalPaginas);
@@ -70,11 +71,11 @@ export default function Creditos() {
             }
         };
         cargar();
-    }, [page, estado, cobradorId, clienteId, creadoPorId]);
+    }, [page, id, estado, cobradorId, clienteId, creadoPorId]);
 
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ${!isLoading ? "" : "is-loading"}`}>
         <h2 className="title">Listado de Créditos</h2>
         <PaginatedContainer
             fields={FIELDS}

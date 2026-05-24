@@ -1,93 +1,63 @@
-
-import Button from "../ui/Button" ;
-import IconButton from "../ui/IconButton";
-import React, { use } from "react";
-import styles from "./ColorPalette.module.css";
 import { useState } from "react";
-import { ICONS } from "../../utils/icontypes";
+import IconButton from "../ui/IconButton";
+import styles from "./ColorPalette.module.css";
 
-
-export default function ColorPalette({ onConfirm }){
-
-       const [color, setColor]= useState("var(--border)");
-       const [isOpen, setIsOpen] = useState(false);
-
-       
- const handleConfirm = (colorElegido) => {
-     
-        if(onConfirm) {
-            onConfirm(colorElegido);
-        }
-        setIsOpen(false);
-    }
-
-    
-
-    
-    const colorArray =[
+const COLOR_ARRAY = [
         "#d72b31",
         "#e94a22",
         "#f69e31",
-        "#e8fa42",
+        "#b7ba03",
         "#60c04c",
         "#21917b",
         "#225575",
         "#5f3675",
+];
 
-    ];
+export default function ColorPalette({ onConfirm }) {
+    const [color,  setColor]  = useState(null);
+    const [isOpen, setIsOpen] = useState(false);
+    const [hover,  setHover]  = useState(null);
 
-    console.log("setColor", color);
+    const handleSelect = (c) => {
+        setColor(c);
+        setHover(null);
+        if (onConfirm) onConfirm(c);
+        setIsOpen(false);
+    };
 
-    return(<>
-    <div >
+    const previewColor = hover ?? color;
 
-        <IconButton 
-                variant="primary" 
-                icon= "palette"
-                onClick={() => setIsOpen(!isOpen)}
-            >
-                
-
-
-            </IconButton>
+    return (
+        <div className={styles.wrapper}>
+            <div className={styles.trigger}>
+                <IconButton
+                    variant="primary"
+                    icon="palette"
+                    onClick={() => setIsOpen(o => !o)}
+                />
+            </div>
 
             {isOpen && (
-                <div style={{ marginTop: '15px' }}>
-                    <p style={{ marginBottom: '10px' }}>Elija un color:</p>
-
-                    <div className={styles.container}>
-                        {colorArray?.map((colorValue, index) => (
-                            <div 
-                                key={index} 
-                                className={styles.ColorDisplay} 
-                                onClick={() => [setColor(colorValue), handleConfirm(colorValue)]} 
-                                
-                                style={{ backgroundColor: colorValue }}
-                            >
-                                
-                            </div>
+                <div className={styles.dropdown}>
+                    <div className={styles.grid}>
+                        {COLOR_ARRAY.map((c) => (
+                            <div
+                                key={c}
+                                className={styles.colorDot}
+                                style={{ backgroundColor: c }}
+                                onClick={() => handleSelect(c)}
+                                onMouseEnter={() => setHover(c)}
+                                onMouseLeave={() => setHover(null)}
+                            />
                         ))}
-
-                        <div 
-                            className={styles.container2} 
-                            style={{ backgroundColor: color }}
-                        >
-                            
-                           
-                        </div>
                     </div>
+
+                    <div
+                        className={styles.preview}
+                        style={{ backgroundColor: previewColor ?? "var(--border-subtle)" }}
+                    />
                 </div>
             )}
         </div>
-        
-         </>
     );
 }
-        
-
-
-
-
-
-
-    

@@ -27,6 +27,7 @@ public class CreditoController {
     // GET /api/creditos?estado=&clienteId=&cobradorId=&creadoPorId=&pagina=&tamanio=
     @GetMapping
     public ResponseEntity<PaginatedResponse<CreditoResponse>> listar(
+            @RequestParam(required = false) Long id,
             @RequestParam(required = false) EstadoCredito estado,
             @RequestParam(required = false) Long clienteId,
             @RequestParam(required = false) Long cobradorId,
@@ -35,7 +36,7 @@ public class CreditoController {
             @RequestParam(defaultValue = "10") int tamanio
     ) {
         return ResponseEntity.ok(
-                creditoService.listarConFiltros(estado, clienteId, cobradorId, creadoPorId, pagina, tamanio)
+                creditoService.listarConFiltros(id, estado, clienteId, cobradorId, creadoPorId, pagina, tamanio)
         );
     }
 
