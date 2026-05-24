@@ -35,6 +35,7 @@ export default function EtiquetasDetail() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const { showToast } = useToast();
+    const [salt, setSalt]= useState(mockEtiqueta);
     
     const [etiqueta, setEtiqueta]   = useState(mockEtiqueta);
     const [cantUsuarios]= useState(mockcantUs);
@@ -65,8 +66,9 @@ export default function EtiquetasDetail() {
     const handleCrearEtiqueta=async(nuevaEtiqueta)=>{
 
         try {
-            showToast ("etiqueta Creada correctamente", "success");
+            showToast ("etiqueta Creada ",nuevaEtiqueta.nombre, "success");
             setModalCrear(false);
+            setSalt(nuevaEtiqueta);
         }
         catch(e){
             showToast(e?.mensajes?.[0]?? "Error al crear etiqueta", "error")
@@ -100,8 +102,8 @@ export default function EtiquetasDetail() {
     <div className={styles.card}>
       <div className={styles.filaData}>
         <DataField label="ID"       value={`#${etiqueta.id}`} />
-        <DataField label="NOMBRE"  value={`#${etiqueta.nombre}`} />
-        <DataField label="DESCRIPCION" value={`#${etiqueta.descripcion}`} />
+        <DataField label="NOMBRE"  value={`#${salt.nombre}`} />
+        <DataField label="DESCRIPCION" value={`#${salt.descripcion}`} />
          <DataField label="USUARIOS ASIGNADOS"  value={`#${cantUsuarios.cant}`} />
         <div style={{ color: "var(--text-muted)" , fontSize: "var(--text-xs)" , fontWeight: "var(--font-medium)"}}  > COLOR 
            <div style={{padding:"4px"}}/>
@@ -126,7 +128,7 @@ export default function EtiquetasDetail() {
         </Button>
 
         <div>crearEtiqueta
-            <Button onClick={setModalCrear(true)}>
+            <Button onClick={()=> setModalCrear(true)}>
                 crear
 
             </Button>
@@ -146,6 +148,9 @@ export default function EtiquetasDetail() {
 
         </ModalModifcarEtiquetaNombre>
 
+        <ModalCrearEtiqueta isOpen={modalCrear}  onClose={() => setModalCrear(false)}
+                onConfirm={handleCrearEtiqueta}></ModalCrearEtiqueta>
+
         
 
 
@@ -156,10 +161,9 @@ export default function EtiquetasDetail() {
 
         </ModalModifcarEtiquetaDescripcion>
 
-        <ModalCrearEtiqueta isOpen={modalCrear} onClose={()=> setModalCrear(false)} onConfirm={handleCrearEtiqueta}>
+        
 
-
-        </ModalCrearEtiqueta>
+       
 
 
 
