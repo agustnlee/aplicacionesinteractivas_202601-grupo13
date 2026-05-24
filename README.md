@@ -247,8 +247,6 @@ proyecto/
 | PATCH | `/api/usuarios/{id}/estado` | Activar/desactivar usuario | Por Definir |
 | PATCH | `/api/usuarios/{id}/password` | Resetear contraseña | Por Definir |
 
----
-
 
 ---
 ## Estética
@@ -305,8 +303,6 @@ Cabe destacar que no se iplementó teniendo en cuenta la responsividad para dife
 
 ---
 
----
-
 ## Componentes Reutilizables
 | Componente | Responsabilidad |
 |---|---|
@@ -325,8 +321,6 @@ Cabe destacar que no se iplementó teniendo en cuenta la responsividad para dife
 
 ---
 
----
-
 ## Manejo de Estados Visuales
 | Estado | Implementación | Objetivo |
 |---|---|---|
@@ -342,8 +336,6 @@ Cabe destacar que no se iplementó teniendo en cuenta la responsividad para dife
 
 ---
 
-
----
 ## Justificación de Dependencias adicionales
 
 ### Lucide React
@@ -351,9 +343,6 @@ Utilizada para mejorar la visualización de acciones e iconografía del sistema 
 
 ### TailwindCSS
 Utilizado parcialmente en la Home para acelerar el desarrollo visual y facilitar la construcción de layouts, con proyección de crecimiento constante de secciones.
-
----
-
 
 ---
 
