@@ -55,4 +55,9 @@ public class UsuarioController {
         usuarioService.resetearPassword(id, request);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}")
+        public ResponseEntity<UsuarioResponse> obtener(@PathVariable Long id) {
+            return ResponseEntity.ok(usuarioService.obtenerUsuario(id));
+        }
 }

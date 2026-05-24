@@ -43,7 +43,7 @@ export default function ModalEditarUsuario({ isOpen, usuario, onClose, onConfirm
                 name="nombre"
                 value={nombre}
                 onChange={e => setNombre(e.target.value)}
-                placeholder="Ej: Juan Pérez"
+                placeholder="Nombre"
             />
             <div className={styles.fieldGroup}>
                 <label className={styles.label}>Rol</label>

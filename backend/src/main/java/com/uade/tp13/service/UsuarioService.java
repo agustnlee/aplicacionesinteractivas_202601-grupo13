@@ -100,6 +100,11 @@ public class UsuarioService {
                 .totalElementos(page.getTotalElements())
                 .build();
     }
+
+    @Transactional(readOnly = true)
+        public UsuarioResponse obtenerUsuario(Long id) {
+            return mapToResponse(getOrThrow(id));
+        }
    
  
  

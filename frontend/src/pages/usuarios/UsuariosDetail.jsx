@@ -11,6 +11,8 @@ import { ICONS } from "../../utils/icontypes";
 import styles from "../PagesDetail.module.css";
 
 import { getUsuarioById, editarUsuario, cambiarEstadoUsuario, resetearPassword } from "../../api/usuarioApi";
+import { logout } from "../../api/authApi";
+
 
 const ROL_BADGE = {
     ADMIN:    { clase: "badge badge-danger",  icono: "shieldCheck"  },
@@ -67,6 +69,16 @@ export default function UsuariosDetail() {
     const handleAlterarEstado = async () => {
         try {
             await cambiarEstadoUsuario(id);
+            const userActual = JSON.parse(localStorage.getItem("user") ?? "null");
+
+            if (userActual?.id === usuario.id && usuario.estado) {
+                try { await logout(); } catch (_) {}
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+                showToast("Tu usuario fue desactivado. Sesión cerrada.", "warning");
+                navigate("/login", { replace: true });
+                return;
+            }
             setUsuario(prev => ({ ...prev, estado: !prev.estado }));
             showToast(usuario.estado ? "Usuario desactivado" : "Usuario activado", "success");
             setModalEstado(false);
@@ -128,13 +140,13 @@ export default function UsuariosDetail() {
                             </Button>
                             <Button
                                 icon={usuario.estado ? "trash" : "check"}
-                                variant={usuario.estado ? "danger" : "success"}
+                                variant={usuario.estado ? "danger" : "success-2"}
                                 size="md"
                                 onClick={() => setModalEstado(true)}
                             >
                                 {usuario.estado ? "Desactivar usuario" : "Activar usuario"}
                             </Button>
-                            <Button icon="lock" variant="ghost" size="md"
+                            <Button icon="lockClosed" variant="ghost" size="md"
                                 onClick={() => setModalPassword(true)}>
                                 Cambiar contraseña
                             </Button>
@@ -145,9 +157,10 @@ export default function UsuariosDetail() {
 
             <ModalEditarUsuario
                 isOpen={modalEditar}
-                nombreActual={usuario?.nombre}
+                usuario={usuario}
                 onClose={() => setModalEditar(false)}
                 onConfirm={handleEditarUsuario}
+
             />
             <ModalAlterarEstado
                 isOpen={modalEstado}
