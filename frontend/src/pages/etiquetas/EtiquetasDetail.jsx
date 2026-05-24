@@ -8,10 +8,11 @@ import DataField from "../../components/common/DataField";
 import Button from "../../components/ui/Button";
 import ColorPalette from "../../components/common/ColorPalette";
 
-import { obtenerEtiquetaPorId, modificarEtiqueta } from "../../api/apiEtiquetas";
+import { obtenerEtiquetaPorId, modificarEtiqueta, crearEtiqueta } from "../../api/apiEtiquetas";
 import {obtenerResumenEtiquetas} from "../../api/apiClienteEtiquetas";
 import ModalModifcarEtiquetaNombre from "../../components/etiquetas/ModalModificarEtiquetaNombre";
 import ModalModifcarEtiquetaDescripcion from "../../components/etiquetas/ModalModificarEtiquetaDescripcion";
+import ModalCrearEtiqueta from "../../components/etiquetas/ModalCrearEtiqueta";
 
 
 
@@ -24,9 +25,10 @@ export default function EtiquetasDetail() {
     const mockEtiqueta ={id:1, nombre: "mora", color: "#16a34a", descripcion: "blabla"}
     const mockcantUs={cant: 12};
 
-    const [modalNombre, setModalNombre]     = useState(false);
-     const [modalDescripcion, setModalDescripcion]     = useState(false);
+    const [modalNombre, setModalNombre]= useState(false);
+     const [modalDescripcion, setModalDescripcion]= useState(false);
      const [colorPalette, setColorPalette ] = useState(false);
+     const [modalCrear, setModalCrear]= useState(false);
 
 
   
@@ -36,7 +38,6 @@ export default function EtiquetasDetail() {
     
     const [etiqueta, setEtiqueta]   = useState(mockEtiqueta);
     const [cantUsuarios]= useState(mockcantUs);
-
 
 
 
@@ -61,6 +62,17 @@ export default function EtiquetasDetail() {
         }
     };
 
+    const handleCrearEtiqueta=async(nuevaEtiqueta)=>{
+
+        try {
+            showToast ("etiqueta Creada correctamente", "success");
+            setModalCrear(false);
+        }
+        catch(e){
+            showToast(e?.mensajes?.[0]?? "Error al crear etiqueta", "error")
+        }
+    }
+
     
 
     const handleCambiarDescripcion = async (nuevaDesc) => {
@@ -75,8 +87,6 @@ export default function EtiquetasDetail() {
 
 
     
-
-
    
 
     return (<> 
@@ -112,8 +122,15 @@ export default function EtiquetasDetail() {
            
 
         <Button icon="trash" variant="danger" size="md" >
-            eliminar etiqueta
+            eliminar etiqueta <Button icon="edit"  variant="ghost"  size="md"  onClick={() => set(true)}/>
         </Button>
+
+        <div>crearEtiqueta
+            <Button onClick={setModalCrear(true)}>
+                crear
+
+            </Button>
+        </div>
 
 
   
@@ -138,6 +155,12 @@ export default function EtiquetasDetail() {
 
 
         </ModalModifcarEtiquetaDescripcion>
+
+        <ModalCrearEtiqueta isOpen={modalCrear} onClose={()=> setModalCrear(false)} onConfirm={handleCrearEtiqueta}>
+
+
+        </ModalCrearEtiqueta>
+
 
 
         
