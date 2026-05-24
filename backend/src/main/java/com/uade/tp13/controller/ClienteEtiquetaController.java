@@ -80,4 +80,9 @@ public class ClienteEtiquetaController {
             .build();
     }
 
+    @GetMapping("/resumen/{etiquetaId}")
+        public ResponseEntity<Long> contarClientesPorEtiqueta(@PathVariable Long etiquetaId) {
+        return ResponseEntity.ok(clienteEtiquetaService.contarPorEtiqueta(etiquetaId));
+    }
+
 }

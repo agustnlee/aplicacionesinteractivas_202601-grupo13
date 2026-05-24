@@ -21,5 +21,8 @@ export const obtenerEtiquetaPorCliente = (clienteId, params = {}) =>
 export const eliminarAsignacion= (idAsignacion)=>
     apiClient(`/clientes-etiquetas/${idAsignacion}`, "DELETE");
 
+export const contarClientesPorEtiqueta = (etiquetaId) =>
+    apiClient(`/clientes-etiquetas/resumen/${etiquetaId}`);
+
 
 

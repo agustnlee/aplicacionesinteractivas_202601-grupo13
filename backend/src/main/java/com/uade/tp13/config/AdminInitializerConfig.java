@@ -27,6 +27,7 @@ public class AdminInitializerConfig implements CommandLineRunner {
     private final CuotaRepository    cuotaRepository;
     private final PasswordEncoder    passwordEncoder;
     private final EtiquetaRepository etiquetaRepository;
+    private final ClienteEtiquetaRepository clienteEtiquetaRepository;
 
     @Override
     public void run(String... args) {
@@ -115,54 +116,26 @@ Cliente c3 = clienteRepository.save(Cliente.builder()
 	    crearCredito(c2, cobrador2, analista, new BigDecimal("75000"),  new BigDecimal("18"), 10, EstadoCredito.ACTIVO);
 	    crearCredito(c3, cobrador1, admin,    new BigDecimal("33000"),  new BigDecimal("10"), 6,  EstadoCredito.CANCELADO);
 
-            etiquetaRepository.save(Etiqueta.builder()
-        .nombre("Urgente")
-        .color("#d72b31")
-        .descripcion("Etiqueta urgente")
-        .build());
+        Etiqueta eUrgente    = etiquetaRepository.save(Etiqueta.builder().nombre("Urgente")     .color("#d72b31").descripcion("Etiqueta urgente").build());
+        Etiqueta eImportante = etiquetaRepository.save(Etiqueta.builder().nombre("Importante")  .color("#e94a22").descripcion("Alta prioridad").build());
+        Etiqueta ePendiente  = etiquetaRepository.save(Etiqueta.builder().nombre("Pendiente")   .color("#f69e31").descripcion("Pendiente de revisión").build());
+        Etiqueta eSeguimiento= etiquetaRepository.save(Etiqueta.builder().nombre("Seguimiento") .color("#e8fa42").descripcion("Requiere seguimiento").build());
+        Etiqueta ePagado     = etiquetaRepository.save(Etiqueta.builder().nombre("Pagado")      .color("#60c04c").descripcion("Caso pagado").build());
+        Etiqueta eActivo     = etiquetaRepository.save(Etiqueta.builder().nombre("Activo")      .color("#21917b").descripcion("Caso activo").build());
+        Etiqueta eInfo       = etiquetaRepository.save(Etiqueta.builder().nombre("Info")        .color("#225575").descripcion("Información general").build());
+        Etiqueta eArchivado  = etiquetaRepository.save(Etiqueta.builder().nombre("Archivado")   .color("#5f3675").descripcion("Caso archivado").build());
 
-etiquetaRepository.save(Etiqueta.builder()
-        .nombre("Importante")
-        .color("#e94a22")
-        .descripcion("Alta prioridad")
-        .build());
-
-etiquetaRepository.save(Etiqueta.builder()
-        .nombre("Pendiente")
-        .color("#f69e31")
-        .descripcion("Pendiente de revisión")
-        .build());
-
-etiquetaRepository.save(Etiqueta.builder()
-        .nombre("Seguimiento")
-        .color("#e8fa42")
-        .descripcion("Requiere seguimiento")
-        .build());
-
-etiquetaRepository.save(Etiqueta.builder()
-        .nombre("Pagado")
-        .color("#60c04c")
-        .descripcion("Caso pagado")
-        .build());
-
-etiquetaRepository.save(Etiqueta.builder()
-        .nombre("Activo")
-        .color("#21917b")
-        .descripcion("Caso activo")
-        .build());
-
-etiquetaRepository.save(Etiqueta.builder()
-        .nombre("Info")
-        .color("#225575")
-        .descripcion("Información general")
-        .build());
-
-etiquetaRepository.save(Etiqueta.builder()
-        .nombre("Archivado")
-        .color("#5f3675")
-        .descripcion("Caso archivado")
-        .build());
-
+        clienteEtiquetaRepository.saveAll(List.of(
+                ClienteEtiqueta.builder().cliente(c1).etiqueta(eUrgente)    .asignadoPorId(admin).build(),
+                ClienteEtiqueta.builder().cliente(c1).etiqueta(eImportante) .asignadoPorId(admin).build(),
+                ClienteEtiqueta.builder().cliente(c1).etiqueta(ePendiente)  .asignadoPorId(analista).build(),
+                ClienteEtiqueta.builder().cliente(c2).etiqueta(eSeguimiento).asignadoPorId(admin).build(),
+                ClienteEtiqueta.builder().cliente(c2).etiqueta(eActivo)     .asignadoPorId(cobrador1).build(),
+                ClienteEtiqueta.builder().cliente(c2).etiqueta(eInfo)       .asignadoPorId(analista).build(),
+                ClienteEtiqueta.builder().cliente(c3).etiqueta(ePagado)     .asignadoPorId(admin).build(),
+                ClienteEtiqueta.builder().cliente(c3).etiqueta(eArchivado)  .asignadoPorId(cobrador2).build(),
+                ClienteEtiqueta.builder().cliente(c3).etiqueta(eUrgente)    .asignadoPorId(admin).build()
+                ));
         System.out.println(">>> AdminInitializerConfig: datos de prueba cargados.");
     }
 

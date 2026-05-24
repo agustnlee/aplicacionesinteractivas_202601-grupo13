@@ -27,7 +27,7 @@ const columnasConfig = [
     { 
         key: "descripcion", 
         label: "Descripción", 
-        width: "130px",
+        width: "420px",
         render: (c) => {
             const descSegura = c.descripcion || c.descripcionEtiqueta;
             return descSegura ? descSegura : <span style={{ color: 'var(--text-muted)' }}>Sin descripción</span>;
