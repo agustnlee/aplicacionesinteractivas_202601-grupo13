@@ -8,47 +8,42 @@ import ColorPalette from "../common/ColorPalette";
 
 export default function ModalCrearEtiqueta({isOpen, onClose, onConfirm })
 { const[descripcion, setDescripcion] = useState("");
-    const[nombre, setNombre]= useState("");
-    const[color, setColor]= useState("");
+    const[nombre,setNombre]= useState("");
+   const[color,setColor]= useState("");
+
   const [error, setError]= useState("");
-
-  const [formData, setFormData] = useState("");
-
-  const INITIAL_FORM = {
-    nombre:"",
-    descripcion:"",
-    color: "",
+  
+  const INITIAL_FORM = {nombre: "a", descripcion:"b",color: "c"
+   
 };
+const [formData, setFormData] = useState(INITIAL_FORM);
+const handleCambiarcolor = async (color) => {
+        try {
+            showToast("Color actualizado correctamente", "success");
+            
+            setColor(color);
+        } catch (e) {
+            showToast(e?.mensajes?.[0] ?? "Error al cambiar color", "error");
+        }
+    };
+  
 
  const handleConfirm = () => {
-    setError("");
+    formData.nombre=nombre;
+    formData.descripcion=descripcion;
+    formData.color=color;
+
     onConfirm(formData);
   }
 
-  
-      useEffect(() => {
-          if (!isOpen) setFormData(INITIAL_FORM);
-      }, [isOpen]);
-
-  const handleCambiarcolor = async (colorN) => {
-
-        setFormData(prev=> ({...prev,[color]: colorN}))
-    
-        
-    };
-
-     const handleChange = (e) => {
+   const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    
-
   
   const handleClose = () => { 
-    setDescripcion(""); 
-    setNombre(""),
-    setColor(""),
+    setFormData(""); 
     setError(""); 
     onClose();
   }
@@ -57,7 +52,7 @@ export default function ModalCrearEtiqueta({isOpen, onClose, onConfirm })
           <Modal
               isOpen={isOpen}
               onClose={handleClose}
-              title="Crear Etiqueta"
+              title="CrearEtiqueta"
               description="Ingresá los datos de la nueva etiqueta"
               icon={ICONS.edit}
               iconVariant="default"
@@ -65,29 +60,37 @@ export default function ModalCrearEtiqueta({isOpen, onClose, onConfirm })
               actions={[{ label: "Confirmar", onClick: handleConfirm, variant: "primary" }]}
           >
               <div className={styles.body}>
-                  <label className={styles.label}> nueva etiqueta</label>
-                  <input
-                     type="text"
-                    name="nombre"
-                    placeholder="Nombre"
-                    value={formData.nombre}
-                    onChange={handleChange}
-                  />
-
-                   <ColorPalette onConfirm={handleCambiarcolor}/>
-                  
-                  
+                  <label className={styles.label}> DESCRIPCION ETIQUETA</label>
                   <input
                       type="text"
-                    name="descripcion"
-                    placeholder="Descripcion"
-                    value={formData.descripcion}
-                    onChange={handleChange}
+                      value={descripcion}
+                      onChange={e => { setDescripcion(e.target.value); setError(""); }}
+                      placeholder={descripcion}
+                      className={`${styles.input} ${error ? styles.inputError : ""}`}
                   />
-
-
                   {error && <span className={styles.error}>{error}</span>}
               </div>
+
+
+               <div className={styles.body}>
+                  <label className={styles.label}> NOMBRE ETIQUETA</label>
+                  <input
+                      type="text"
+                      value={nombre}
+                      onChange={e => { setNombre(e.target.value); setError(""); }}
+                      placeholder={nombre}
+                      className={`${styles.input} ${error ? styles.inputError : ""}`}
+                  />
+                  {error && <span className={styles.error}>{error}</span>}
+              </div>
+
+
+              <div>
+                
+                <ColorPalette onConfirm={handleCambiarcolor} /> 
+                      
+              </div>
+
           </Modal>
       );
   }
