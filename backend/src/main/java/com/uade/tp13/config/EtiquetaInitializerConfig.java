@@ -5,7 +5,7 @@ import com.uade.tp13.repository.EtiquetaRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+/* 
 @Configuration
 public class EtiquetaInitializerConfig {
 
@@ -54,3 +54,5 @@ public class EtiquetaInitializerConfig {
         }
     }
 }
+
+*/
