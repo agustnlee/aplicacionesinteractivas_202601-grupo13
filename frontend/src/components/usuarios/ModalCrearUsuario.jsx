@@ -1,85 +1,101 @@
 import { useState, useEffect } from "react";
 import Modal from "../common/Modal";
-import Button from "../ui/Button";
-import InputPassword from "../common/InputPassword";
+import ModalForm from "../common/ModalForm";
+import { ICONS } from "../../utils/icontypes";
+import styles from "./ModalCrearUsuario.module.css";
 
-const INITIAL_FORM = {
-    nombre:   "",
-    email:    "",
-    password: "",
-    rol:      "COBRADOR",
-};
+const INITIAL = { nombre: "", email: "", password: "", rol: "COBRADOR" };
 
+const ROLES = [
+    { value: "ADMIN",    label: "Admin"    },
+    { value: "ANALISTA", label: "Analista" },
+    { value: "COBRADOR", label: "Cobrador" },
+];
 
-export default function ModalCrearUsuario({
-    isOpen,
-    onClose,
-    onConfirm
-}) {
-
-    const [formData, setFormData] = useState("");
+export default function ModalCrearUsuario({ isOpen, onClose, onConfirm }) {
+    const [form,         setForm]         = useState(INITIAL);
+    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
-        if (!isOpen) setFormData(INITIAL_FORM);
+        if (!isOpen) { setForm(INITIAL); setShowPassword(false); }
     }, [isOpen]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setForm(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = () => {
-        onConfirm(formData);        // datos al padre
-    };
-
+    const formValido = form.nombre.trim() && form.email.trim() && form.password.trim();
+    const EyeIcon    = showPassword ? ICONS.eye : ICONS.eyeOff;
 
     return (
         <Modal
             isOpen={isOpen}
             onClose={onClose}
             title="Crear usuario"
+            icon={ICONS.user}
+            iconVariant="default"
+            size="md"
+            actions={[{
+                label:    "Crear usuario",
+                onClick:  () => onConfirm(form),
+                variant:  "primary",
+                disabled: !formValido,
+            }]}
         >
-            <div
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "12px"
-                }}
-            >
-                <input
-                    type="text"
+            <div className={styles.body}>
+                <ModalForm
+                    label="Nombre"
                     name="nombre"
-                    placeholder="Nombre"
-                    value={formData.nombre}
+                    value={form.nombre}
                     onChange={handleChange}
+                    placeholder="Ej: Juan Pérez"
                 />
-
-                <input
-                    type="email"
+                <ModalForm
+                    label="Email"
                     name="email"
-                    placeholder="Email"
-                    value={formData.email}
+                    value={form.email}
                     onChange={handleChange}
+                    type="email"
+                    placeholder="Ej: juan@mail.com"
                 />
 
-                <InputPassword
-                    value={formData.password}
-                    onChange={handleChange}
-                />
+                {/* Password local */}
+                <div className={styles.fieldGroup}>
+                    <label className={styles.label}>Contraseña</label>
+                    <div className={styles.passwordWrapper}>
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            value={form.password}
+                            onChange={handleChange}
+                            placeholder="Ingresá una contraseña"
+                            className={styles.passwordInner}
+                        />
+                        <button
+                            type="button"
+                            className={styles.eyeBtn}
+                            onClick={() => setShowPassword(p => !p)}
+                        >
+                            <EyeIcon size={16} />
+                        </button>
+                    </div>
+                </div>
 
-                <select
-                    name="rol"
-                    value={formData.rol}
-                    onChange={handleChange}
-                >
-                        <option value="ADMIN">Admin</option>
-                        <option value="ANALISTA">Analista</option>
-                        <option value="COBRADOR">Cobrador</option>
-                </select>
-
-                <Button onClick={handleSubmit}>
-                    Crear usuario
-                </Button>
+                {/* Rol */}
+                <div className={styles.fieldGroup}>
+                    <label className={styles.label}>Rol</label>
+                    <select
+                        name="rol"
+                        value={form.rol}
+                        onChange={handleChange}
+                        className={styles.select}
+                    >
+                        {ROLES.map(r => (
+                            <option key={r.value} value={r.value}>{r.label}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
         </Modal>
     );

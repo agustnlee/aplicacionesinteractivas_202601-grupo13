@@ -19,10 +19,5 @@ public class UsuarioUpdateRequest {
     @NotNull(message = "El rol es obligatorio")
     private ROL_USUARIO rol;
 
-    @NotBlank(message = "El email es obligatorio")
-    @Email(message = "El email tiene que ser con el formato valido")
-    private String email;
-
-    @NotNull(message = "El estado es obligatorio")
     private Boolean estado;
 }

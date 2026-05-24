@@ -31,7 +31,7 @@ public class UsuarioService {
     @Transactional
     public UsuarioResponse crearUsuario(UsuarioRequest request) {
         if (usuarioRepository.existsByEmail(request.getEmail())) {
-            throw new ConflictException("Ya existe un usuario con el email: " + request.getEmail());
+            throw new BusinessException("Ya existe un usuario con el email: " + request.getEmail());
         }
  
         Usuario usuario = Usuario.builder()
@@ -100,6 +100,11 @@ public class UsuarioService {
                 .totalElementos(page.getTotalElements())
                 .build();
     }
+
+    @Transactional(readOnly = true)
+        public UsuarioResponse obtenerUsuario(Long id) {
+            return mapToResponse(getOrThrow(id));
+        }
    
  
  
