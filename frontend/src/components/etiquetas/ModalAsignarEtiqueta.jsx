@@ -24,7 +24,7 @@ export default function ModalAsignarEtiqueta({isOpen, onClose, onConfirm })
           <Modal
               isOpen={isOpen}
               onClose={handleClose}
-              title="Asignar/Deasignar cliente"
+              title="Asignar/Desasignar cliente"
               description="Ingrese el id del cliente que desea Asignar o Deasignar a una etiqueta"
               icon={ICONS.edit}
               iconVariant="default"
