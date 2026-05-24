@@ -1,38 +1,57 @@
-.container {
-    position: absolute;
-    z-index: 1100;       
-    width: 150px;
-    padding: 15px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+.wrapper {
+    position: relative;
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-lg);
+    gap: var(--gap-sm);
+}
+
+.trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gap-sm);
+}
+
+.dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 1100;
     background: var(--surface);
     border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 140px;
 }
 
-.container2 {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 1px solid rgba(0,0,0,0.15);
-    flex-shrink: 0;
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--gap-sm);
 }
 
-.ColorDisplay {
-    height: 24px;
+.colorDot {
     width: 24px;
+    height: 24px;
     border-radius: 50%;
     cursor: pointer;
+    border: 1px solid transparent;
     transition: transform var(--anim-fast) var(--ease-standard),
-                opacity var(--anim-fast);
+                border-color var(--anim-fast);
 }
 
-.ColorDisplay:hover {
-    transform: scale(1.15);
-    opacity: 0.85;
-    cursor: pointer;
+.colorDot:hover {
+    transform: scale(1.2);
+    border-color: var(--border-subtle);
+}
+
+.preview {
+    width: 100%;
+    height: 32px;
+    border-radius: var(--radius);
+    border: 1px solid rgba(0,0,0,0.1);
+    transition: background-color var(--anim-fast) var(--ease-standard);
 }

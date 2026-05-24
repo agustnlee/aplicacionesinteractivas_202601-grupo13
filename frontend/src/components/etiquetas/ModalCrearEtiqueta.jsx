@@ -5,10 +5,12 @@ import ColorPalette from "../common/ColorPalette";
 import { ICONS } from "../../utils/icontypes";
 import styles from "./ModalCrearEtiqueta.module.css";
 
-const INITIAL = { nombre: "", descripcion: "", color: "" };
+const INITIAL  = { nombre: "", descripcion: "", color: "" };
+const MAX_DESC = 50;
 
-export default function ModalCrearEtiqueta({isOpen, onClose, onConfirm }) { 
-    const [form, setForm] = useState(INITIAL);
+export default function ModalCrearEtiqueta({ isOpen, onClose, onConfirm }) {
+    const [form,  setForm]  = useState(INITIAL);
+    const [shake, setShake] = useState(false);
 
     useEffect(() => {
         if (!isOpen) setForm(INITIAL);
@@ -16,6 +18,11 @@ export default function ModalCrearEtiqueta({isOpen, onClose, onConfirm }) {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        if (name === "descripcion" && value.length > MAX_DESC) {
+            setShake(true);
+            setTimeout(() => setShake(false), 400);
+            return;
+        }
         setForm(prev => ({ ...prev, [name]: value }));
     };
 
@@ -44,23 +51,40 @@ export default function ModalCrearEtiqueta({isOpen, onClose, onConfirm }) {
                     onChange={handleChange}
                     placeholder="Ej: Moroso"
                 />
-                <ModalForm
-                    label="Descripción"
-                    name="descripcion"
-                    value={form.descripcion}
-                    onChange={handleChange}
-                    placeholder="Ej: Cliente con pagos atrasados"
-                />
-                <div className={styles.colorGroup}>
-                    <span className={styles.label}>Color</span>
+
+                {/* Descripción con contador */}
+                <div className={styles.fieldGroup}>
+                    <div className={styles.labelRow}>
+                        <label className={styles.label}>Descripción</label>
+                    </div>
+                    <input
+                        type="text"
+                        name="descripcion"
+                        value={form.descripcion}
+                        onChange={handleChange}
+                        placeholder="Ej: Cliente con pagos atrasados"
+                        className={`${styles.input} ${shake ? styles.shake : ""}`}
+                    />
+                    <span className={`${styles.counter} ${form.descripcion.length >= MAX_DESC ? styles.counterMax : ""}`}>
+                        {form.descripcion.length}/{MAX_DESC}
+                    </span>
+                </div>
+
+                {/* Color — palette y dot alineados */}
+                <div className={styles.fieldGroup}>
+                    <label className={styles.label}>Color</label>
                     <div className={styles.colorRow}>
                         <ColorPalette
                             onConfirm={(color) => setForm(prev => ({ ...prev, color }))}
                         />
-                        {form.color
-                            ? <div className={styles.colorDot} style={{ backgroundColor: form.color }} />
-                            : <span className={styles.colorHint}>Seleccioná un color</span>
-                        }
+                            {form.color ? (
+                                <div
+                                    className={styles.colorDot}
+                                    style={{ backgroundColor: form.color }}
+                                />
+                            ) : (
+                                <span className={styles.colorHint}>Seleccioná un color</span>
+                            )}
                     </div>
                 </div>
             </div>
