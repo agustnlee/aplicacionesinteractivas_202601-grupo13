@@ -282,9 +282,9 @@ npm run dev
 | I | Spring Boot, arquitectura, estructura de proyectos | `/backend` |
 | II | Hibernate/JPA, entidades, repositorios | `/moderl`, `/repository` |
 | II | Seguridad con JWT | `/security` |
-| III | React + Vite, componentes, props | (Por Definir) |
-| III | React Hooks (`useState`, `useEffect`) | /frontend |
-| III | React Router | (Por Definir) |
-| IV | Fetch, consumo de API | `/api` |
-| IV | Renderizado condicional | Estados de carga + error en cada página |
-| V | Redux I y II: acciones, reducers, store, thunks | `store/slices/`, `store/index.js` |
+| III | React + Vite, componentes, props |  `/frontend` |
+| III | React Hooks (`useState`, `useEffect`) | `/frontend` |
+| III | React Router | `/App.jsx`  |
+| IV | Fetch, consumo de API | `/api/apiClient`, `/frontend` |
+| IV | Renderizado condicional |  `/pages`,  `components/common/LoadingWrapper.jsx`, `components/common/PaginatedContainer.jsx` |
+| V | Redux I y II: acciones, reducers, store, thunks | (por definir) |
