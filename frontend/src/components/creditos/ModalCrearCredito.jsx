@@ -1,25 +1,33 @@
 import React, { useState } from 'react';
 import Modal from '../common/Modal'; 
 
-export default function ModalCrearCredito({ isOpen, onClose, onConfirm }) {
+export default function ModalCrearCredito({ isOpen, onClose, onConfirm, isClientes=false }) {
   const [step, setStep] = useState(1);
   const [monto, setMonto] = useState('');
   const [cuotas, setCuotas] = useState('');
+  const [interes, setInteres] = useState('');
+  const [cobradorId, setCobradorId] = useState('');
 
   // Corrección: Resetea todos los inputs de texto al cerrar el flujo completo
   const handleCloseFull = () => {
     setStep(1);
     setMonto('');
     setCuotas('');
+    setInteres('');
+    setCobradorId('');
     onClose();
   };
+
+  const isPaso1Disabled = isClientes 
+    ? !monto || !cuotas || !interes || !cobradorId 
+    : !monto || !cuotas;
 
   const accionesPaso1 = [
     {
       label: "Ver Preview",
-      onClick: () => { if (monto && cuotas) setStep(2); },
+      onClick: () => { if (!isPaso1Disabled) setStep(2); },
       variant: "primary",
-      disabled: !monto || !cuotas
+      disabled: isPaso1Disabled
     }
   ];
 
@@ -67,13 +75,38 @@ export default function ModalCrearCredito({ isOpen, onClose, onConfirm }) {
               placeholder="Ej: 12" 
             />
           </div>
+          {isClientes && (
+            <>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                <label style={{ fontSize: '0.9rem', fontWeight: '500' }}>Interés (%)</label>
+                <input 
+                  type="number" 
+                  className="form-control" 
+                  value={interes} 
+                  onChange={(e) => setInteres(e.target.value)} 
+                  placeholder="Ej: 15" 
+                />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                <label style={{ fontSize: '0.9rem', fontWeight: '500' }}>ID del Cobrador</label>
+                <input 
+                  type="number" 
+                  className="form-control" 
+                  value={cobradorId} 
+                  onChange={(e) => setCobradorId(e.target.value)} 
+                  placeholder="Ej: 1" 
+                />
+              </div>
+            </>
+          )}
         </div>
       </Modal>
     );
   }
 
-  const montoCuotaCalculado = cuotas > 0 ? (Number(monto) / Number(cuotas)) : 0;
-
+  const interesMultiplicador = isClientes && interes ? (1 + (Number(interes) / 100)) : 1;
+  const montoTotalConInteres = Number(monto) * interesMultiplicador;
+  const montoCuotaCalculado = cuotas > 0 ? (montoTotalConInteres / Number(cuotas)) : 0;
   return (
     <Modal
       isOpen={isOpen}
@@ -84,6 +117,14 @@ export default function ModalCrearCredito({ isOpen, onClose, onConfirm }) {
       actions={accionesPaso2}
     >
       <div style={{ lineHeight: '2', padding: '10px 0' }}>
+        <p><strong>Monto Base Solicitado:</strong> ${Number(monto).toLocaleString()}</p>
+        
+        {isClientes && (
+          <>
+            <p><strong>Interés Aplicado:</strong> {interes}%</p>
+            <p><strong>Cobrador Asignado (ID):</strong> {cobradorId}</p>
+          </>
+        )}
         <p><strong>Monto Total Solicitado:</strong> ${Number(monto).toLocaleString()}</p>
         <p><strong>Plazo Estimado:</strong> {cuotas} meses</p>
         <p><strong>Monto aproximado por cuota:</strong> ${montoCuotaCalculado.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
