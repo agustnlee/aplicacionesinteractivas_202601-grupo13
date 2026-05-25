@@ -58,7 +58,7 @@ export default function CeldaEtiquetas({ clienteId }) {
             </span>
         );
     }
-    const MAX_MOSTRAR = 2;
+    const MAX_MOSTRAR = 5;
     const etiquetasVisibles = etiquetas.slice(0, MAX_MOSTRAR);
     const etiquetasOcultas = etiquetas.length - MAX_MOSTRAR;
 
@@ -70,7 +70,7 @@ export default function CeldaEtiquetas({ clienteId }) {
                     key={et.etiquetaId} 
                     style={{ 
                         backgroundColor: et.colorEtiqueta || "var(--surface-2)", 
-                        color: "var(--text)", //DEFINIR UN COLOR IDEAL PARA RESALTAR EL LINK
+                        color: "var(--text-inverse)", //DEFINIR UN COLOR IDEAL PARA RESALTAR EL LINK
                         padding: "2px 8px", 
                         borderRadius: "12px", 
                         fontSize: "var(--text-xs)",
@@ -85,7 +85,7 @@ export default function CeldaEtiquetas({ clienteId }) {
                 </Link>
             ))}
             {etiquetasOcultas > 0 && (
-            <span style={{ fontSize: "10px", padding: "2px 6px", backgroundColor: "var(--primary-500)", borderRadius: "10px" }}>
+            <span style={{ fontSize: "10px", padding: "2px 6px", backgroundColor: "var(--primary-500)", borderRadius: "10px", color: "var(--text-inverse)" }}>
                 +{etiquetasOcultas}
             </span>
         )}
