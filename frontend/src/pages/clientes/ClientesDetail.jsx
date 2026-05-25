@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate, replace } from "react-router-dom";
 import { obtenerFichaCliente, editarCliente, alterarEstadoCliente } from "../../api/clientesApi"; 
 import { crearCredito } from "../../api/creditoApi";
 import { useToast } from "../../hooks/useToast";
@@ -70,7 +70,7 @@ const columnsEtiquetas = [
 export default function ClientesDetail() {
     const { id } = useParams();
     const { showToast } = useToast();
-
+    const navigate = useNavigate();
     const [cliente, setCliente] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -86,7 +86,8 @@ export default function ClientesDetail() {
             const data = await obtenerFichaCliente(id);
             setCliente(data);
         } catch (err) {
-            setError(err.mensajes ? err.mensajes.join(", ") : "Error al cargar la ficha del cliente.");
+            showToast("El cliente solicitado no existe", "error");
+            navigate("/clientes", { replace: true });
         } finally {
             setIsLoading(false);
         }
@@ -119,7 +120,6 @@ export default function ClientesDetail() {
 
     const handleCrearCredito = async (datosDelModal) => {
         try {
-            // El backend recibe el interés numérico. Si ponés 15, enviamos 15 (o 0.15 si tu backend lo exige así, ajustalo aquí)
             const requestData = {
                 clienteId: Number(id),
                 monto: Number(datosDelModal.monto),

@@ -45,22 +45,8 @@ const columns = [
     { 
         key: "etiquetas", 
         label: "Etiquetas", 
-        width: "20%",
+        width: "35%",
         render: (item) => <ColumnEtiquetas clienteId={item.id} /> 
-    },
-    { 
-        key: "creadoPor", 
-        label: "Creado por", 
-        width: "15%",
-        render: (item) => (
-            item.idCreadoPor ? (
-                <Link to={`/usuarios/${item.idCreadoPor}`} className={styles.link}>
-                    {item.nombreCreadoPor}
-                </Link>
-            ) : (
-                <span style={{ color: "var(--text-muted)" }}>Sistema</span>
-            )
-        )
     }
 ];
 
@@ -133,9 +119,10 @@ export default function Clientes() {
 
     const handleCrearCliente = async (formData) => {
         try {
-            await crearCliente(formData);
+            const clienteCreado = await crearCliente(formData);
             showToast("Cliente creado exitosamente", "success");
-            cargarClientes();
+            setIsModalOpen(false);
+            navigate(`/clientes/${clienteCreado.id}`);
         } catch (err) {
             const mensajeError = err?.mensajes?.[0] ?? "Ocurrió un error al crear el cliente";
             showToast(mensajeError, "error");
