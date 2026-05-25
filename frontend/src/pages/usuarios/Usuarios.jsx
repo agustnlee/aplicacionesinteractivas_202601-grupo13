@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { getUsuarios, crearUsuario } from "../../api/usuarioApi";
 import ModalCrearUsuario from "../../components/usuarios/ModalCrearUsuario";
 import FichaUsuario from "../../components/usuarios/FichaUsuario";
@@ -37,7 +37,9 @@ const COLUMNS = [
 
 export default function Usuarios() {
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const { showToast } = useToast();
+    
 
     const [usuarios, setUsuarios] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -84,13 +86,13 @@ export default function Usuarios() {
     const handleCrearUsuario = async (formData) => {
         try {
 
-            await crearUsuario(formData);
+            const usuario = await crearUsuario(formData);
 
             showToast("Usuario creado correctamente", "success");
 
             setIsModalOpen(false);
 
-            fetchUsuarios(false);
+            navigate(`/usuarios/${usuario.id}`);  
 
         } catch (err) {
 
