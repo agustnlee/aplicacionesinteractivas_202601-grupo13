@@ -265,7 +265,7 @@ export default function ClientesDetail() {
                 isOpen={modalCredito}
                 onClose={() => setModalCredito(false)}
                 onConfirm={handleCrearCredito}
-                isClientes={false} 
+                isClientes={true} 
             />
         </div>
     );

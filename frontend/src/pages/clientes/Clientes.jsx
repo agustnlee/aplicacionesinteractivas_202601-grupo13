@@ -93,7 +93,7 @@ export default function Clientes() {
                 } catch (err) {
                     setClientes([]);
                     setTotalPages(0);
-                    setError("No se encontró ningún cliente con ese DNI.");
+                    setError({ mensajes: ["No se encontró ningún cliente con ese DNI."] });
                     setIsLoading(false);
                     return;
                 }
@@ -110,7 +110,7 @@ export default function Clientes() {
                 } catch (err) {
                     setClientes([]);
                     setTotalPages(0);
-                    setError("No se encontró ningún cliente con ese ID.");
+                    setError({ mensajes: ["No se encontró ningún cliente con ese ID."] });
                     setIsLoading(false);
                     return;
                 }
@@ -157,7 +157,7 @@ export default function Clientes() {
                 currentPage={currentPage}
                 totalPages={totalPages}
                 isLoading={isLoading}
-                isEmpty={clientes.length === 0}
+                isEmpty={!clientes.length }
                 error={error} 
                 onCreate={() => setIsModalOpen(true)}
             >
