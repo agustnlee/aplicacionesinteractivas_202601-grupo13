@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { obtenerFichaCliente, editarCliente, alterarEstadoCliente } from "../../api/clientesApi"; 
+import { crearCredito } from "../../api/creditoApi";
 import { useToast } from "../../hooks/useToast";
 
 import PaginatedContainer from "../../components/common/PaginatedContainer";
@@ -10,6 +11,7 @@ import Button from "../../components/ui/Button";
 
 import ModalEditarCliente from "../../components/clientes/ModalEditarCliente";
 import ModalAlterarEstado from "../../components/clientes/ModalAlterarEstado";
+import ModalCrearCredito from "../../components/creditos/ModalCrearCredito";
 
 import styles from "../PagesDetail.module.css";
 
@@ -75,6 +77,7 @@ export default function ClientesDetail() {
 
     const [modalEditar, setModalEditar] = useState(false);
     const [modalEstado, setModalEstado] = useState(false);
+    const [modalCredito, setModalCredito] = useState(false);
 
     const cargarFicha = async () => {
         setIsLoading(true);
@@ -114,6 +117,28 @@ export default function ClientesDetail() {
         }
     };
 
+    const handleCrearCredito = async (datosDelModal) => {
+        try {
+            // El backend recibe el interés numérico. Si ponés 15, enviamos 15 (o 0.15 si tu backend lo exige así, ajustalo aquí)
+            const requestData = {
+                clienteId: Number(id),
+                monto: Number(datosDelModal.monto),
+                cantidadCuotas: Number(datosDelModal.cuotas), 
+                interes: Number(datosDelModal.interes), 
+                cobradorId: Number(datosDelModal.cobradorId) 
+            };
+            
+            await crearCredito(requestData);
+            
+            showToast("Crédito creado exitosamente", "success");
+            setModalCredito(false); 
+            await cargarFicha(); 
+        } catch (err) {
+            const mensajeError = err?.mensajes?.[0] ?? "Ocurrió un error al crear el crédito";
+            showToast(mensajeError, "error");
+        }
+    };
+
     useEffect(() => {
         cargarFicha();
     }, [id]);
@@ -139,7 +164,7 @@ export default function ClientesDetail() {
                         new Date(cliente.fechaCreacion).toLocaleString("es-AR", { 
                             dateStyle: "short", timeStyle: "short" 
                         })
-                    } />
+                        } />
                     
                     <DataField label="Creado por" value={
                         cliente.idCreador ? (
@@ -174,7 +199,7 @@ export default function ClientesDetail() {
             </div>
 
             <h3 className={`title ${styles.titulo}`} style={{ marginTop: "var(--space-4)" }}>
-                Etiquetas Asignadas (A DEFINIR)
+                Etiquetas Asignadas a {cliente.nombre}
             </h3>
             <PaginatedContainer
                 columns={columnsEtiquetas}
@@ -193,9 +218,18 @@ export default function ClientesDetail() {
                 ))}
             </PaginatedContainer>
 
-            <h3 className={`title ${styles.titulo}`} style={{ marginTop: "var(--space-4)" }}>
-                Creditos Activos de {cliente.nombre}
-            </h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'var(--space-4)', marginBottom: '1rem' }}>
+    <h3 className={`title ${styles.titulo}`} style={{ margin: 0 }}>
+        Créditos Activos de {cliente.nombre}
+    </h3>
+    <Button 
+        variant="primary" 
+        size="md" 
+        onClick={() => setModalCredito(true)}
+    >
+        Crear Crédito
+    </Button>
+</div>
             <PaginatedContainer
                 columns={columnsCreditos}
                 isLoading={false}
@@ -226,6 +260,12 @@ export default function ClientesDetail() {
                 clienteId={cliente.id}
                 estadoActual={cliente.estado}
                 onSubmit={handleAlterarEstado} 
+            />
+            <ModalCrearCredito
+                isOpen={modalCredito}
+                onClose={() => setModalCredito(false)}
+                onConfirm={handleCrearCredito}
+                isClientes={false} 
             />
         </div>
     );
