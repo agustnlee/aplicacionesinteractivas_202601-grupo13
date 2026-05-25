@@ -1,9 +1,8 @@
-import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { CheckCircle2, Wallet, Users, Tags } from "lucide-react"; 
 
 export default function Homepage() {
-  const user = useSelector((state) => state.auth?.user);
+  const user = JSON.parse(localStorage.getItem("user") ?? "null");
   const displayName = user?.nombre ?? user?.name ?? "Operador";
   const isAdmin = String(user?.rol ?? "").toUpperCase() === "ADMIN";
 
@@ -37,7 +36,8 @@ export default function Homepage() {
               style={{ padding: "2rem 2rem" }}
             >
               <h1 className="m-0 text-3xl md:text-4xl font-bold tracking-tight text-[var(--primary-800)]">
-                ¡Bienvenido de vuelta, {displayName}!
+                {/* ¡Bienvenido de vuelta, {displayName}!  TODO*/}
+                    ¡Bienvenido de vuelta,  Operador
               </h1>
               <p className="text-base md:text-lg leading-relaxed max-w-3xl m-0 text-[var(--text-alt)]">
                 Panel central de operaciones. Gestioná la cartera de clientes, visualizá créditos otorgados y monitoreá el estado de mora para priorizar la gestión.
