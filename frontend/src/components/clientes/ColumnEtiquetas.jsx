@@ -85,8 +85,7 @@ export default function CeldaEtiquetas({ clienteId }) {
                 </Link>
             ))}
             {etiquetasOcultas > 0 && (
-            <span style={{ fontSize: "10px", padding: "2px 6px", backgroundColor: "#c9c9c9", borderRadius: "10px" }}>
-                {/* Para mayor contraste background #c9c9c9 (gris algo oscuro) */}
+            <span style={{ fontSize: "10px", padding: "2px 6px", backgroundColor: "var(--primary-500)", borderRadius: "10px" }}>
                 +{etiquetasOcultas}
             </span>
         )}
