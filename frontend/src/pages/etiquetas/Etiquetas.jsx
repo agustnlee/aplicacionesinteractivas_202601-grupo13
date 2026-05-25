@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { buscarEtiquetas, crearEtiqueta } from "../../api/apiEtiquetas";
 import FichaEtiqueta from "../../components/etiquetas/FichaEtiqueta";
 import PaginatedContainer from "../../components/common/PaginatedContainer";
@@ -24,6 +24,7 @@ const COLUMNS = [
 
 export default function Etiquetas() {
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const { showToast }  = useToast();
     
 
@@ -62,15 +63,14 @@ export default function Etiquetas() {
    
     const handleCrearEtiqueta = async (form) => {
         try {
-            await crearEtiqueta({
+            const etiqueta = await crearEtiqueta({
                 nombreEtiqueta:      form.nombre,
                 colorEtiqueta:       form.color,
                 descripcionEtiqueta: form.descripcion,
             });
             showToast("Etiqueta creada correctamente", "success");
             setModalCrear(false);
-            //refetch
-            await cargar(false); 
+            navigate(`/etiquetas/${etiqueta.etiquetaId}`);
 
         } catch (e) {
             showToast(e?.mensajes?.[0] ?? "Error al crear etiqueta", "error");
