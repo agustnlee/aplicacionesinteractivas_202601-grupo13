@@ -74,16 +74,10 @@ public class ClienteService {
     @Transactional
     public ClienteResponse editarCliente(Long id, ClienteUpdateRequest request) {
         Cliente cliente = getOrThrow(id);
-        if (request.getEstado() != null && !request.getEstado() && cliente.getEstado()) {
-            validarImpedimentosDeBaja(id);
-        }
         cliente.setNombre(request.getNombre());
         cliente.setTelefono(request.getTelefono());
         cliente.setDomicilio(request.getDomicilio());
        
-        if (request.getEstado() != null) {
-            cliente.setEstado(request.getEstado());
-        }
         return mapToResponseBasico(clienteRepository.save(cliente));
     }
     @Transactional
@@ -110,7 +104,7 @@ public class ClienteService {
         Cliente cliente = getOrThrow(id);
         Pageable limiteFicha = PageRequest.of(0, 100);
        
-        List<Credito> creditos = creditoRepository.buscarConFiltros(EstadoCredito.ACTIVO,id,null,null, limiteFicha).getContent();
+        List<Credito> creditos = creditoRepository.buscarConFiltros(null,EstadoCredito.ACTIVO,id,null,null, limiteFicha).getContent();
         List<ClienteEtiqueta> etiquetas = clienteEtiquetaRepository.findByClienteId(id, limiteFicha).getContent();
        
         return fichaCompleta(cliente, creditos, etiquetas);

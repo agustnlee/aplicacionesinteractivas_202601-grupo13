@@ -24,13 +24,14 @@ public class UsuarioController {
  
     @GetMapping
     public ResponseEntity<PaginatedResponse<UsuarioResponse>> listar(
+            @RequestParam(required = false) Long id,
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) ROL_USUARIO rol,
             @RequestParam(required = false) Boolean estado,
             @RequestParam(defaultValue = "0") int pagina,
             @RequestParam(defaultValue = "10") int tamanio
     ) {
-        return ResponseEntity.ok(usuarioService.buscarUsuarios(nombre, rol, estado, pagina, tamanio));
+        return ResponseEntity.ok(usuarioService.buscarUsuarios(id, nombre, rol, estado, pagina, tamanio));
     }
  
     @PutMapping("/{id}")
@@ -55,4 +56,9 @@ public class UsuarioController {
         usuarioService.resetearPassword(id, request);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}")
+        public ResponseEntity<UsuarioResponse> obtener(@PathVariable Long id) {
+            return ResponseEntity.ok(usuarioService.obtenerUsuario(id));
+        }
 }

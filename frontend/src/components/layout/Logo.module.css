@@ -1,0 +1,40 @@
+.link {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  border-radius: var(--radius);
+  outline-offset: 2px;
+  text-decoration: none;
+  min-width: 0;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--primary-500);
+}
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  background: var(--primary-600);
+  padding: var(--space-2);
+  box-shadow: var(--shadow-sm), inset 0 0 0 1px rgba(29, 78, 216, 0.2);
+  flex-shrink: 0;
+}
+
+.icon {
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+  color: var(--text-inverse);
+}
+
+.brand {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  letter-spacing: -0.025em;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

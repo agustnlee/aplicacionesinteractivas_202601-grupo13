@@ -53,14 +53,14 @@ public class CreditoService {
 
     @Transactional(readOnly = true)
     public PaginatedResponse<CreditoResponse> listarConFiltros(
-        EstadoCredito estado, Long clienteId,
+        Long id, EstadoCredito estado, Long clienteId,
         Long cobradorId, Long creadoPorId,
         int pagina, int tamanio) {
 
         Pageable pageable = buildPageable(pagina, tamanio);
 
         Page<Credito> page = creditoRepository.buscarConFiltros(
-            estado, clienteId, cobradorId, creadoPorId, pageable
+            id, estado, clienteId, cobradorId, creadoPorId, pageable
         );
 
         return creditoCuotaMapper.creditoToPageResponse(page);
@@ -190,8 +190,8 @@ public class CreditoService {
         if (!cobrador.getEstado()) {
             throw new BusinessException("El cobrador con id " + cobradorId + " está inactivo.");
         }
-        if (cobrador.getRol() != ROL_USUARIO.COBRADOR) {
-            throw new BusinessException("El usuario con id " + cobradorId + " no tiene rol de COBRADOR.");
+        if (cobrador.getRol() != ROL_USUARIO.COBRADOR && cobrador.getRol() != ROL_USUARIO.ADMIN) {
+            throw new BusinessException("El usuario con id " + cobradorId + " no tiene rol de COBRADOR o ADMIN.");
         }
         return cobrador;
     }

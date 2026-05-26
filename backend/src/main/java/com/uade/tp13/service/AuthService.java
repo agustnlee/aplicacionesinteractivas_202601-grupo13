@@ -2,12 +2,14 @@ package com.uade.tp13.service;
 
 import com.uade.tp13.dto.request.LoginRequest;
 import com.uade.tp13.dto.response.AuthResponse;
+import com.uade.tp13.exception.BusinessException;
 import com.uade.tp13.model.Usuario;
 import com.uade.tp13.security.JwtUtils;
 import com.uade.tp13.security.TokenBlacklist;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +24,7 @@ public class AuthService {
     private final TokenBlacklist tokenBlacklist;
 
     public AuthResponse login(LoginRequest request) {
+      try {
         // validacion credenciales (compara passwords con Bcrypt)
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -37,8 +40,13 @@ public class AuthService {
         return AuthResponse.builder()
                 .token(jwtUtils.generateToken(usuario))
                 .id(usuario.getId())
+                .nombre(usuario.getNombre())
+                .email(usuario.getEmail()) 
                 .rol(usuario.getRol())
                 .build();
+      } catch (BadCredentialsException e) {
+        throw new BusinessException("Credenciales incorrectas");
+      }
     }
 
     public void logout(String authHeader) {

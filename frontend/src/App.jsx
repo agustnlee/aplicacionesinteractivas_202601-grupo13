@@ -1,24 +1,73 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import PrivateRoute from './components/PrivateRoute';
-import Navbar from './components/Navbar';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Clientes from './pages/Clientes';
-import Creditos from './pages/Creditos';
-import Cobranzas from './pages/Cobranzas';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
-export default function App() {
+// import componentes puro layout
+import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
+import PrivateRoute from './components/layout/PrivateRoute';
+
+// import paginas
+import Homepage from './pages/Homepage';
+import Login from './pages/auth/Login';
+import Clientes from './pages/clientes/Clientes';
+import ClientesDetail from './pages/clientes/ClientesDetail';
+import Creditos from './pages/creditos/Creditos';
+import CreditosDetail from './pages/creditos/CreditosDetail';
+import Etiquetas from './pages/etiquetas/Etiquetas';
+import EtiquetasDetail from './pages/etiquetas/EtiquetasDetail';
+import Usuarios from './pages/usuarios/Usuarios';
+import UsuariosDetail from './pages/usuarios/UsuariosDetail';
+
+import Test from './pages/Test';
+
+function Layout() {
   return (
-    <BrowserRouter>
+    <div className="app">
       <Navbar />
-      <Routes>
-        <Route path="/login"     element={<Login />} />
-        <Route path="/register"  element={<Register />} />
-        <Route path="/clientes"  element={<PrivateRoute><Clientes /></PrivateRoute>} />
-        <Route path="/creditos"  element={<PrivateRoute><Creditos /></PrivateRoute>} />
-        <Route path="/cobranzas" element={<PrivateRoute><Cobranzas /></PrivateRoute>} />
-        <Route path="*"          element={<Navigate to="/login" replace />} />
-      </Routes>
-    </BrowserRouter>
+      <div className="app-body">
+        <main className="main-content">
+          <Outlet />
+        </main>
+      </div>
+      <Footer />
+    </div>
   );
 }
+
+function App() {
+  return (
+
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      
+      {/* Rutas con layout  */}
+      <Route element={<Layout />}>
+
+        {/* Públicas */}
+        {/* Públicas (Mantenemos el /login oficial de develop) */}
+        <Route path="/" element={<Homepage />} />
+        <Route path="/test" element={<Test />} />
+        
+
+        {/* Privadas protegidas con autenticación */}
+        <Route element={<PrivateRoute />}>
+          <Route path="/clientes" element={<Clientes />} />
+          <Route path="/clientes/:id" element={<ClientesDetail />} />
+
+          <Route path="/creditos" element={<Creditos />} />
+          <Route path="/creditos/:id" element={<CreditosDetail />} />
+
+          <Route path="/etiquetas" element={<Etiquetas />} />
+          <Route path="/etiquetas/:id" element={<EtiquetasDetail />} />
+
+          <Route path="/usuarios" element={<Usuarios />} />
+          <Route path="/usuarios/:id" element={<UsuariosDetail />} />
+        </Route>
+
+        {/* Cualquier otra ruta redirige al Home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
+  );
+}
+
+export default App;

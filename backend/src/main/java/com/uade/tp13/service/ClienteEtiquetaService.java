@@ -132,13 +132,18 @@ public Page<EtiquetaResumenResponse> obtenerResumenEtiquetas(Pageable pageable) 
     //
     private ClienteEtiquetaResponse mapToResponse(ClienteEtiqueta ce) {
         return ClienteEtiquetaResponse.builder()
-                .etiquetaId(ce.getEtiqueta().getId())
-                .clienteId(ce.getCliente().getId()) 
-                .asignadoPorId(ce.getAsignadoPorId().getId())
-                .asignadoEn(ce.getAsignadoEn())// Usamos el ID de la relación ManyToOne
-                .build();
+            .id(ce.getId())
+            .etiquetaId(ce.getEtiqueta().getId())
+            .clienteId(ce.getCliente().getId())
+            .asignadoEn(ce.getAsignadoEn())
+            .nombreEtiqueta(ce.getEtiqueta().getNombre())
+            .colorEtiqueta(ce.getEtiqueta().getColor())
+            .build();
 
-    
+    }
+
+    public long contarPorEtiqueta(Long etiquetaId) {
+        return clienteEtiquetaRepository.countByEtiquetaId(etiquetaId);
     }
 
 
