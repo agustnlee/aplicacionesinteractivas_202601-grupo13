@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { obtenerEtiquetaPorCliente } from "../../api/apiClienteEtiquetas";
-import { obtenerEtiquetaPorId } from "../../api/apiEtiquetas";
 import { Link } from "react-router-dom";
 
 export default function ColumnEtiquetas({ clienteId }) {
@@ -12,26 +11,17 @@ export default function ColumnEtiquetas({ clienteId }) {
         const cargar = async () => {
             setIsLoading(true);
             try {
-                // Recorrer todas las páginas
                 let pagina = 0;
-                let todasLasRelaciones = [];
+                let todas = [];
                 while (true) {
                     const resp = await obtenerEtiquetaPorCliente(clienteId, { pagina, tamanio: 20 });
-                    const relaciones = resp.content ?? [];
-                    todasLasRelaciones = [...todasLasRelaciones, ...relaciones];
-                    if (pagina + 1 >= (resp.totalPages ?? resp.totalPaginas ?? 1)) break;
+                    const items = resp.content ?? resp.contenido ?? [];
+                    todas = [...todas, ...items];
+                    const totalPaginas = resp.totalPages ?? resp.totalPaginas ?? 1;
+                    if (pagina + 1 >= totalPaginas) break;
                     pagina++;
                 }
-
-                if (!todasLasRelaciones.length) {
-                    if (mounted) setEtiquetas([]);
-                    return;
-                }
-
-                const detalles = await Promise.all(
-                    todasLasRelaciones.map((r) => obtenerEtiquetaPorId(r.etiquetaId))
-                );
-                if (mounted) setEtiquetas(detalles);
+                if (mounted) setEtiquetas(todas);
             } catch {
                 if (mounted) setEtiquetas([]);
             } finally {
@@ -53,29 +43,49 @@ export default function ColumnEtiquetas({ clienteId }) {
     );
 
     return (
-        <div style={{ display: "flex", gap: "5px", flexWrap: "wrap", alignItems: "center" }}>
-            {etiquetas.map((et) => (
-                <Link
-                    key={et.etiquetaId}
-                    to={`/etiquetas/${et.etiquetaId}`}
-                    title={et.nombreEtiqueta}
-                    style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        padding: "3px 9px",
-                        borderRadius: "9999px",
-                        border: "1.5px solid var(--primary-500)",
-                        backgroundColor: et.colorEtiqueta ?? "var(--primary-500)",
-                        textDecoration: "none",
-                        color: "var(--primary-50)",
-                        fontSize: "var(--text-xs)",
-                        fontWeight: "600",
-                        whiteSpace: "nowrap",
-                    }}
-                >
-                    {et.nombreEtiqueta}
-                </Link>
-            ))}
-        </div>
-    );
+    <div style={{
+        display: "flex",
+        gap: "5px",
+        flexWrap: "nowrap",
+        alignItems: "center",
+        overflowX: "auto",
+        paddingTop: "4px",
+        paddingBottom: "4px",
+        scrollbarWidth: "none",
+        maxWidth: "360px",
+    }}>
+        {etiquetas.map((et) => (
+            <Link
+                key={et.id}
+                to={`/etiquetas/${et.etiquetaId}`}
+                title={et.nombreEtiqueta}
+                style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    padding: "3px 9px",
+                    borderRadius: "9999px",
+                    border: "1.5px solid var(--primary-50)",
+                    backgroundColor: et.colorEtiqueta ?? "var(--primary-500)",
+                    textDecoration: "none",
+                    color: "var(--primary-50)",
+                    fontSize: "var(--text-xs)",
+                    fontWeight: "600",
+                    whiteSpace: "nowrap",
+                    flexShrink: 0,
+                    transition: "transform 0.15s ease, box-shadow 0.15s ease",
+                }}
+                onMouseEnter={e => {
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.18)";
+                }}
+                onMouseLeave={e => {
+                    e.currentTarget.style.transform = "translateY(0px)";
+                    e.currentTarget.style.boxShadow = "none";
+                }}
+            >
+                {et.nombreEtiqueta}
+            </Link>
+        ))}
+    </div>
+);
 }
