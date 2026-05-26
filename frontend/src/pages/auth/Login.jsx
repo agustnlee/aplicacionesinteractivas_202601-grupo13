@@ -12,8 +12,6 @@ export default function Login() {
     const { showToast } = useToast();
     const token = localStorage.getItem("token");
 
-    if (token) return <Navigate to="/" replace />;
-
     const [loading,      setLoading]      = useState(false);
     const [error,        setError]        = useState(null);
     const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +20,8 @@ export default function Login() {
         email:    "admin@tp13.com",
         password: "admin123",
     });
+
+    if (token) return <Navigate to="/" replace />;
 
     const handleChange = (e) => {
         const { name, value } = e.target;
