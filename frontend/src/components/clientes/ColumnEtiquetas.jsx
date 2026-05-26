@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { obtenerEtiquetaPorCliente} from "../../api/apiClienteEtiquetas"; 
-import { obtenerEtiquetaPorId } from "../../api/apiEtiqueta"; 
+import { obtenerEtiquetaPorId } from "../../api/apiEtiquetas"; 
 import { Link } from "react-router-dom";
 
 export default function CeldaEtiquetas({ clienteId }) {
