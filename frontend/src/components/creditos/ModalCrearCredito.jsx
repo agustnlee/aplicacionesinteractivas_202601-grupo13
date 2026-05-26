@@ -124,7 +124,7 @@ export default function ModalCrearCredito({ isOpen, onClose, onConfirm, clienteI
                         }}>
                             <div style={{
                                 fontSize: "0.72rem",
-                                color: "var(--primary-700)",   // ← label en primary-700
+                                color: "var(--primary-700)",
                                 marginBottom: "4px",
                                 fontWeight: "600",
                             }}>
@@ -133,7 +133,7 @@ export default function ModalCrearCredito({ isOpen, onClose, onConfirm, clienteI
                             <div style={{
                                 fontWeight: "700",
                                 fontSize: "0.95rem",
-                                color: "var(--text)",          // ← valor en texto normal
+                                color: "var(--text)",     
                             }}>
                                 {value}
                             </div>
@@ -145,7 +145,7 @@ export default function ModalCrearCredito({ isOpen, onClose, onConfirm, clienteI
                     <div>
                         <div style={{
                             fontSize: "0.8rem", fontWeight: "600",
-                            color: "var(--primary-700)",       // ← encabezado sección primary-700
+                            color: "var(--primary-700)",      
                             marginBottom: "6px",
                         }}>
                             Detalle de cuotas
@@ -164,7 +164,7 @@ export default function ModalCrearCredito({ isOpen, onClose, onConfirm, clienteI
                                                 padding: "8px 12px", textAlign: "left",
                                                 fontWeight: "600", color: "var(--primary-50)",
                                                 position: "sticky", top: 0,
-                                                backgroundColor: "var(--primary-700)", // ← tabla header primary-700
+                                                backgroundColor: "var(--primary-700)", 
                                             }}>
                                                 {h}
                                             </th>

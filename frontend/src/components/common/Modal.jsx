@@ -13,7 +13,7 @@ export default function Modal({
     children,
     actions,
     size = "md",
-    hideBack = false,        // ← nuevo
+    hideBack = false,      
 }) {
     useLockBodyScroll(isOpen);
 

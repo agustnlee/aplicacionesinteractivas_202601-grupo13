@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import RowModels from '../common/RowModels'; // Ajustá la ruta si RowModels está en otra carpeta
+import RowModels from '../common/RowModels'; 
 import styles from '../../pages/PagesDetail.module.css';
 
 
@@ -37,7 +37,7 @@ const columnasConfig = [
 
 
 const FichaCredito = ({ credito }) => {
-  // Definimos cómo se procesa y visualiza cada celda de la fila
+
   
 
   return (
