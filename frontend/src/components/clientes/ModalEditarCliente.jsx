@@ -92,6 +92,7 @@ export default function ModalEditarCliente({ isOpen, onClose, clienteActual, onS
                     <ModalForm 
                         label="DNI" 
                         name="dni" 
+                        type="number"
                         value={formData.dni} 
                         disabled={true} 
                     />
@@ -110,6 +111,7 @@ export default function ModalEditarCliente({ isOpen, onClose, clienteActual, onS
                         name="telefono" 
                         value={formData.telefono} 
                         onChange={handleChange} 
+                        type="number"
                     />
                     <ModalForm 
                         label="Domicilio *" 

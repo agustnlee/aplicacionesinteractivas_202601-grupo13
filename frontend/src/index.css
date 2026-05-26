@@ -279,6 +279,10 @@ input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
   color: var(--primary-900);
   border-left: 3px solid var(--primary-600);
   padding-left: var(--space-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 1200px;   
 }
 
 .btn {

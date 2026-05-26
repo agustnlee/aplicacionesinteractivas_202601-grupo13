@@ -15,4 +15,8 @@
     font-size: var(--text-sm);
     color: var(--text);
     font-weight: var(--font-semibold);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;   
 }
