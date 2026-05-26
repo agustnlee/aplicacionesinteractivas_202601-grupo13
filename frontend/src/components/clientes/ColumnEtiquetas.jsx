@@ -1,94 +1,91 @@
 import { useState, useEffect } from "react";
-import { obtenerEtiquetaPorCliente} from "../../api/apiClienteEtiquetas"; 
-import { obtenerEtiquetaPorId } from "../../api/apiEtiqueta"; 
+import { obtenerEtiquetaPorCliente } from "../../api/apiClienteEtiquetas";
 import { Link } from "react-router-dom";
 
-export default function CeldaEtiquetas({ clienteId }) {
+export default function ColumnEtiquetas({ clienteId }) {
     const [etiquetas, setEtiquetas] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        let isMounted = true; 
-
-        const cargarEtiquetas = async () => {
+        let mounted = true;
+        const cargar = async () => {
             setIsLoading(true);
             try {
-                const respuestaRelacion = await obtenerEtiquetaPorCliente(clienteId);
-                const relaciones = respuestaRelacion.content || [];
-
-                if (relaciones.length === 0) {
-                    if (isMounted) setEtiquetas([]);
-                    return;
+                let pagina = 0;
+                let todas = [];
+                while (true) {
+                    const resp = await obtenerEtiquetaPorCliente(clienteId, { pagina, tamanio: 20 });
+                    const items = resp.content ?? resp.contenido ?? [];
+                    todas = [...todas, ...items];
+                    const totalPaginas = resp.totalPages ?? resp.totalPaginas ?? 1;
+                    if (pagina + 1 >= totalPaginas) break;
+                    pagina++;
                 }
-                const promesasDetalles = relaciones.map(rel => obtenerEtiquetaPorId(rel.etiquetaId));
-                const detalles = await Promise.all(promesasDetalles);
-
-                if (isMounted) setEtiquetas(detalles);
-            } catch (error) {
-                console.error(`Error cargando etiquetas del cliente ${clienteId}:`, error);
-                if (isMounted) setEtiquetas([]); 
+                if (mounted) setEtiquetas(todas);
+            } catch {
+                if (mounted) setEtiquetas([]);
             } finally {
-                if (isMounted) setIsLoading(false);
+                if (mounted) setIsLoading(false);
             }
         };
-
-        cargarEtiquetas();
-
-        return () => { isMounted = false; };
+        cargar();
+        return () => { mounted = false; };
     }, [clienteId]);
 
-    if (isLoading) {
-        return (
-            <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)", fontStyle: "italic" }}>
-                Cargando...
-            </span>
-        );
-    }
+    if (isLoading) return (
+        <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)", fontStyle: "italic" }}>
+            Cargando...
+        </span>
+    );
 
-    if (etiquetas.length === 0) {
-        return (
-            <span style={{ 
-                color: "var(--text-muted)", 
-                fontWeight: "var(--font-medium)",
-                display: "flex",
-                alignItems: "center",
-                gap: "var(--space-1)"
-            }}>
-                    <span style={{ fontSize: "var(--text-xs)" }}>Sin etiquetas</span>
-            </span>
-        );
-    }
-    const MAX_MOSTRAR = 5;
-    const etiquetasVisibles = etiquetas.slice(0, MAX_MOSTRAR);
-    const etiquetasOcultas = etiquetas.length - MAX_MOSTRAR;
+    if (!etiquetas.length) return (
+        <span style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)" }}>—</span>
+    );
 
     return (
-        <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap', alignItems: 'center' }}>
-            {etiquetasVisibles.map(et => (
-                <Link 
-                    to={`/etiquetas/${et.etiquetaId}`}
-                    key={et.etiquetaId} 
-                    style={{ 
-                        backgroundColor: et.colorEtiqueta || "var(--surface-2)", 
-                        color: "var(--text-inverse)", //DEFINIR UN COLOR IDEAL PARA RESALTAR EL LINK
-                        padding: "2px 8px", 
-                        borderRadius: "12px", 
-                        fontSize: "var(--text-xs)",
-                        fontWeight: "var(--font-semibold)",
-                        border: "1px solid var(--border-subtle)", 
-                        whiteSpace: "nowrap",
-                        textDecoration: "none" 
-                    }}
-                    title={et.nombreEtiqueta}
-                >
-                    {et.nombreEtiqueta}
-                </Link>
-            ))}
-            {etiquetasOcultas > 0 && (
-            <span style={{ fontSize: "10px", padding: "2px 6px", backgroundColor: "var(--primary-500)", borderRadius: "10px", color: "var(--text-inverse)" }}>
-                +{etiquetasOcultas}
-            </span>
-        )}
-        </div>
-    );
+    <div style={{
+        display: "flex",
+        gap: "5px",
+        flexWrap: "nowrap",
+        alignItems: "center",
+        overflowX: "auto",
+        paddingTop: "4px",
+        paddingBottom: "4px",
+        scrollbarWidth: "none",
+        maxWidth: "360px",
+    }}>
+        {etiquetas.map((et) => (
+            <Link
+                key={et.id}
+                to={`/etiquetas/${et.etiquetaId}`}
+                title={et.nombreEtiqueta}
+                style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    padding: "3px 9px",
+                    borderRadius: "9999px",
+                    border: "1.5px solid var(--primary-50)",
+                    backgroundColor: et.colorEtiqueta ?? "var(--primary-500)",
+                    textDecoration: "none",
+                    color: "var(--primary-50)",
+                    fontSize: "var(--text-xs)",
+                    fontWeight: "600",
+                    whiteSpace: "nowrap",
+                    flexShrink: 0,
+                    transition: "transform 0.15s ease, box-shadow 0.15s ease",
+                }}
+                onMouseEnter={e => {
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.18)";
+                }}
+                onMouseLeave={e => {
+                    e.currentTarget.style.transform = "translateY(0px)";
+                    e.currentTarget.style.boxShadow = "none";
+                }}
+            >
+                {et.nombreEtiqueta}
+            </Link>
+        ))}
+    </div>
+);
 }

@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
-import { useParams, Link, useNavigate, replace } from "react-router-dom";
-import { obtenerFichaCliente, editarCliente, alterarEstadoCliente } from "../../api/clientesApi"; 
-import { crearCredito } from "../../api/creditoApi";
+import { useState, useEffect, useCallback } from "react";
+import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
+import { obtenerFichaCliente, editarCliente, alterarEstadoCliente } from "../../api/clientesApi";
+import { crearCredito, getCreditos } from "../../api/creditoApi";
 import { useToast } from "../../hooks/useToast";
 
 import PaginatedContainer from "../../components/common/PaginatedContainer";
-import RowModels from "../../components/common/RowModels";
+import FichaCreditoCliente from "../../components/clientes/FichaCreditoCliente";
+import FichaEtiquetaCliente from "../../components/clientes/FichaEtiquetaCliente";
+import LoadingWrapper from "../../components/common/LoadingWrapper";
 import DataField from "../../components/common/DataField";
 import Button from "../../components/ui/Button";
 
@@ -15,83 +17,81 @@ import ModalCrearCredito from "../../components/creditos/ModalCrearCredito";
 
 import styles from "../PagesDetail.module.css";
 
-const columnsCreditos = [
-    { key: "id", label: "ID", width: "10%" },
-    { key: "monto", label: "Monto", width: "20%", render: (c) => `$${c.monto.toLocaleString()}` },
-    { 
-        key: "fechaCreacion", 
-        label: "Fecha de Inicio", 
-        width: "20%",
-        render: (c) => new Date(c.fechaCreacion).toLocaleDateString("es-AR") 
-    },
-    { 
-        key: "cobradorNombre", 
-        label: "Cobrador", 
-        width: "25%",
-        render: (c) => (
-            c.cobradorId ? (
-                <Link to={`/usuarios/${c.cobradorId}`} className={styles.link}>
-                    {c.cobradorNombre}
-                </Link>
-            ) : (
-                <span style={{ color: "var(--text-muted)" }}>Sin asignar</span>
-            )
-        )
-    },
-    { 
-        key: "estado", 
-        label: "Estado", 
-        width: "25%",
-        render: (c) => (
-            <span className={`badge ${c.estado === 'ACTIVO' ? 'badge-success' : 'badge-neutral'}`}>
-                {c.estado.replace(/_/g, " ")}
-            </span>
-        )
-    }
+const COLUMNS_CREDITOS = [
+    { label: "ID",       width: "60px"  },
+    { label: "Cobrador", width: "130px" },
+    { label: "Monto",    width: "110px" },
+    { label: "Cuotas",   width: "80px"  },
+    { label: "Interés",  width: "80px"  },
+    { label: "Fecha",    width: "110px" },
+    { label: "Estado",   width: "140px" },
 ];
 
-const columnsEtiquetas = [
-    { key: "idClienteEtiqueta", label: "idClienteEtiqueta", width: "20%" },
-    { key: "idEtiqueta", label: "ID Etiqueta", width: "20%" },
-    { key: "nombre", label: "Nombre", width: "40%" },
-    { 
-        key: "color", 
-        label: "Color", 
-        width: "20%",
-        render: (et) => (
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <div style={{ width: "14px", height: "14px", borderRadius: "50%", backgroundColor: et.color, border: "1px solid var(--border-subtle)" }}></div>
-                <span>{et.color}</span>
-            </div>
-        )
-    }
+const FIELDS_CREDITOS = [
+    { key: "estado", label: "Estado", type: "select", options: [
+        { value: "ACTIVO",                   label: "Activo"                   },
+        { value: "EN_MORA",                  label: "En mora"                  },
+        { value: "CERRADO",                  label: "Cerrado"                  },
+        { value: "CANCELADO",                label: "Cancelado"                },
+        { value: "CANCELADO_REFINANCIACION", label: "Cancelado refinanciación" },
+    ]},
 ];
 
 export default function ClientesDetail() {
     const { id } = useParams();
     const { showToast } = useToast();
     const navigate = useNavigate();
-    const [cliente, setCliente] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [searchParams] = useSearchParams();
 
-    const [modalEditar, setModalEditar] = useState(false);
-    const [modalEstado, setModalEstado] = useState(false);
+    const [cliente, setCliente]           = useState(null);
+    const [fichaLoading, setFichaLoading] = useState(true);
+
+    const [creditos, setCreditos]                     = useState([]);
+    const [creditosTotalPages, setCreditosTotalPages] = useState(0);
+    const [creditosLoading, setCreditosLoading]       = useState(true);
+    const [creditosError, setCreditosError]           = useState(null);
+
+    const [modalEditar,  setModalEditar]  = useState(false);
+    const [modalEstado,  setModalEstado]  = useState(false);
     const [modalCredito, setModalCredito] = useState(false);
 
-    const cargarFicha = async () => {
-        setIsLoading(true);
-        setError(null);
+    const creditoPage   = parseInt(searchParams.get("pagina") ?? "0", 10);
+    const creditoEstado = searchParams.get("estado") ?? undefined;
+
+    const cargarFicha = useCallback(async () => {
+        setFichaLoading(true);
         try {
             const data = await obtenerFichaCliente(id);
             setCliente(data);
-        } catch (err) {
+        } catch {
             showToast("El cliente solicitado no existe", "error");
             navigate("/clientes", { replace: true });
         } finally {
-            setIsLoading(false);
+            setFichaLoading(false);
         }
-    };
+    }, [id]);
+
+    const cargarCreditos = useCallback(async () => {
+        setCreditosLoading(true);
+        setCreditosError(null);
+        try {
+            const data = await getCreditos({
+                clienteId: id,
+                ...(creditoEstado && { estado: creditoEstado }),
+                pagina:  creditoPage,
+                tamanio: 5,
+            });
+            setCreditos(data.contenido ?? []);
+            setCreditosTotalPages(data.totalPaginas ?? 0);
+        } catch (err) {
+            setCreditosError(err?.mensajes?.[0] ?? "Error al cargar créditos");
+        } finally {
+            setCreditosLoading(false);
+        }
+    }, [id, creditoPage, creditoEstado]);
+
+    useEffect(() => { cargarFicha(); },    [cargarFicha]);
+    useEffect(() => { cargarCreditos(); }, [cargarCreditos]);
 
     const handleEditarCliente = async (clienteId, requestData) => {
         try {
@@ -99,174 +99,134 @@ export default function ClientesDetail() {
             showToast("Datos actualizados exitosamente", "success");
             await cargarFicha();
         } catch (err) {
-            const mensajeError = err?.mensajes?.[0] ?? "Ocurrió un error al actualizar el cliente";
-            showToast(mensajeError, "error");
+            showToast(err?.mensajes?.[0] ?? "Error al actualizar el cliente", "error");
             throw err;
         }
     };
 
     const handleAlterarEstado = async (clienteId, nuevoEstado) => {
         try {
-            
-            await alterarEstadoCliente(clienteId, nuevoEstado);
+            await alterarEstadoCliente(clienteId);
             showToast(`Cliente ${nuevoEstado ? "dado de alta" : "dado de baja"} exitosamente`, "success");
-            await cargarFicha(); 
+            await cargarFicha();
         } catch (err) {
-            const mensajeError = err?.mensajes?.[0] ?? "Ocurrió un error al alterar el estado del cliente";
-            showToast(mensajeError, "error");
-            throw err; 
+            showToast(err?.mensajes?.[0] ?? "Error al alterar el estado", "error");
+            throw err;
         }
     };
 
     const handleCrearCredito = async (datosDelModal) => {
         try {
-            const requestData = {
-                clienteId: Number(id),
-                monto: Number(datosDelModal.monto),
-                cantidadCuotas: Number(datosDelModal.cuotas), 
-                interes: Number(datosDelModal.interes), 
-                cobradorId: Number(datosDelModal.cobradorId) 
-            };
-            
-            await crearCredito(requestData);
-            
+            await crearCredito(datosDelModal);
             showToast("Crédito creado exitosamente", "success");
-            setModalCredito(false); 
-            await cargarFicha(); 
+            setModalCredito(false);
+            await cargarCreditos();
         } catch (err) {
-            const mensajeError = err?.mensajes?.[0] ?? "Ocurrió un error al crear el crédito";
-            showToast(mensajeError, "error");
+            showToast(err?.mensajes?.[0] ?? "Error al crear el crédito", "error");
         }
     };
-
-    useEffect(() => {
-        cargarFicha();
-    }, [id]);
-
-    if (isLoading && !cliente) return <div style={{ padding: "2rem", textAlign: "center" }}>Cargando ficha...</div>;
-    if (error && !cliente) return <div style={{ padding: "2rem", color: "red" }}>{error}</div>;
-    if (!cliente) return null;
 
     return (
         <div className={styles.page}>
             <h2 className={`title ${styles.titulo}`}>Detalle de Cliente</h2>
 
-            <div className={styles.card}>
-                <div className={styles.filaData}>
-                    <DataField label="ID" value={`#${cliente.id}`} />
-                    <DataField label="Nombre" value={cliente.nombre} />
-                    <DataField label="DNI" value={cliente.dni} />
-                    <DataField label="Email" value={cliente.email} />
-                    <DataField label="Teléfono" value={cliente.telefono} />
-                    <DataField label="Domicilio" value={cliente.domicilio} />
-                    
-                    <DataField label="Fecha de Alta" value={
-                        new Date(cliente.fechaCreacion).toLocaleString("es-AR", { 
-                            dateStyle: "short", timeStyle: "short" 
-                        })
-                        } />
-                    
-                    <DataField label="Creado por" value={
-                        cliente.idCreador ? (
-                            <Link to={`/usuarios/${cliente.idCreador}`} className={styles.link}>
-                                {cliente.creadorNombre}
-                            </Link>
-                        ) : (
-                            cliente.creadorNombre
-                        )
-                    } />
+            <LoadingWrapper isLoading={fichaLoading} error={null} isEmpty={!cliente && !fichaLoading}>
+                {cliente && (
+                    <>
+                        {/* ── Card datos ─────────────────────────────── */}
+                        <div className={styles.card}>
+                            <div className={styles.filaData}>
+                                <DataField label="ID"           value={`#${cliente.id}`} />
+                                <DataField label="Nombre"       value={<strong>{cliente.nombre}</strong>} />
+                                <DataField label="DNI"          value={cliente.dni} />
+                                <DataField label="Email"        value={cliente.email} />
+                                <DataField label="Teléfono"     value={cliente.telefono} />
+                                <DataField label="Domicilio"    value={cliente.domicilio} />
+                                <DataField label="Fecha de Alta" value={
+                                    new Date(cliente.fechaCreacion)
+                                        .toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" })
+                                        .split(",")[0]
+                                } />
+                                <DataField label="Creado por" value={
+                                    cliente.idCreador
+                                        ? <Link to={`/usuarios/${cliente.idCreador}`} className={styles.link}>{cliente.creadorNombre}</Link>
+                                        : cliente.creadorNombre
+                                } />
+                                <DataField label="Estado" value={
+                                    <span className={`badge ${cliente.estado ? "badge-success" : "badge-danger"}`}>
+                                        {cliente.estado ? "Activo" : "Inactivo"}
+                                    </span>
+                                } />
+                            </div>
 
-                    <DataField label="Estado" value={
-                        <span className={`badge ${cliente.estado ? 'badge-success' : 'badge-danger'}`}>
-                            {cliente.estado ? 'Activo' : 'Inactivo'}
-                        </span>
-                    } />
-                </div>
+                            <div className={styles.acciones}>
+                                <Button icon="edit" variant="ghost" size="md" onClick={() => setModalEditar(true)}>
+                                    Modificar datos
+                                </Button>
+                                <Button
+                                    icon={cliente.estado ? "lockClosed" : "lockOpen"}
+                                    variant={cliente.estado ? "danger" : "success"}
+                                    size="md"
+                                    onClick={() => setModalEstado(true)}
+                                >
+                                    {cliente.estado ? "Dar de baja" : "Dar de alta"}
+                                </Button>
+                            </div>
+                        </div>
 
-                <div className={styles.acciones}>
-                    <Button icon="edit" variant="ghost" size="md" onClick={() => setModalEditar(true)}>
-                        Modificar datos
-                    </Button>
-                    <Button 
-                        icon={cliente.estado ? "lockClosed" : "lockOpen"} 
-                        variant={cliente.estado ? "danger" : "success"} 
-                        size="md" 
-                        onClick={() => setModalEstado(true)}
-                    >
-                        {cliente.estado ? "Dar de baja" : "Dar de alta"}
-                    </Button>
-                </div>
-            </div>
+                        {/* ── Etiquetas ──────────────────────────────── */}
+                        <h3 className={`title ${styles.titulo}`} style={{ marginTop: "var(--space-4)" }}>
+                            Etiquetas de {cliente.nombre}
+                        </h3>
+                        <div className={styles.card}>
+                            <FichaEtiquetaCliente etiquetas={cliente.detalleEtiquetas ?? []} />
+                        </div>
 
-            <h3 className={`title ${styles.titulo}`} style={{ marginTop: "var(--space-4)" }}>
-                Etiquetas Asignadas a {cliente.nombre}
-            </h3>
-            <PaginatedContainer
-                columns={columnsEtiquetas}
-                isLoading={false}
-                isEmpty={!cliente.detalleEtiquetas?.length}
-                error={null}
-                currentPage={0}
-                totalPages={1}
-            >
-                {cliente.detalleEtiquetas?.map(etiqueta => (
-                    <RowModels
-                        key={etiqueta.idClienteEtiqueta}
-                        item={etiqueta}
-                        columns={columnsEtiquetas}
+                        {/* ── Créditos ───────────────────────────────── */}
+                        <h3 className={`title ${styles.titulo}`} style={{ marginTop: "var(--space-4)" }}>
+                            Créditos de {cliente.nombre}
+                        </h3>
+                        <PaginatedContainer
+                            fields={FIELDS_CREDITOS}
+                            columns={COLUMNS_CREDITOS}
+                            isLoading={creditosLoading}
+                            isEmpty={!creditos.length}
+                            error={creditosError}
+                            currentPage={creditoPage}
+                            totalPages={creditosTotalPages}
+                            onCreate={() => setModalCredito(true)}
+                        >
+                            {creditos.map((c) => (
+                                <FichaCreditoCliente key={c.id} credito={c} />
+                            ))}
+                        </PaginatedContainer>
+                    </>
+                )}
+            </LoadingWrapper>
+
+            {cliente && (
+                <>
+                    <ModalEditarCliente
+                        isOpen={modalEditar}
+                        onClose={() => setModalEditar(false)}
+                        clienteActual={cliente}
+                        onSubmit={handleEditarCliente}
                     />
-                ))}
-            </PaginatedContainer>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'var(--space-4)', marginBottom: '1rem' }}>
-    <h3 className={`title ${styles.titulo}`} style={{ margin: 0 }}>
-        Créditos Activos de {cliente.nombre}
-    </h3>
-    <Button 
-        variant="primary" 
-        size="md" 
-        onClick={() => setModalCredito(true)}
-    >
-        Crear Crédito
-    </Button>
-</div>
-            <PaginatedContainer
-                columns={columnsCreditos}
-                isLoading={false}
-                isEmpty={!cliente.historialCreditos?.length}
-                error={null}
-                currentPage={0}
-                totalPages={1}
-            >
-                {cliente.historialCreditos?.map(credito => (
-                    <RowModels
-                        key={credito.id}
-                        item={credito}
-                        columns={columnsCreditos}
-                        basePath="/creditos" 
+                    <ModalAlterarEstado
+                        isOpen={modalEstado}
+                        onClose={() => setModalEstado(false)}
+                        clienteId={cliente.id}
+                        estadoActual={cliente.estado}
+                        onSubmit={handleAlterarEstado}
                     />
-                ))}
-            </PaginatedContainer>
-
-            <ModalEditarCliente 
-                isOpen={modalEditar} 
-                onClose={() => setModalEditar(false)} 
-                clienteActual={cliente}
-                onSubmit={handleEditarCliente} 
-            />
-            <ModalAlterarEstado 
-                isOpen={modalEstado} 
-                onClose={() => setModalEstado(false)} 
-                clienteId={cliente.id}
-                estadoActual={cliente.estado}
-                onSubmit={handleAlterarEstado} 
-            />
-            <ModalCrearCredito
-                isOpen={modalCredito}
-                onClose={() => setModalCredito(false)}
-                onConfirm={handleCrearCredito}
-                isClientes={true} 
-            />
+                    <ModalCrearCredito
+                        isOpen={modalCredito}
+                        onClose={() => setModalCredito(false)}
+                        onConfirm={handleCrearCredito}
+                        clienteId={id}
+                    />
+                </>
+            )}
         </div>
     );
 }

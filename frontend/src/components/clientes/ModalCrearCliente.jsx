@@ -79,6 +79,7 @@ export default function ModalCrearCliente({ isOpen, onClose, onSubmit }) {
                         value={formData.dni} 
                         onChange={handleChange} 
                         placeholder="Ej: 11223344" 
+                        type="number"
                     />
                     <ModalForm 
                         label="Email *" 
@@ -97,6 +98,7 @@ export default function ModalCrearCliente({ isOpen, onClose, onSubmit }) {
                         value={formData.telefono} 
                         onChange={handleChange} 
                         placeholder="Ej: 12345678" 
+                        type="number"
                     />
                     <ModalForm 
                         label="Domicilio *" 

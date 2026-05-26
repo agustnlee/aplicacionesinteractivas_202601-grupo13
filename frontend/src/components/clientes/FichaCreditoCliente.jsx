@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
-import RowModels from '../common/RowModels'; 
+import RowModels from '../common/RowModels';
 import styles from '../../pages/PagesDetail.module.css';
-
 
 const ESTADO_BADGE = {
     ACTIVO:                   "badge badge-success",
@@ -14,8 +13,6 @@ const ESTADO_BADGE = {
 const columnasConfig = [
     { key: "id",             label: "ID",       width: "60px",
         render: (c) => <strong>#{c.id}</strong> },
-    { key: "clienteNombre",  label: "Cliente",  width: "130px",
-        render: (c) => <Link to={`/clientes/${c.clienteId}`} className={styles.link}>{c.clienteNombre}</Link> },
     { key: "cobradorNombre", label: "Cobrador", width: "130px",
         render: (c) => <Link to={`/usuarios/${c.cobradorId}`} className={styles.link}>{c.cobradorNombre}</Link> },
     { key: "monto",          label: "Monto",    width: "110px",
@@ -34,19 +31,8 @@ const columnasConfig = [
     },
 ];
 
+const FichaCreditoCliente = ({ credito }) => (
+    <RowModels item={credito} columns={columnasConfig} basePath="/creditos" />
+);
 
-
-const FichaCredito = ({ credito }) => {
-
-  
-
-  return (
-    <RowModels 
-      item={credito} 
-      columns={columnasConfig} 
-      basePath="/creditos" 
-    />
-  );
-};
-
-export default FichaCredito;
+export default FichaCreditoCliente;

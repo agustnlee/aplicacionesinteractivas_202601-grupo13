@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import useDebounce from '../../hooks/useDebounce';
+import Button from "../ui/Button";
 import styles from './FilterSearch.module.css';
 
 export default function FilterSearch({ fields , onCreate}) {
@@ -79,13 +80,15 @@ export default function FilterSearch({ fields , onCreate}) {
             )}
             
             {onCreate && (
-                <button 
-                    type="button" 
-                    onClick={onCreate} 
-                    className={styles.btnCrear}
+                <Button 
+                    variant="primary"
+                    size="sm"
+                    icon="plus"
+                    onClick={onCreate}
+                    iconPosition='right'
                 >
                     Crear
-                </button>
+                </Button>
             )}
         </div>
     );

@@ -9,14 +9,14 @@ export default function Modal({
     title,
     description,
     icon: IconComponent,
-    iconVariant = "default", // default | danger | success | warning | info
+    iconVariant = "default",
     children,
-    actions,   // array de { label, onClick, variant, disabled } para flexibilizar
-    size = "md" // sm | md | lg
+    actions,
+    size = "md",
+    hideBack = false,      
 }) {
     useLockBodyScroll(isOpen);
 
-    // cerrar con Escape
     useEffect(() => {
         if (!isOpen) return;
         const handleKey = (e) => { if (e.key === "Escape") onClose(); };
@@ -28,11 +28,8 @@ export default function Modal({
 
     return (
         <div className={styles.overlay} onClick={onClose}>
-            <div
-                className={`${styles.modal} ${styles[size]}`}
-                onClick={e => e.stopPropagation()}>
+            <div className={`${styles.modal} ${styles[size]}`} onClick={e => e.stopPropagation()}>
 
-                {/* header */}
                 <div className={styles.header}>
                     <div className={styles.titleRow}>
                         {IconComponent && (
@@ -47,35 +44,26 @@ export default function Modal({
                     </button>
                 </div>
 
-                {/* descripción */}
-                {description && (
-                    <p className={styles.description}>{description}</p>
-                )}
+                {description && <p className={styles.description}>{description}</p>}
 
-                {/* contenido flexible */}
-                {children && (
-                    <div className={styles.body}>
-                        {children}
-                    </div>
-                )}
+                {children && <div className={styles.body}>{children}</div>}
 
-                {/* acciones */}
                 {actions && actions.length > 0 && (
                     <div className={styles.footer}>
-                        <button
-                            type="button"
-                            className="btn btn-ghost btn-md"
-                            onClick={onClose}>
-                              Volver
-                        </button>
+                        {!hideBack && (
+                            <button type="button" className="btn btn-ghost btn-md" onClick={onClose}>
+                                Volver
+                            </button>
+                        )}
                         {actions.map((action, i) => (
                             <button
                                 key={i}
                                 type="button"
                                 className={`btn btn-${action.variant ?? "primary"} btn-md`}
                                 onClick={action.onClick}
-                                disabled={action.disabled}>
-                                  {action.label}
+                                disabled={action.disabled}
+                            >
+                                {action.label}
                             </button>
                         ))}
                     </div>
