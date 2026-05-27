@@ -12,6 +12,13 @@ const apiClient = async (endpoint, method = "GET", body = null) => {
         ...(body && { body: JSON.stringify(body) })
     });
 
+    if (res.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "/login";
+        return;
+    }
+
     if (res.status === 204 || res.status === 201 && res.headers.get("content-length") === "0") 
         return null;
 
