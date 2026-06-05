@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ClienteController {
     private final ClienteService clienteService;
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA')")
     @PostMapping
     public ResponseEntity<ClienteResponse> crearCliente(
         @Valid @RequestBody ClienteRequest request,
@@ -29,7 +32,8 @@ public class ClienteController {
         ClienteResponse response = clienteService.crearCliente(request,  usuario.getId());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
- 
+    
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA')")
     @PutMapping("/{id}")
     public ResponseEntity<ClienteResponse> editarCliente(
             @PathVariable Long id, 
@@ -38,13 +42,15 @@ public class ClienteController {
         ClienteResponse response = clienteService.editarCliente(id, request);
         return ResponseEntity.ok(response);
     }
- 
+    
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA')")
     @PatchMapping("/{id}/estado")
     public ResponseEntity<Void> alterarEstado(@PathVariable Long id) {
         clienteService.alterarEstado(id);
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')") // Analista y Admin filtro libre, Cobrador solo los suyos
     @GetMapping
     public ResponseEntity<PaginatedResponse<ClienteResponse>> listarClientes(
             @RequestParam(required = false) String nombre,
@@ -55,22 +61,28 @@ public class ClienteController {
  
         return ResponseEntity.ok(clienteService.buscarClientes(nombre, estado, creadoPorId, pagina, tamanio));
     }
- 
+    
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')") // Analista y Admin filtro libre, Cobrador solo los suyos
     @GetMapping("/{id}")
     public ResponseEntity<ClienteResponse> busquedaId(@PathVariable Long id) {
         return ResponseEntity.ok(clienteService.busquedaId(id));
     }
- 
+    
+    /////
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')") // Analista y Admin filtro libre, Cobrador solo los suyos
     @GetMapping("/dni/{dni}")
     public ResponseEntity<ClienteResponse> busquedaDni(@PathVariable String dni) {
         return ResponseEntity.ok(clienteService.busquedaDni(dni));
     }
-    //PENDIENTE
+    
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')") // Analista y Admin filtro libre, Cobrador solo los suyos
     @GetMapping("/{id}/ficha")
     public ResponseEntity<ClienteFichaResponse> obtenerFichaCliente(@PathVariable Long id) {
         return ResponseEntity.ok(clienteService.clienteFicha(id));
     }
- 
+    
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')") // Analista y Admin filtro libre, Cobrador solo los suyos
     @GetMapping("/dni/{dni}/ficha")
     public ResponseEntity<ClienteFichaResponse> obtenerFichaClientePorDni(@PathVariable String dni) {
         return ResponseEntity.ok(clienteService.clienteFichaDni(dni));

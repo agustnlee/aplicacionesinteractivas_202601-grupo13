@@ -8,6 +8,7 @@ import com.uade.tp13.service.CreditoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,12 +20,14 @@ public class CreditoController {
     private final CreditoService creditoService;
 
     // GET /api/creditos/{id}
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')")
     @GetMapping("/{id}")
     public ResponseEntity<CreditoResponse> obtener(@PathVariable Long id) {
         return ResponseEntity.ok(creditoService.obtenerCredito(id));
     }
 
     // GET /api/creditos?estado=&clienteId=&cobradorId=&creadoPorId=&pagina=&tamanio=
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')")
     @GetMapping
     public ResponseEntity<PaginatedResponse<CreditoResponse>> listar(
             @RequestParam(required = false) Long id,
@@ -42,6 +45,7 @@ public class CreditoController {
 
 
     // POST /api/creditos/preview
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')")
     @PostMapping("/preview")
     public ResponseEntity<PlanCuotasResponse> preview(
             @Valid @RequestBody CrearCreditoRequest request) {
@@ -49,6 +53,7 @@ public class CreditoController {
     }
 
     // POST /api/creditos
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA')")
     @PostMapping
     public ResponseEntity<CreditoResponse> crear(
             @Valid @RequestBody CrearCreditoRequest request, @AuthenticationPrincipal Usuario usuario) {
@@ -58,6 +63,7 @@ public class CreditoController {
     }
 
     // PATCH /api/creditos/{id}/cobrador
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA')")
     @PatchMapping("/{id}/cobrador")
     public ResponseEntity<CreditoResponse> cambiarCobrador(
             @PathVariable Long id,
@@ -66,6 +72,7 @@ public class CreditoController {
     }
 
     // PATCH /api/creditos/{id}/cancelar
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA')")
     @PatchMapping("/{id}/cancelar")
     public ResponseEntity<CreditoResponse> cancelar(
             @PathVariable Long id,
