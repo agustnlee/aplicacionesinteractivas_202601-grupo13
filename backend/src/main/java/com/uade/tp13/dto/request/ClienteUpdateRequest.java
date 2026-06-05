@@ -20,5 +20,4 @@ public class ClienteUpdateRequest {
     @NotBlank(message = "El domicilio es obligatorio")
     private String domicilio;
 
-
 }
