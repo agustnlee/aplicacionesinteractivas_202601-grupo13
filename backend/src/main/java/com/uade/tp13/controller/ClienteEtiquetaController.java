@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class ClienteEtiquetaController {
     private final ClienteEtiquetaService clienteEtiquetaService;
 
     // --- HU45: Asignar etiqueta a cliente ---
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA')")
     @PostMapping("/{clienteId}/etiquetas/{etiquetaId}")
     public ResponseEntity<Void> asignarEtiqueta(
             @PathVariable Long clienteId,
@@ -41,6 +43,7 @@ public class ClienteEtiquetaController {
     }
     
     // --- HU47: Obtener resumen estadístico de etiquetas (Paginado) ---
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/resumen")
     public ResponseEntity<PaginatedResponse<EtiquetaResumenResponse>> obtenerResumenEtiquetas(
             @RequestParam(defaultValue = "0") int pagina,
@@ -51,6 +54,7 @@ public class ClienteEtiquetaController {
     }
 
     // --- HU48: Obtener etiquetas asignadas a un cliente específico (Paginado) ---
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')")
     @GetMapping("/cliente/{clienteId}")
     public ResponseEntity<PaginatedResponse<ClienteEtiquetaResponse>> obtenerEtiquetasPorCliente(
             @PathVariable Long clienteId,
@@ -62,6 +66,7 @@ public class ClienteEtiquetaController {
     }
 
     // --- ELIMINAR: Quitar etiqueta de un cliente por el ID de la asignación ---
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA')")
     @DeleteMapping("/{idAsignacion}")
     public ResponseEntity<Void> eliminarAsignacion(@PathVariable Long idAsignacion) {
         clienteEtiquetaService.eliminarPorId(idAsignacion);
@@ -80,7 +85,8 @@ public class ClienteEtiquetaController {
             .build();
     }
 
-    @GetMapping("/resumen/{etiquetaId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA')") // solo admin y analista
+    @GetMapping("/resumen/{etiquetaId}") 
         public ResponseEntity<Long> contarClientesPorEtiqueta(@PathVariable Long etiquetaId) {
         return ResponseEntity.ok(clienteEtiquetaService.contarPorEtiqueta(etiquetaId));
     }

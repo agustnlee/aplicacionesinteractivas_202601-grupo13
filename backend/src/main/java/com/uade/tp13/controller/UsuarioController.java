@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
  
 @RestController
@@ -16,12 +17,14 @@ import org.springframework.web.bind.annotation.*;
 public class UsuarioController {
  
     private final UsuarioService usuarioService;
- 
+    
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<UsuarioResponse> crear(@Valid @RequestBody UsuarioRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.crearUsuario(request));
     }
- 
+    
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')")
     @GetMapping
     public ResponseEntity<PaginatedResponse<UsuarioResponse>> listar(
             @RequestParam(required = false) Long id,
@@ -33,7 +36,8 @@ public class UsuarioController {
     ) {
         return ResponseEntity.ok(usuarioService.buscarUsuarios(id, nombre, rol, estado, pagina, tamanio));
     }
- 
+    
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponse> actualizar(
             @PathVariable Long id,
@@ -41,13 +45,15 @@ public class UsuarioController {
     ) {
         return ResponseEntity.ok(usuarioService.editarUsuario(id, request));
     }
- 
+    
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}/estado")
     public ResponseEntity<Void> cambiarEstado(@PathVariable Long id) {
         usuarioService.alterarEstado(id);
         return ResponseEntity.noContent().build();
     }
- 
+    
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}/password")
     public ResponseEntity<Void> resetearPassword(
             @PathVariable Long id,
@@ -57,6 +63,7 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')")
     @GetMapping("/{id}")
         public ResponseEntity<UsuarioResponse> obtener(@PathVariable Long id) {
             return ResponseEntity.ok(usuarioService.obtenerUsuario(id));
