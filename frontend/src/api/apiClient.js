@@ -18,6 +18,10 @@ const apiClient = async (endpoint, method = "GET", body = null) => {
         window.location.href = "/login";
         return;
     }
+    if (res.status === 403) {
+        const error = await res.json().catch(() => ({ mensajes: ["No tenés permiso para realizar esta acción."] }));
+        throw { ...error, status: 403 };
+    }
 
     if (res.status === 204 || res.status === 201 && res.headers.get("content-length") === "0") 
         return null;
