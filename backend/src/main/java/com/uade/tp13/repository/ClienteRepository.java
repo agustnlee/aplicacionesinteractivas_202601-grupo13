@@ -30,10 +30,12 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
        "(:nombre IS NULL OR LOWER(c.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))) AND " +
        "(:estado IS NULL OR c.estado = :estado) AND " +
        "(:creadoPorId IS NULL OR c.creadoPor.id = :creadoPorId)")
-Page<Cliente> findByFiltros(
+    Page<Cliente> findByFiltros(
         @Param("nombre") String nombre,
         @Param("estado") Boolean estado,
         @Param("creadoPorId") Long creadoPorId,
         Pageable pageable
     );
+
+    Page<Cliente> findClientesPorCobrador(@Param("cobradorId") Long cobradorId, Pageable pageable);
 }

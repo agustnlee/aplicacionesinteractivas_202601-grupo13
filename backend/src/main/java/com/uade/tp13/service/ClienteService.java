@@ -6,10 +6,12 @@ import com.uade.tp13.enums.EstadoCredito;
 import com.uade.tp13.exception.*;
 import com.uade.tp13.model.*;
 import com.uade.tp13.repository.*;
+import com.uade.tp13.enums.ROL_USUARIO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.access.AccessDeniedException;
  
 import java.util.List;
 import java.util.Set;
@@ -31,23 +33,36 @@ public class ClienteService {
    
     //BusquedasDirecta
     @Transactional(readOnly = true)
-    public ClienteResponse busquedaId(Long clienteId) {
-        return mapToResponseBasico(getOrThrow(clienteId));
-    }
- 
-    @Transactional(readOnly = true)
-    public ClienteResponse busquedaDni(String dni) {
-        Cliente cliente = clienteRepository.findByDni(dni)
-                .orElseThrow(() -> new ResourceNotFoundException("No se encontró cliente con DNI: " + dni));
+    public ClienteResponse busquedaId(Long clienteId, Usuario usuarioAutenticado) {
+        Cliente cliente = getOrThrow(clienteId);
+        validarAccesoCliente(cliente, usuarioAutenticado);
         return mapToResponseBasico(cliente);
     }
  
     @Transactional(readOnly = true)
-    public PaginatedResponse<ClienteResponse> buscarClientes(String nombre, Boolean estado, Long creadoPorId, int p, int s) {
+    public ClienteResponse busquedaDni(String dni, Usuario usuarioAutenticado) {
+        Cliente cliente = clienteRepository.findByDni(dni)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró cliente con DNI: " + dni));
+        validarAccesoCliente(cliente, usuarioAutenticado);
+        return mapToResponseBasico(cliente);
+    }
+ 
+    @Transactional(readOnly = true)
+    public PaginatedResponse<ClienteResponse> buscarClientes(String nombre, Boolean estado, Long creadoPorId, int p, int s, Usuario usuarioAutenticado) {
         String nombreLimpio = (nombre != null && !nombre.isBlank()) ? nombre : null;        
         Pageable pageable = buildPageable(p, s);
+        Page<Cliente> page;
+
+        ROL_USUARIO rol = usuarioAutenticado.getRol();
+
+        if (rol == ROL_USUARIO.COBRADOR) {
+            page = clienteRepository.findClientesPorCobrador(usuarioAutenticado.getId(), pageable);
+        } else if (rol == ROL_USUARIO.ANALISTA) {
+            page = clienteRepository.findByFiltros(nombreLimpio, estado, usuarioAutenticado.getId(), pageable);
+        } else {
+            page = clienteRepository.findByFiltros(nombreLimpio, estado, creadoPorId, pageable);
+        }
        
-        Page<Cliente> page = clienteRepository.findByFiltros(nombreLimpio, estado, creadoPorId, pageable);
         return mapToPageResponseBasico(page);
     }
  
@@ -100,20 +115,19 @@ public class ClienteService {
  
     // Ficha por Id y DNI
     @Transactional(readOnly = true)
-    public ClienteFichaResponse clienteFicha(Long id) {
+    public ClienteFichaResponse clienteFicha(Long id, Usuario usuarioAutenticado) {
         Cliente cliente = getOrThrow(id);
+        validarAccesoCliente(cliente, usuarioAutenticado);
         Pageable limiteFicha = PageRequest.of(0, 100);
-       
-        List<Credito> creditos = creditoRepository.buscarConFiltros(null,EstadoCredito.ACTIVO,id,null,null, limiteFicha).getContent();
+        List<Credito> creditos = creditoRepository.buscarConFiltros(null, null, id, null, null, limiteFicha).getContent();
         List<ClienteEtiqueta> etiquetas = clienteEtiquetaRepository.findByClienteId(id, limiteFicha).getContent();
-       
         return fichaCompleta(cliente, creditos, etiquetas);
     }
     @Transactional(readOnly = true)
-    public ClienteFichaResponse clienteFichaDni(String dni){
+    public ClienteFichaResponse clienteFichaDni(String dni, Usuario usuarioAutenticado){
         Cliente c= clienteRepository.findByDni(dni)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró cliente con DNI: " + dni));
-        return clienteFicha(c.getId());
+        return clienteFicha(c.getId(), usuarioAutenticado);
     }
  
     private Cliente getOrThrow(Long id) {
@@ -188,5 +202,22 @@ public class ClienteService {
                         .fechaCreacion(cr.getFechaCreacion())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    private void validarAccesoCliente(Cliente cliente, Usuario usuarioAutenticado) {
+        ROL_USUARIO rol = usuarioAutenticado.getRol();
+        if (rol == ROL_USUARIO.ADMIN) return;
+        if (rol == ROL_USUARIO.ANALISTA) {
+            if (cliente.getCreadoPor() == null || !cliente.getCreadoPor().getId().equals(usuarioAutenticado.getId())) {
+                throw new AccessDeniedException("No tenés acceso a este cliente.");
+            }
+        }
+        if (rol == ROL_USUARIO.COBRADOR) {
+            boolean tieneCredito = creditoRepository.existsByCobrador_IdAndCliente_Id(
+                usuarioAutenticado.getId(), cliente.getId());
+            if (!tieneCredito) {
+                throw new AccessDeniedException("No tenés acceso a este cliente.");
+            }
+        }
     }
 }
