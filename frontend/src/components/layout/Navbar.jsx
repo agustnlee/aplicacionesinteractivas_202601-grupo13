@@ -116,8 +116,10 @@ export default function Navbar() {
                     >
                         <NavLink to="/clientes" className={linkClass} onClick={handleClose}>Clientes</NavLink>
                         <NavLink to="/creditos"  className={linkClass} onClick={handleClose}>Créditos</NavLink>
-                        <NavLink to="/etiquetas" className={linkClass} onClick={handleClose}>Etiquetas</NavLink>
                         <NavLink to="/usuarios"  className={linkClass} onClick={handleClose}>Usuarios</NavLink>
+                        {user?.rol === "ADMIN" && (
+                            <NavLink to="/etiquetas" className={linkClass} onClick={handleClose}>Etiquetas</NavLink>
+                        )}
                     </div>
                 </div>
             )}
