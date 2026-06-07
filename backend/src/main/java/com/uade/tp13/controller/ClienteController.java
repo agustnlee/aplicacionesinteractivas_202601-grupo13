@@ -57,34 +57,35 @@ public class ClienteController {
             @RequestParam(required = false) Boolean estado,
             @RequestParam(required = false) Long creadoPorId,
             @RequestParam(defaultValue = "0") int pagina,
-            @RequestParam(defaultValue = "10") int tamanio) {
- 
-        return ResponseEntity.ok(clienteService.buscarClientes(nombre, estado, creadoPorId, pagina, tamanio));
+            @RequestParam(defaultValue = "10") int tamanio,
+            @AuthenticationPrincipal Usuario usuario
+        ) {
+        return ResponseEntity.ok(clienteService.buscarClientes(nombre, estado, creadoPorId, pagina, tamanio, usuario));
     }
     
     @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')") // Analista y Admin filtro libre, Cobrador solo los suyos
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteResponse> busquedaId(@PathVariable Long id) {
-        return ResponseEntity.ok(clienteService.busquedaId(id));
+    public ResponseEntity<ClienteResponse> busquedaId(@PathVariable Long id, @AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(clienteService.busquedaId(id, usuario));
     }
     
     /////
 
     @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')") // Analista y Admin filtro libre, Cobrador solo los suyos
     @GetMapping("/dni/{dni}")
-    public ResponseEntity<ClienteResponse> busquedaDni(@PathVariable String dni) {
-        return ResponseEntity.ok(clienteService.busquedaDni(dni));
+    public ResponseEntity<ClienteResponse> busquedaDni(@PathVariable String dni, @AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(clienteService.busquedaDni(dni, usuario));
     }
     
     @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')") // Analista y Admin filtro libre, Cobrador solo los suyos
     @GetMapping("/{id}/ficha")
-    public ResponseEntity<ClienteFichaResponse> obtenerFichaCliente(@PathVariable Long id) {
-        return ResponseEntity.ok(clienteService.clienteFicha(id));
+    public ResponseEntity<ClienteFichaResponse> obtenerFichaCliente(@PathVariable Long id, @AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(clienteService.clienteFicha(id, usuario));
     }
     
     @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')") // Analista y Admin filtro libre, Cobrador solo los suyos
     @GetMapping("/dni/{dni}/ficha")
-    public ResponseEntity<ClienteFichaResponse> obtenerFichaClientePorDni(@PathVariable String dni) {
-        return ResponseEntity.ok(clienteService.clienteFichaDni(dni));
+    public ResponseEntity<ClienteFichaResponse> obtenerFichaClientePorDni(@PathVariable String dni, @AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(clienteService.clienteFichaDni(dni, usuario));
     }
 }

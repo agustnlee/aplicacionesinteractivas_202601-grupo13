@@ -22,8 +22,8 @@ public class CreditoController {
     // GET /api/creditos/{id}
     @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')")
     @GetMapping("/{id}")
-    public ResponseEntity<CreditoResponse> obtener(@PathVariable Long id) {
-        return ResponseEntity.ok(creditoService.obtenerCredito(id));
+    public ResponseEntity<CreditoResponse> obtener(@PathVariable Long id, @AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(creditoService.obtenerCredito(id, usuario));
     }
 
     // GET /api/creditos?estado=&clienteId=&cobradorId=&creadoPorId=&pagina=&tamanio=
@@ -36,10 +36,11 @@ public class CreditoController {
             @RequestParam(required = false) Long cobradorId,
             @RequestParam(required = false) Long creadoPorId,
             @RequestParam(defaultValue = "0") int pagina,
-            @RequestParam(defaultValue = "10") int tamanio
+            @RequestParam(defaultValue = "10") int tamanio,
+            @AuthenticationPrincipal Usuario usuario
     ) {
         return ResponseEntity.ok(
-                creditoService.listarConFiltros(id, estado, clienteId, cobradorId, creadoPorId, pagina, tamanio)
+                creditoService.listarConFiltros(id, estado, clienteId, cobradorId, creadoPorId, pagina, tamanio, usuario)
         );
     }
 
