@@ -1,37 +1,46 @@
-import {createAsyinThunk, createSlice} from "@reduxjs/toolkit";
-import axios from "axios";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import { buscarEtiquetas, modificarEtiqueta, } from "../api/apiEtiquetas";
 
-export const EtiquetasThunk = createAsyncThunk('etiquetas',async()=>{
-    try {
-        const response = await axios.get('/api/etiquetas');
-        return response.data;
-    } catch (error) {
-        throw error;
-    }}
-)
 
-const EtiquetaSlice = createSlice({
-    name:'etiquetas',
-    initialState:{
-        items:[],
-        loading:false,
-        error:null
-    },
-    reducers:{},
-    extraReducers:(builder)=>{
+
+export const BuscarEtiquetasThunk = createAsyncThunk( "/etiquetas", async (_, {rejectWithValue})=>{
+    try{
+        const data = await buscarEtiquetas();
+        return data; 
+    }catch(err){
+        return rejectWithValue(err);
+    }    
+
+}    
+);
+
+export const etquetaSlice = createSlice({
+    name: "etiquetas",
+    initialState: {
+        etiquetas: [],
+        loading: false,
+        error: null,
+    }, 
+    reducers: {
+        clearError: (state) => { state.error = null; }
+    },  
+    extraReducers: (builder) => {
         builder
-            .addCase(EtiquetasThunk.pending,(state)=>{
-                state.loading= true;
-                state.error=null;})
-                .addCase(EtiquetasThunk.fulfilled,(state,action)=>{
-                    state.loading=false;
-                    state.items=action.payload;
-                })
-                .addCase(EtiquetasThunk.rejected,(state,action)=>{
-                    state.loading=false;
-                    state.error=action.error.message;
-                })
-}});
+            .addCase(BuscarEtiquetasThunk.pending, (state) => { 
+                state.loading = true;
+                state.error = null;
+            }
+            )
+            .addCase(BuscarEtiquetasThunk.fulfilled, (state, action) => {
+                state.loading = false;
+                state.etiquetas = action.payload; 
+            })
+            .addCase(BuscarEtiquetasThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Error al cargar etiquetas";
+            });
+    }
+});
 
-export default EtiquetaSlice.reducer;
+
 
