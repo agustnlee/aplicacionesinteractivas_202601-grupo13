@@ -183,69 +183,70 @@ proyecto/
 ### Cliente (requiere JWT)
 | Método | Endpoint | Descripción | Roles |
 |--------|----------|-------------|-------|
-| POST | `/api/clientes` | Crear cliente | Por Definir |
-| GET | `/api/clientes` | Listar clientes con filtros (nombre, estado, creadoPorId, paginado) | Por Definir |
-| GET | `/api/clientes/{id}` | Buscar por ID | Por Definir |
-| GET | `/api/clientes/dni/{dni}` | Buscar por DNI | Por Definir |
-| GET | `/api/clientes/{id}/ficha` | Obtener ficha completa del cliente | Por Definir |
-| GET | `/api/clientes/dni/{dni}/ficha` | Obtener ficha completa del cliente por DNI | Por Definir |
-| PUT | `/api/clientes/{id}` | Editar cliente | Por Definir |
-| PATCH | `/api/clientes/{id}/estado` | Activar/desactivar cliente | Por Definir |
+| POST | `/api/clientes` | Crear cliente | ANALISTA, ADMIN |
+| GET | `/api/clientes` | Listar clientes con filtros (nombre, estado, creadoPorId, paginado) | COBRADOR, ANALISTA, ADMIN |
+| GET | `/api/clientes/{id}` | Buscar por ID | COBRADOR, ANALISTA, ADMIN |
+| GET | `/api/clientes/dni/{dni}` | Buscar por DNI | COBRADOR, ANALISTA, ADMIN |
+| GET | `/api/clientes/{id}/ficha` | Obtener ficha completa del cliente | COBRADOR, ANALISTA, ADMIN |
+| GET | `/api/clientes/dni/{dni}/ficha` | Obtener ficha completa del cliente por DNI | COBRADOR, ANALISTA, ADMIN |
+| PUT | `/api/clientes/{id}` | Editar cliente | ANALISTA, ADMIN |
+| PATCH | `/api/clientes/{id}/estado` | Activar/desactivar cliente | ANALISTA, ADMIN |
 
 ### Crédito (requiere JWT)
 | Método | Endpoint | Descripción | Roles |
 |--------|----------|-------------|-------|
-| POST | `/api/creditos` | Crear crédito (genera cuotas automáticamente) | Por Definir |
-| POST | `/api/creditos/preview` | Previsualizar plan de cuotas sin confirmar | Por Definir |
-| GET | `/api/creditos/{id}` | Buscar por ID (incluye cuotas con estado pagada/pendiente) | Por Definir |
-| GET | `/api/creditos` | Listar créditos con filtros (estado, clienteId, cobradorId, creadoPorId, paginado) | Por Definir |
-| PATCH | `/api/creditos/{id}/cobrador` | Cambiar cobrador asignado | Por Definir |
-| PATCH | `/api/creditos/{id}/cancelar` | Cancelar crédito | Por Definir |
+| POST | `/api/creditos` | Crear crédito (genera cuotas automáticamente) | ANALISTA, ADMIN |
+| POST | `/api/creditos/preview` | Previsualizar plan de cuotas sin confirmar | COBRADOR, ANALISTA, ADMIN |
+| GET | `/api/creditos/{id}` | Buscar por ID (incluye cuotas con estado pagada/pendiente) | COBRADOR, ANALISTA, ADMIN |
+| GET | `/api/creditos` | Listar créditos con filtros (estado, clienteId, cobradorId, creadoPorId, paginado) | COBRADOR, ANALISTA, ADMIN |
+| PATCH | `/api/creditos/{id}/cobrador` | Cambiar cobrador asignado | ANALISTA, ADMIN |
+| PATCH | `/api/creditos/{id}/cancelar` | Cancelar crédito | ANALISTA, ADMIN |
 
 ### Cuota (requiere JWT)
 | Método | Endpoint | Descripción | Roles |
 |--------|----------|-------------|-------|
-| GET | `/api/creditos/{creditoId}/cuotas` | Listar todas las cuotas de un crédito | Por Definir |
-| GET | `/api/creditos/{creditoId}/cuotas/pendientes` | Listar cuotas pendientes | Por Definir |
-| GET | `/api/creditos/{creditoId}/cuotas/vencidas` | Listar cuotas vencidas | Por Definir |
+| GET | `/api/creditos/{creditoId}/cuotas` | Listar todas las cuotas de un crédito | COBRADOR, ANALISTA, ADMIN |
+| GET | `/api/creditos/{creditoId}/cuotas/pendientes` | Listar cuotas pendientes | COBRADOR, ANALISTA, ADMIN |
+| GET | `/api/creditos/{creditoId}/cuotas/vencidas` | Listar cuotas vencidas | COBRADOR, ANALISTA, ADMIN |
 
 ### Pago (requiere JWT)
 | Método | Endpoint | Descripción | Roles |
 |--------|----------|-------------|-------|
-| POST | `/api/pagos/registrar/{cuotaId}` | Registrar pago de una cuota (método, observaciones) | Por Definir |
-| GET | `/api/pagos/credito/{creditoId}` | Obtener pagos de un crédito | Por Definir |
-| DELETE | `/api/pagos/{pagoId}` | Cancelar un pago | Por Definir |
+| POST | `/api/pagos/registrar/{cuotaId}` | Registrar pago de una cuota (método, observaciones) | ANALISTA, ADMIN |
+| GET | `/api/pagos/credito/{creditoId}` | Obtener pagos de un crédito | COBRADOR, ANALISTA, ADMIN |
+| DELETE | `/api/pagos/{pagoId}` | Cancelar un pago | ANALISTA, ADMIN |
 
 ### Mora (requiere JWT)
 | Método | Endpoint | Descripción | Roles |
 |--------|----------|-------------|-------|
-| POST | `/api/mora/forzar/{creditoId}` | Forzar mora manualmente sobre un crédito | Por Definir |
+| POST | `/api/mora/forzar/{creditoId}` | Forzar mora manualmente sobre un crédito | Publico/DevOnly |
 
 ### Etiqueta (requiere JWT)
 | Método | Endpoint | Descripción | Roles |
 |--------|----------|-------------|-------|
-| POST | `/api/etiquetas` | Crear etiqueta | Por Definir |
-| GET | `/api/etiquetas` | Listar/buscar etiquetas con filtros (nombre, color, paginado) | Por Definir |
-| GET | `/api/etiquetas/{id}` | Obtener etiqueta por ID | Por Definir |
-| PUT | `/api/etiquetas/{id}` | Modificar etiqueta | Por Definir |
-| DELETE | `/api/etiquetas/{id}` | Eliminar etiqueta (param: forzar) | Por Definir |
+| POST | `/api/etiquetas` | Crear etiqueta | ANALISTA, ADMIN |
+| GET | `/api/etiquetas` | Listar/buscar etiquetas con filtros (nombre, color, paginado) | ANALISTA, ADMIN |
+| GET | `/api/etiquetas/{id}` | Obtener etiqueta por ID | ANALISTA, ADMIN |
+| PUT | `/api/etiquetas/{id}` | Modificar etiqueta | ANALISTA, ADMIN |
+| DELETE | `/api/etiquetas/{id}` | Eliminar etiqueta (param: forzar) | ANALISTA, ADMIN |
 
 ### ClienteEtiqueta (requiere JWT)
 | Método | Endpoint | Descripción | Roles |
 |--------|----------|-------------|-------|
-| POST | `/api/clientes-etiquetas/{clienteId}/etiquetas/{etiquetaId}` | Asignar etiqueta a cliente | Por Definir |
-| GET | `/api/clientes-etiquetas/cliente/{clienteId}` | Obtener etiquetas de un cliente (paginado) | Por Definir |
-| GET | `/api/clientes-etiquetas/resumen` | Resumen estadístico de etiquetas (paginado) | Por Definir |
-| DELETE | `/api/clientes-etiquetas/{idAsignacion}` | Quitar etiqueta de un cliente | Por Definir |
+| POST | `/api/clientes-etiquetas/{clienteId}/etiquetas/{etiquetaId}` | Asignar etiqueta a cliente | ANALISTA, ADMIN |
+| GET | `/api/clientes-etiquetas/cliente/{clienteId}` | Obtener etiquetas de un cliente (paginado) | COBRADOR, ANALISTA, ADMIN |
+| GET | `/api/clientes-etiquetas/resumen` | Resumen estadístico de etiquetas (paginado) | ADMIN |
+| DELETE | `/api/clientes-etiquetas/{idAsignacion}` | Quitar etiqueta de un cliente | ANALISTA, ADMIN |
 
 ### Usuario (requiere JWT)
 | Método | Endpoint | Descripción | Roles |
 |--------|----------|-------------|-------|
-| POST | `/api/usuarios` | Crear usuario | Por Definir |
-| GET | `/api/usuarios` | Listar usuarios con filtros (nombre, rol, estado, paginado) | Por Definir |
-| PUT | `/api/usuarios/{id}` | Editar usuario | Por Definir |
-| PATCH | `/api/usuarios/{id}/estado` | Activar/desactivar usuario | Por Definir |
-| PATCH | `/api/usuarios/{id}/password` | Resetear contraseña | Por Definir |
+| POST | `/api/usuarios` | Crear usuario | ADMIN |
+| GET | `/api/usuarios` | Listar usuarios con filtros (nombre, rol, estado, paginado) | COBRADOR, ANALISTA, ADMIN |
+| GET | `/api/usuarios/{id}` | Buscar un usuario | COBRADOR, ANALISTA, ADMIN |
+| PUT | `/api/usuarios/{id}` | Editar usuario | ADMIN |
+| PATCH | `/api/usuarios/{id}/estado` | Activar/desactivar usuario | ADMIN |
+| PATCH | `/api/usuarios/{id}/password` | Resetear contraseña | ADMIN |
 
 
 ---
@@ -346,10 +347,6 @@ Utilizado parcialmente en la Home para acelerar el desarrollo visual y facilitar
 
 ---
 
-## Estados Redux (POR DEFINIR)
-
----
-
 ## Cómo correr el proyecto
 
 ### Backend
@@ -382,4 +379,4 @@ npm run dev
 | III | React Router | `/App.jsx`  |
 | IV | Fetch, consumo de API | `/api/apiClient`, `/frontend` |
 | IV | Renderizado condicional |  `/pages`,  `components/common/LoadingWrapper.jsx`, `components/common/PaginatedContainer.jsx` |
-| V | Redux I y II: acciones, reducers, store, thunks | (por definir) |
+| V | Redux I y II: acciones, reducers, store, thunks | /store |
