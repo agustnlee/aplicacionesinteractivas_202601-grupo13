@@ -30,5 +30,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
             @Param("estado") Boolean estado,
             Pageable pageable
     );
+
+
+    // Para homepage, metricas
+    long countByEstado(Boolean estado); 
 }
  
