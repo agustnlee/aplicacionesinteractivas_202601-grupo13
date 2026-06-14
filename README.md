@@ -248,6 +248,12 @@ proyecto/
 | PATCH | `/api/usuarios/{id}/estado` | Activar/desactivar usuario | ADMIN |
 | PATCH | `/api/usuarios/{id}/password` | Resetear contraseña | ADMIN |
 
+### Metricas (requiere JWT)
+| Método | Endpoint | Descripción | Roles |
+|--------|----------|-------------|-------|
+| GET | `/api/metricas` | Obtener metricas (en forma de cantidades long) para el homepage | COBRADOR, ANALISTA, ADMIN |
+
+
 
 ---
 ## Estética
