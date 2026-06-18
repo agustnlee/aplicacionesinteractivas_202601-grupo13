@@ -3,9 +3,9 @@ import { buscarEtiquetas, modificarEtiqueta, crearEtiqueta, eliminarEtiqueta, ob
 
 
 
-export const BuscarEtiquetasThunk = createAsyncThunk( "/etiquetas", async ({ nombre, color } , {rejectWithValue})=>{
+export const BuscarEtiquetasThunk = createAsyncThunk( "/etiquetas", async (params, {rejectWithValue})=>{
     try{
-        const data = await buscarEtiquetas(nombre, color);
+        const data = await buscarEtiquetas(params);
         return data; 
     }catch(err){
         return rejectWithValue(err);
@@ -23,9 +23,9 @@ export const CrearEtiquetaThunk = createAsyncThunk( "/etiquetas/crear", async (d
     }
 });
 
-export const ModificarEtiquetaThunk = createAsyncThunk( "/etiquetas/modificar", async ({id, data}, {rejectWithValue})=>{
+export const ModificarEtiquetaThunk = createAsyncThunk( "/etiquetas/modificar", async ({etiquetaId, data}, {rejectWithValue})=>{
     try{
-        const response = await modificarEtiqueta(id, data); 
+        const response = await modificarEtiqueta(etiquetaId, data); 
         return response;
     }catch(err){
         return rejectWithValue(err);
@@ -34,26 +34,26 @@ export const ModificarEtiquetaThunk = createAsyncThunk( "/etiquetas/modificar", 
 
 export const EliminarEtiquetaThunk = createAsyncThunk(
     "/etiquetas/eliminar", 
-    async (id, { rejectWithValue }) => {
+    async (etiquetaId, { rejectWithValue }) => {
         try {
-            await eliminarEtiqueta(id);
-            return id; 
+            await eliminarEtiqueta(etiquetaId);
+            return etiquetaId; 
         } catch (err) {
             return rejectWithValue(err);
         }
     }
 );
 
-export const ObtenerEtiquetaPorIdThunk = createAsyncThunk( "/etiquetas/:id", async (id, {rejectWithValue})=>{
+export const ObtenerEtiquetaPorIdThunk = createAsyncThunk( "/etiquetas/:id", async (etiquetaId, {rejectWithValue})=>{
     try{
-        const response = await obtenerEtiquetaPorId(id); 
+        const response = await obtenerEtiquetaPorId(etiquetaId); 
         return response;
     }catch(err){
         return rejectWithValue(err);
     }
 });
 
-export const etquetaSlice = createSlice({
+export const etiquetaSlice = createSlice({
     name: "etiquetas",
     initialState: {
         etiquetas: [],
@@ -78,8 +78,8 @@ export const etquetaSlice = createSlice({
             .addCase(BuscarEtiquetasThunk.fulfilled, (state, action) => {
                 state.loading = false;
               
-                state.etiquetas = action.payload?.content || [];
-                state.totalPaginas = action.payload?.totalPages || 1;
+                state.etiquetas = action.payload?.contenido || [];
+                state.totalPaginas = action.payload?.totalPaginas || 1;
             })
             .addCase(BuscarEtiquetasThunk.rejected, (state, action) => {
                 state.loading = false;
@@ -109,12 +109,12 @@ export const etquetaSlice = createSlice({
             })
             .addCase(ModificarEtiquetaThunk.fulfilled, (state, action) => {
                 state.loading = false;
-                const index = state.etiquetas.findIndex(e => (e.id ) == (action.payload?.id ));
+                const index = state.etiquetas.findIndex(e => (e.etiquetaId ) == (action.payload?.etiquetaId ));
                 if (index !== -1) {
                     state.etiquetas[index] = action.payload;
                 }
                
-                if (state.etiquetaActual && (state.etiquetaActual.id) == (action.payload?.id )) {
+                if (state.etiquetaActual && (state.etiquetaActual.etiquetaId) == (action.payload?.etiquetaId )) {
                     state.etiquetaActual = action.payload;
                 }
             })
@@ -133,10 +133,10 @@ export const etquetaSlice = createSlice({
                 const idEliminado = action.payload; 
                 
                 
-                state.etiquetas = state.etiquetas.filter(e => e.id !== idEliminado );
+                state.etiquetas = state.etiquetas.filter(e => e.etiquetaId !== idEliminado );
                 
                
-                if (state.etiquetaActual && (state.etiquetaActual.id == idEliminado )) {
+                if (state.etiquetaActual && (state.etiquetaActual.etiquetaId == idEliminado )) {
                     state.etiquetaActual = null;
                 }
             })
