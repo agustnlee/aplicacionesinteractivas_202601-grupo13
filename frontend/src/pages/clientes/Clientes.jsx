@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
-import { listarClientes, buscarClientePorId, crearCliente } from "../../api/clientesApi";
+import { useDispatch, useSelector } from "react-redux";
+import {BuscarClientesThunk, ObtenerClientePorIdThunk, CrearClienteThunk,limpiarClienteActual } from "../../store/ClienteSlice";
 import { useToast } from "../../hooks/useToast";
 import PaginatedContainer from "../../components/common/PaginatedContainer";
 import RowModels from "../../components/common/RowModels";
@@ -47,51 +48,37 @@ export default function Clientes() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const { showToast } = useToast();
+    const dispatch = useDispatch();
 
-    const [clientes, setClientes]     = useState([]);
-    const [totalPages, setTotalPages] = useState(0);
-    const [isLoading, setIsLoading]   = useState(true);
-    const [error, setError]           = useState(null);
+    const { clientes, totalPages, loading, error } = useSelector(state => state.clientes);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const currentPage = parseInt(searchParams.get("pagina") || "0", 10);
 
     const cargarClientes = useCallback(async () => {
-        setIsLoading(true);
-        setError(null);
-        try {
-            const paramsObjeto = Object.fromEntries([...searchParams]);
-
-            // ID exacto → navegar directo
-            if (paramsObjeto.id) {
-                try {
-                    const encontrado = await buscarClientePorId(paramsObjeto.id);
+        const paramsObjeto = Object.fromEntries([...searchParams]);
+        // ID exacto → navegar directo
+        if (paramsObjeto.id) {
+                dispatch(ObtenerClientePorIdThunk(paramsObjeto.id))
+                .unwrap()
+                .then((encontrado) => {
                     navigate(`/clientes/${encontrado.id}`, { replace: true });
-                    return;
-                } catch {
-                    setError({ mensajes: ["No se encontró ningún cliente con ese ID."] });
-                    setIsLoading(false);
-                    return;
-                }
-            }
-
-            const { id, ...filtrosPaginados } = paramsObjeto;
-            filtrosPaginados.pagina  = currentPage;
-            filtrosPaginados.tamanio = 5;
-
-            const respuesta = await listarClientes(filtrosPaginados);
-            setClientes(respuesta.contenido || []);
-            setTotalPages(respuesta.totalPaginas || 0);
-        } catch (err) {
-            setError(err?.mensajes?.join(", ") ?? "Error al cargar los clientes.");
-        } finally {
-            setIsLoading(false);
+                })
+                .catch(() => {//SUGERENCIA
+                    showToast("No se encontró ningún cliente con ese ID", "error");});
+            return;
         }
-    }, [searchParams, currentPage, navigate]);
+
+        const { id, ...filtrosPaginados } = paramsObjeto;
+        filtrosPaginados.pagina  = currentPage;
+        filtrosPaginados.tamanio = 5;
+
+        dispatch(BuscarClientesThunk(filtrosPaginados));
+    }, [searchParams, currentPage, navigate, dispatch]);
 
     const handleCrearCliente = async (formData) => {
         try {
-            const clienteCreado = await crearCliente(formData);
+            const clienteCreado = await dispatch(CrearClienteThunk(formData)).unwrap();
             showToast("Cliente creado exitosamente", "success");
             setIsModalOpen(false);
             navigate(`/clientes/${clienteCreado.id}`);
@@ -101,7 +88,11 @@ export default function Clientes() {
         }
     };
 
-    useEffect(() => { cargarClientes(); }, [cargarClientes]);
+    useEffect(() => { cargarClientes();
+        return () => {
+            dispatch(limpiarClienteActual());
+        };
+     }, [cargarClientes,dispatch]);
 
     return (
         <div className={styles.page}>
@@ -111,7 +102,7 @@ export default function Clientes() {
                 columns={COLUMNS}
                 currentPage={currentPage}
                 totalPages={totalPages}
-                isLoading={isLoading}
+                isLoading={loading}
                 isEmpty={!clientes.length}
                 error={error}
                 onCreate={() => setIsModalOpen(true)}

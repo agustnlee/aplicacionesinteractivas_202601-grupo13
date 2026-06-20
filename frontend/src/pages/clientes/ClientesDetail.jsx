@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
-import { obtenerFichaCliente, editarCliente, alterarEstadoCliente } from "../../api/clientesApi";
-import { crearCredito, getCreditos } from "../../api/creditoApi";
+import {useDispatch, useSelector } from "react-redux";
+import { ObtenerFichaClienteThunk, EditarClienteThunk, AlterarEstadoClienteThunk, limpiarClienteActual } from "../../store/ClienteSlice";
+import { crearCredito, getCreditos } from "../../api/creditoApi";//FAALTA SLICE DE CREDITOS
 import { useToast } from "../../hooks/useToast";
 
 import PaginatedContainer from "../../components/common/PaginatedContainer";
@@ -42,9 +43,9 @@ export default function ClientesDetail() {
     const { showToast } = useToast();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
+    const dispatch = useDispatch();
 
-    const [cliente, setCliente]           = useState(null);
-    const [fichaLoading, setFichaLoading] = useState(true);
+    const { clienteActual: cliente, loading: fichaLoading } = useSelector((state) => state.clientes);
 
     const [creditos, setCreditos]                     = useState([]);
     const [creditosTotalPages, setCreditosTotalPages] = useState(0);
@@ -59,17 +60,12 @@ export default function ClientesDetail() {
     const creditoEstado = searchParams.get("estado") ?? undefined;
 
     const cargarFicha = useCallback(async () => {
-        setFichaLoading(true);
-        try {
-            const data = await obtenerFichaCliente(id);
-            setCliente(data);
-        } catch {
-            showToast("El cliente solicitado no existe", "error");
-            navigate("/clientes", { replace: true });
-        } finally {
-            setFichaLoading(false);
-        }
-    }, [id]);
+        dispatch(ObtenerFichaClienteThunk(id)).unwrap()
+            .catch(() => {
+                showToast("El cliente solicitado no existe", "error");
+                navigate("/clientes", { replace: true });
+            });
+    }, [id, dispatch, navigate, showToast]);
 
     const cargarCreditos = useCallback(async () => {
         setCreditosLoading(true);
@@ -90,14 +86,18 @@ export default function ClientesDetail() {
         }
     }, [id, creditoPage, creditoEstado]);
 
-    useEffect(() => { cargarFicha(); },    [cargarFicha]);
+    useEffect(() => { cargarFicha();
+        return () => {
+            dispatch(limpiarClienteActual());
+        };
+     },    [cargarFicha]);
     useEffect(() => { cargarCreditos(); }, [cargarCreditos]);
 
     const handleEditarCliente = async (clienteId, requestData) => {
         try {
-            await editarCliente(clienteId, requestData);
+            await dispatch(EditarClienteThunk({ id: clienteId, data: requestData })).unwrap();
             showToast("Datos actualizados exitosamente", "success");
-            await cargarFicha();
+            setModalEditar(false);
         } catch (err) {
             showToast(err?.mensajes?.[0] ?? "Error al actualizar el cliente", "error");
             throw err;
@@ -106,9 +106,9 @@ export default function ClientesDetail() {
 
     const handleAlterarEstado = async (clienteId, nuevoEstado) => {
         try {
-            await alterarEstadoCliente(clienteId);
+            await dispatch(AlterarEstadoClienteThunk(clienteId)).unwrap();
             showToast(`Cliente ${nuevoEstado ? "dado de alta" : "dado de baja"} exitosamente`, "success");
-            await cargarFicha();
+            setModalEstado(false);
         } catch (err) {
             showToast(err?.mensajes?.[0] ?? "Error al alterar el estado", "error");
             throw err;
