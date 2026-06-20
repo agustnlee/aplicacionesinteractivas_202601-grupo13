@@ -49,22 +49,22 @@ export const ContarClientesPorEtiquetaThunk = createAsyncThunk( "/clientes-etiqu
 export const clienteEtiquetaSlice = createSlice({
     name: "clienteEtiquetas",
     initialState: { 
-        asignaciones: [],
+
         resumen: [],
         etiquetasPorCliente: [],
-        conteoClientesPorEtiqueta: {},
+        conteoClientesPorEtiqueta:  0,
         loading: false,
         error: null,    
         },
     reducers: {},
     extraReducers: (builder) => {
-            builder.addCase(AsignarEtiquetaThunk.pending, (state) => {
+           addCase(AsignarEtiquetaThunk.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(AsignarEtiquetaThunk.fulfilled, (state, action) => {
+            .addCase(AsignarEtiquetaThunk.fulfilled, (state) => {
                 state.loading = false;
-                state.asignaciones.push(action.payload);
+                
             })
             .addCase(AsignarEtiquetaThunk.rejected, (state, action) => {
                 state.loading = false;
@@ -98,9 +98,9 @@ export const clienteEtiquetaSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(EliminarAsignacionThunk.fulfilled, (state, action) => {
+            .addCase(EliminarAsignacionThunk.fulfilled, (state) => {
                 state.loading = false;
-                state.asignaciones = state.asignaciones.filter(a => a.id !== action.payload);
+               
             })
             .addCase(EliminarAsignacionThunk.rejected, (state, action) => {
                 state.loading = false;
@@ -112,15 +112,13 @@ export const clienteEtiquetaSlice = createSlice({
             })
             .addCase(ContarClientesPorEtiquetaThunk.fulfilled, (state, action) => {
                 state.loading = false;
-                const { etiquetaId, conteo } = action.payload || {};
-                if (etiquetaId) {
-                    state.conteoClientesPorEtiqueta[etiquetaId] = conteo || 0;
-                }   
+               state.conteoClientesPorEtiqueta = typeof action.payload === 'number' ? action.payload : 0;
             })
             .addCase(ContarClientesPorEtiquetaThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload || "Error al contar clientes por etiqueta";
             }); 
+
  
     }
 });
