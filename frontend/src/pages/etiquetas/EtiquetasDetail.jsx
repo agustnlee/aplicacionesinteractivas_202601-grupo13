@@ -23,7 +23,7 @@ import styles from "../PagesDetail.module.css";
 
 
 export default function EtiquetasDetail() {
-    const { id }        = useParams();
+    const {  id }        = useParams();
     const navigate      = useNavigate();
     const { showToast } = useToast();
     const dispatch      = useDispatch();
@@ -71,13 +71,15 @@ export default function EtiquetasDetail() {
         return () => { dispatch(limpiarEtiquetaActual()); };
     }, [id, dispatch, navigate, showToast]);
 
+ 
+
     const handleEditar = async ({ nombre, descripcion }) => {
         try {
             await dispatch(ModificarEtiquetaThunk({
-                id,
+                etiquetaId: id, 
                 data: {
                     nombreEtiqueta:      nombre,
-                    colorEtiqueta:       etiqueta.colorEtiqueta,
+                    colorEtiqueta:       etiqueta.colorEtiqueta || etiqueta.color,
                     descripcionEtiqueta: descripcion,
                 }
             })).unwrap();
@@ -91,11 +93,11 @@ export default function EtiquetasDetail() {
     const handleCambiarColor = async (color) => {
         try {
             await dispatch(ModificarEtiquetaThunk({
-                id, 
+                etiquetaId: id, 
                 data: {
-                    nombreEtiqueta:      etiqueta.nombreEtiqueta,
+                    nombreEtiqueta:      etiqueta.nombreEtiqueta || etiqueta.nombre,
                     colorEtiqueta:       color,
-                    descripcionEtiqueta: etiqueta.descripcionEtiqueta,
+                    descripcionEtiqueta: etiqueta.descripcionEtiqueta || etiqueta.descripcion,
                 }
             })).unwrap();
             showToast("Color actualizado correctamente", "success");
@@ -103,7 +105,6 @@ export default function EtiquetasDetail() {
             showToast(e?.mensajes?.[0] ?? "Error al cambiar color", "error");
         }
     };
-
     const handleAsignar = async (clienteId) => {
         try {
             await dispatch(AsignarEtiquetaThunk({ clienteId, etiquetaId: id })).unwrap();
