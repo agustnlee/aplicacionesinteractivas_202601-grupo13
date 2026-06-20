@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/etiquetas")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA')")
+@PreAuthorize("hasRole('ADMIN')")
 public class EtiquetaController {
 
     private final EtiquetaService etiquetaService;
