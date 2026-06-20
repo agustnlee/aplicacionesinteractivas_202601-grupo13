@@ -58,7 +58,8 @@ export const clienteEtiquetaSlice = createSlice({
         },
     reducers: {},
     extraReducers: (builder) => {
-           addCase(AsignarEtiquetaThunk.pending, (state) => {
+        builder
+           .addCase(AsignarEtiquetaThunk.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
