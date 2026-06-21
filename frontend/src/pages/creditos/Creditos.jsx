@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import FichaCredito from "../../components/creditos/FichaCredito";
 import PaginatedContainer from "../../components/common/PaginatedContainer";
-import { getCreditos } from '../../api/creditoApi';
+import { useDispatch, useSelector } from "react-redux";
+import { BuscarCreditosThunk } from "../../store/creditoSlice";
 import styles from '../PagesDetail.module.css';
 
 
@@ -34,11 +35,8 @@ const COLUMNS = [
 export default function Creditos() {
   const [searchParams] = useSearchParams();
   
-  // Estado para el cargador (en false para que muestre los datos de una en la captura)
-  const [isLoading, setIsLoading] = useState(false);
-  const [creditos,   setCreditos]   = useState([]);
-  const [error,      setError]      = useState(null);
-  const [totalPages, setTotalPages] = useState(1);
+  const dispatch = useDispatch();
+  const { creditos, totalPaginas: totalPages, loading: isLoading, error } = useSelector(state => state.creditos);
 
   const page   = parseInt(searchParams.get("pagina") ?? "0", 10);
   const id          = searchParams.get("id")   ?? undefined;
@@ -47,31 +45,17 @@ export default function Creditos() {
   const clienteId   = searchParams.get("clienteId")   ?? undefined;
   const creadoPorId = searchParams.get("creadoPorId") ?? undefined;   
 
-  // carga inicial
   useEffect(() => {
-        const cargar = async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const data = await getCreditos({
-                    ...(id  && { id }),
-                    ...(estado && { estado}),
-                    ...(cobradorId  && { cobradorId  }),
-                    ...(clienteId   && { clienteId   }),
-                    ...(creadoPorId && { creadoPorId }),
-                    pagina:  page,
-                    tamanio: 10,
-                });
-                setCreditos(data.contenido);
-                setTotalPages(data.totalPaginas);
-            } catch (e) {
-                setError(e?.mensajes?.[0] ?? "Error al cargar créditos");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        cargar();
-    }, [page, id, estado, cobradorId, clienteId, creadoPorId]);
+    dispatch(BuscarCreditosThunk({
+        ...(id  && { id }),
+        ...(estado && { estado }),
+        ...(cobradorId  && { cobradorId  }),
+        ...(clienteId   && { clienteId   }),
+        ...(creadoPorId && { creadoPorId }),
+        pagina:  page,
+        tamanio: 10,
+    }));
+  }, [page, id, estado, cobradorId, clienteId, creadoPorId, dispatch]);
 
 
   return (

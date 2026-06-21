@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "../../hooks/useToast";
 import LoadingWrapper from "../../components/common/LoadingWrapper";
 import PaginatedContainer from "../../components/common/PaginatedContainer";
@@ -13,8 +14,8 @@ import ModalCancelarPago from "../../components/creditos/ModalCancelarPago";
 import ModalDetallePago from "../../components/creditos/ModalDetallePago";
 import styles from "../PagesDetail.module.css";
 
-import { getCreditoById, cambiarCobrador, cancelarCredito } from "../../api/creditoApi";
-import { registrarPago, cancelarPago, getPagosPorCredito } from "../../api/pagoApi";
+import { ObtenerCreditoPorIdThunk, CambiarCobradorThunk, CancelarCreditoThunk, limpiarCreditoActual } from "../../store/creditoSlice";
+import { RegistrarPagoThunk, CancelarPagoThunk, ObtenerPagosPorCreditoThunk, limpiarPagos } from "../../store/pagoSlice";
 
 const ESTADO_CREDITO_BADGE = {
     ACTIVO:                   "badge badge-success",
@@ -39,47 +40,39 @@ export default function CreditosDetail() {
     const { showToast } = useToast();
     const navigate = useNavigate();
 
-    const [credito,  setCredito]  = useState(null);
-    const [pagos,    setPagos]    = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error,    setError]    = useState(null);
-
     const [modalCobrador,    setModalCobrador]    = useState(false);
     const [modalCancelar,    setModalCancelar]    = useState(false);
     const [modalPago,        setModalPago]        = useState({ open: false, cuota: null });
     const [modalCancelPago,  setModalCancelPago]  = useState({ open: false, cuota: null });
     const [modalPagoDetalle, setModalPagoDetalle] = useState({ open: false, pago: null });
 
-    // Carga inicia
-    useEffect(() => {
-        if (!id || id === "undefined") return;
-        const cargar = async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const [creditoData, pagosData] = await Promise.all([
-                    getCreditoById(id),
-                    getPagosPorCredito(id),
-                ]);
-                setCredito(creditoData);
-                setPagos(pagosData);
-            } catch (e) {
-                showToast("Crédito no encontrado", "warning");
-                navigate("/creditos", { replace: true });
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        cargar();
-    }, [id]);
+    const dispatch = useDispatch();
+    const { creditoActual: credito, loading: isLoading, error } = useSelector(state => state.creditos);
+    const { pagos } = useSelector(state => state.pagos);
 
     const esFinal = ESTADOS_FINALES.includes(credito?.estado);
+
+    useEffect(() => {
+        if (!id || id === "undefined") return;
+
+        Promise.all([
+            dispatch(ObtenerCreditoPorIdThunk(id)).unwrap(),
+            dispatch(ObtenerPagosPorCreditoThunk(id)).unwrap(),
+        ]).catch(() => {
+            showToast("Crédito no encontrado", "warning");
+            navigate("/creditos", { replace: true });
+        });
+
+        return () => {
+            dispatch(limpiarCreditoActual());
+            dispatch(limpiarPagos());
+        };
+    }, [id, dispatch]);
 
     // Handlers
     const handleCambiarCobrador = async (nuevoCobradorId) => {
         try {
-            const updated = await cambiarCobrador(id, nuevoCobradorId);
-            setCredito(updated);
+            await dispatch(CambiarCobradorThunk({ id, cobradorId: nuevoCobradorId })).unwrap();
             showToast("Cobrador actualizado correctamente", "success");
             setModalCobrador(false);
         } catch (e) {
@@ -89,8 +82,7 @@ export default function CreditosDetail() {
 
     const handleCancelarCredito = async (motivoCancelacion) => {
         try {
-            const updated = await cancelarCredito(id, motivoCancelacion);
-            setCredito(updated);
+            await dispatch(CancelarCreditoThunk({ id, motivoCancelacion })).unwrap();
             showToast("Crédito cancelado", "success");
             setModalCancelar(false);
         } catch (e) {
@@ -100,17 +92,10 @@ export default function CreditosDetail() {
 
     const handlePagar = async (cuotaId, metodo, observaciones) => {
         try {
-            const nuevoPago = await registrarPago(cuotaId, metodo, observaciones);
-            // update estado cuota local
-            setCredito(prev => ({
-                ...prev,
-                cuotas: prev.cuotas.map(c =>
-                    c.id === cuotaId ? { ...c, estado: "PAGADA" } : c
-                ),
-            }));
-            setPagos(prev => [...prev, nuevoPago]);
+            await dispatch(RegistrarPagoThunk({ cuotaId, metodo, observaciones })).unwrap();
             showToast("Pago registrado correctamente", "success");
             setModalPago({ open: false, cuota: null });
+            dispatch(ObtenerCreditoPorIdThunk(id)); // refresca credito.cuotas con el estado nuevo
         } catch (e) {
             showToast(e?.mensajes?.[0] ?? "Error al registrar pago", "error");
         }
@@ -120,18 +105,10 @@ export default function CreditosDetail() {
         const pago = pagos.find(p => p.cuotaId === cuota.id);
         if (!pago) return;
         try {
-            await cancelarPago(pago.id);  
-            // revert estado local
-            setCredito(prev => ({
-                ...prev,
-                cuotas: prev.cuotas.map(c =>
-                    c.id === cuota.id ? { ...c, estado: "PENDIENTE" } : c
-                ),
-            }));
-            // sacar pago de local
-            setPagos(prev => prev.filter(p => p.id !== pago.id));
+            await dispatch(CancelarPagoThunk(pago.id)).unwrap();
             showToast("Pago cancelado", "success");
             setModalCancelPago({ open: false, cuota: null });
+            dispatch(ObtenerCreditoPorIdThunk(id)); // refresca credito.cuotas
         } catch (e) {
             showToast(e?.mensajes?.[0] ?? "Error al cancelar pago", "error");
         }
