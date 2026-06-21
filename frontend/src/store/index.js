@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
 import clienteReducer from "./ClienteSlice";
-import creditoReducer from "./CreditoSlice";
-import pagoReducer from "./PagoSlice";
+import creditoReducer from "./creditoSlice";
+import pagoReducer from "./pagoSlice";
 import usuarioReducer from "./usuarioSlice";
 import etiquetaReducer from "./EtiquetaSlice";
 import clienteEtiquetaReducer from "./ClienteEtiquetaSlice";
@@ -13,7 +13,7 @@ export const store = configureStore({
         clientes: clienteReducer,
         creditos: creditoReducer,
         pagos: pagoReducer,
-        usuario: usuarioReducer,
+        usuarios: usuarioReducer,
         etiquetas: etiquetaReducer,
         clienteEtiquetas: clienteEtiquetaReducer,
     }

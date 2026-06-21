@@ -28,7 +28,7 @@ export default function UsuariosDetail() {
     const { showToast } = useToast();
 
     const dispatch = useDispatch();
-    const { usuarioSeleccionado: usuario, loading: isLoading, error } = useSelector(state => state.usuario);
+    const { usuarioSeleccionado: usuario, loading: isLoading, error } = useSelector(state => state.usuarios);
 
     const [modalEditar,   setModalEditar]   = useState(false);
     const [modalEstado,   setModalEstado]   = useState(false);

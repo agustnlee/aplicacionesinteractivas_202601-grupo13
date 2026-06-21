@@ -42,7 +42,7 @@ export default function Usuarios() {
     const { showToast } = useToast();
 
     const dispatch = useDispatch();
-    const { usuarios, loading: isLoading, error, totalPages } = useSelector(state => state.usuario);
+    const { usuarios, loading: isLoading, error, totalPages } = useSelector(state => state.usuarios);
 
 
     const [isModalOpen, setIsModalOpen] = useState(false);
