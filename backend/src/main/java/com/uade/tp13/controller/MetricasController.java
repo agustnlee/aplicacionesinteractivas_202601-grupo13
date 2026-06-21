@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/metricas")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')")
 public class MetricasController {
 
     private final MetricasService metricasService;

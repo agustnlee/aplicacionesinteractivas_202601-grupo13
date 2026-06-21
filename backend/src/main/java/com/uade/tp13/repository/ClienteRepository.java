@@ -37,5 +37,11 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
         Pageable pageable
     );
 
+    @Query("""
+    SELECT DISTINCT c
+    FROM Credito cr
+    JOIN cr.cliente c
+    WHERE cr.cobrador.id = :cobradorId
+        """)
     Page<Cliente> findClientesPorCobrador(@Param("cobradorId") Long cobradorId, Pageable pageable);
 }
