@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { buscarEtiquetas, crearEtiqueta } from "../../api/apiEtiquetas";
+
+import { useDispatch, useSelector } from "react-redux";
+import{BuscarEtiquetasThunk, CrearEtiquetaThunk} from "../../store/EtiquetaSlice";
+
 import FichaEtiqueta from "../../components/etiquetas/FichaEtiqueta";
 import PaginatedContainer from "../../components/common/PaginatedContainer";
 import ModalCrearEtiqueta from "../../components/etiquetas/ModalCrearEtiqueta";
@@ -21,62 +24,55 @@ const COLUMNS = [
 
 
 
-
 export default function Etiquetas() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const { showToast }  = useToast();
+    const dispatch = useDispatch(); 
+
     
+    const { 
+        etiquetas, 
+        loading: isLoading, 
+        error, 
+        totalPaginas: totalPages 
+    } = useSelector(state => state.etiquetas);
 
-    const [etiquetas,   setEtiquetas]   = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error,      setError]      = useState(null);
-    const [totalPages, setTotalPages] = useState(1);
     const [modalCrear, setModalCrear] = useState(false);
-
 
     const page   = parseInt(searchParams.get("pagina") ?? "0", 10);
     const nombre = searchParams.get("nombre") ?? undefined; 
     const color  = searchParams.get("color")  ?? undefined;  
 
-    // carga inicial + triggers
-    const cargar = async  (showLoader = true) => {
-        if (showLoader) setIsLoading(true);
-        setError(null);
-        try {
-            const data = await buscarEtiquetas({
-                pagina: page, tamanio: 10,
-                ...(nombre && { nombre }),
-                ...(color  && { color  }),
-            });
-            setEtiquetas(data.contenido);
-            setTotalPages(data.totalPaginas);
-        } catch (e) {
-            setError(e?.mensajes?.[0] ?? "Error al cargar etiquetas");
-        } finally {
-            if (showLoader) setIsLoading(false);
-        }
-    };
+    // Dispatcher de carga inicial y re-triggers
+    useEffect(() => { 
+        dispatch(BuscarEtiquetasThunk({
+            pagina: page, 
+            tamanio: 10,
+            ...(nombre && { nombre }),
+            ...(color  && { color  }),
+        }));
+    }, [dispatch, page, nombre, color]);
 
-    useEffect(() => { cargar(); }, [page, nombre, color]);
-
-   
+    // Dispatcher de creación
     const handleCrearEtiqueta = async (form) => {
         try {
-            const etiqueta = await crearEtiqueta({
+            // Usamos unwrap() para interceptar la respuesta exitosa cruda
+            const etiqueta = await dispatch(CrearEtiquetaThunk({
                 nombreEtiqueta:      form.nombre,
                 colorEtiqueta:       form.color,
                 descripcionEtiqueta: form.descripcion,
-            });
+            })).unwrap(); 
+            
             showToast("Etiqueta creada correctamente", "success");
             setModalCrear(false);
-            navigate(`/etiquetas/${etiqueta.etiquetaId}`);
+            // Dependiendo de tu backend, el ID podría venir como 'id' o 'etiquetaId'
+            navigate(`/etiquetas/${etiqueta.id || etiqueta.etiquetaId}`);
 
         } catch (e) {
             showToast(e?.mensajes?.[0] ?? "Error al crear etiqueta", "error");
         }
     }
-
 
     return (
          <div className={`${styles.page} ${!isLoading ? "" : "is-loading"}`}>
@@ -85,14 +81,14 @@ export default function Etiquetas() {
                 fields={FIELDS}
                 columns={COLUMNS}
                 isLoading={isLoading}
-                isEmpty={!etiquetas.length}
+                isEmpty={!etiquetas?.length}
                 error={error}
                 currentPage={page}
                 totalPages={totalPages}
                 onCreate={() => setModalCrear(true)}
             >
-                {etiquetas.map(e => (
-                    <FichaEtiqueta key={e.etiquetaId} etiqueta={e} />
+                {etiquetas?.map(e => (
+                    <FichaEtiqueta key={e.etiquetaId || e.id} etiqueta={e} />
                 ))}
             </PaginatedContainer>
 

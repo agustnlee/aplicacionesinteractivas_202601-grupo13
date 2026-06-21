@@ -18,7 +18,6 @@ import EtiquetasDetail from './pages/etiquetas/EtiquetasDetail';
 import Usuarios from './pages/usuarios/Usuarios';
 import UsuariosDetail from './pages/usuarios/UsuariosDetail';
 
-import Test from './pages/Test';
 
 function Layout() {
   return (
@@ -46,7 +45,6 @@ function App() {
         {/* Públicas */}
         {/* Públicas (Mantenemos el /login oficial de develop) */}
         <Route path="/" element={<Homepage />} />
-        <Route path="/test" element={<Test />} />
         
 
         {/* Privadas protegidas con autenticación */}
