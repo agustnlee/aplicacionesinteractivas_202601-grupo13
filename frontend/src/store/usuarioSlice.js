@@ -56,7 +56,8 @@ export const cambiarEstadoUsuarioThunk = createAsyncThunk(
   "usuario/cambiarEstadoUsuario",
   async (id, { rejectWithValue }) => {
     try {
-      return await cambiarEstadoUsuario(id);
+      await cambiarEstadoUsuario(id);
+      return id; 
     } catch (err) {
       return rejectWithValue(err);
     }
@@ -106,6 +107,28 @@ const usuarioSlice = createSlice({
         state.currentPage = action.payload?.paginaActual ?? action.payload?.number ?? 0;
         state.totalElements = action.payload?.totalElementos ?? action.payload?.totalElements ?? 0;
       })
+
+      .addCase(crearUsuarioThunk.fulfilled, (state, action) => {
+        state.usuarios.unshift(action.payload);
+      })
+
+      .addCase(editarUsuarioThunk.fulfilled, (state, action) => {
+        const idx = state.usuarios.findIndex(u => u.id === action.payload.id);
+        if (idx !== -1) state.usuarios[idx] = action.payload;
+        if (state.usuarioSeleccionado?.id === action.payload.id) {
+          state.usuarioSeleccionado = action.payload;
+        }
+      })
+
+      .addCase(cambiarEstadoUsuarioThunk.fulfilled, (state, action) => {
+        const idx = state.usuarios.findIndex(u => u.id === action.payload);
+        if (idx !== -1) state.usuarios[idx].estado = !state.usuarios[idx].estado;
+        if (state.usuarioSeleccionado?.id === action.payload) {
+          state.usuarioSeleccionado.estado = !state.usuarioSeleccionado.estado;
+        }
+      })
+
+
       .addCase(fetchUsuariosThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.mensajes?.[0] || "Error al cargar usuarios";
