@@ -49,17 +49,21 @@ public class ClienteService {
  
     @Transactional(readOnly = true)
     public PaginatedResponse<ClienteResponse> buscarClientes(String nombre, Boolean estado, Long creadoPorId, int p, int s, Usuario usuarioAutenticado) {
-        String nombreLimpio = (nombre != null && !nombre.isBlank()) ? nombre : null;        
-        Pageable pageable = buildPageable(p, s);
+        String nombreLimpio = (nombre != null && !nombre.isBlank()) ? nombre : null;   
+        Pageable pageable;     
         Page<Cliente> page;
+        
 
         ROL_USUARIO rol = usuarioAutenticado.getRol();
 
         if (rol == ROL_USUARIO.COBRADOR) {
-            page = clienteRepository.findClientesPorCobrador(usuarioAutenticado.getId(), pageable);
+            Pageable pageableSinSort = buildPageableSinSort(p, s);
+            page = clienteRepository.findClientesPorCobrador(usuarioAutenticado.getId(), pageableSinSort);
         } else if (rol == ROL_USUARIO.ANALISTA) {
+            pageable = buildPageable(p, s);
             page = clienteRepository.findByFiltros(nombreLimpio, estado, usuarioAutenticado.getId(), pageable);
         } else {
+            pageable = buildPageable(p, s);
             page = clienteRepository.findByFiltros(nombreLimpio, estado, creadoPorId, pageable);
         }
        
@@ -137,6 +141,10 @@ public class ClienteService {
  
     private Pageable buildPageable(int p, int s) {
         return PageRequest.of(p, Math.min(s, 50), Sort.by("nombre").ascending());
+    }
+
+    private Pageable buildPageableSinSort(int p, int s) {
+        return PageRequest.of(p, Math.min(s, 50));
     }
  
     private ClienteResponse mapToResponseBasico(Cliente c) {
