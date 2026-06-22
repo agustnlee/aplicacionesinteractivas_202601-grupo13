@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { getUsuarios, crearUsuario } from "../../api/usuarioApi";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUsuariosThunk, crearUsuarioThunk } from "../../store/usuarioSlice";
 import ModalCrearUsuario from "../../components/usuarios/ModalCrearUsuario";
 import FichaUsuario from "../../components/usuarios/FichaUsuario";
 import { useToast } from "../../hooks/useToast";
@@ -39,13 +40,12 @@ export default function Usuarios() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const { showToast } = useToast();
-    
 
-    const [usuarios, setUsuarios] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const dispatch = useDispatch();
+    const { usuarios, loading: isLoading, error, totalPages } = useSelector(state => state.usuarios);
+
+
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [totalPages, setTotalPages] = useState(1);
 
     const page = parseInt(searchParams.get("pagina") ?? "0", 10);
 
@@ -54,56 +54,28 @@ export default function Usuarios() {
     const rol    = searchParams.get("rol")    ?? undefined;
     const estado = searchParams.get("estado") ?? undefined;
 
-    const fetchUsuarios = async (showLoader = true) => {
-        if (showLoader) setIsLoading(true);
-        setError(null);
 
-        try {
-
-            const data = await getUsuarios({...(id     && { id     }), ...(nombre && { nombre }), ...(rol    && { rol    }), ...(estado && { estado }), pagina: page, tamanio: 10 });
-            setUsuarios(data.contenido ?? []);
-            setTotalPages(data.totalPaginas ?? 1);
-
-        } catch (err) {
-
-            setError(err?.mensajes?.[0] ?? "Error al cargar usuarios");
-
-        } finally {
-
-            if (showLoader) setIsLoading(false);
-
-        }
-
+    const handleCrearUsuario = async (formData) => {
+    try {
+        const usuario = await dispatch(crearUsuarioThunk(formData)).unwrap();
+        showToast("Usuario creado correctamente", "success");
+        setIsModalOpen(false);
+        navigate(`/usuarios/${usuario.id}`);
+    } catch (err) {
+        showToast(err?.mensajes?.[0] ?? "Error al crear usuario", "error");
+    }
     };
 
     useEffect(() => {
-
-        fetchUsuarios();
-
-    }, [page, id, nombre, rol, estado]); // si cambia pagina se hace refetch
-
-
-    const handleCrearUsuario = async (formData) => {
-        try {
-
-            const usuario = await crearUsuario(formData);
-
-            showToast("Usuario creado correctamente", "success");
-
-            setIsModalOpen(false);
-
-            navigate(`/usuarios/${usuario.id}`);  
-
-        } catch (err) {
-
-            console.error(err);
-
-            showToast(
-                err?.mensajes?.[0] ?? "Error al crear usuario",
-                "error"
-            );
-        }
-    };
+        dispatch(fetchUsuariosThunk({
+            ...(id && { id }),
+            ...(nombre && { nombre }),
+            ...(rol && { rol }),
+            ...(estado && { estado }),
+            pagina: page,
+            tamanio: 10,
+        }));
+    }, [page, id, nombre, rol, estado, dispatch]);
 
     return (
         <div className={`${styles.page} ${!isLoading ? "" : "is-loading"}`}>

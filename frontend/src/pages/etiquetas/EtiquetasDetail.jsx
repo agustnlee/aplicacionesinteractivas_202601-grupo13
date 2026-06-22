@@ -1,5 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { 
+    ObtenerEtiquetaPorIdThunk, ModificarEtiquetaThunk, EliminarEtiquetaThunk, limpiarEtiquetaActual 
+} from "../../store/EtiquetaSlice";
+
+import { 
+    ContarClientesPorEtiquetaThunk, AsignarEtiquetaThunk, EliminarAsignacionThunk, ObtenerEtiquetaPorClienteThunk 
+} from "../../store/ClienteEtiquetaSlice";
+
+
 import { useToast } from "../../hooks/useToast";
 import LoadingWrapper from "../../components/common/LoadingWrapper";
 import DataField from "../../components/common/DataField";
@@ -10,53 +20,69 @@ import ModalEliminarEtiqueta from "../../components/etiquetas/ModalEliminarEtiqu
 import ColorPalette from "../../components/common/ColorPalette";
 import styles from "../PagesDetail.module.css";
 
-import { obtenerEtiquetaPorId, modificarEtiqueta, eliminarEtiqueta } from "../../api/apiEtiquetas";
-import { contarClientesPorEtiqueta, asignarEtiqueta, eliminarAsignacion, obtenerEtiquetaPorCliente } from "../../api/apiClienteEtiquetas";
+
 
 export default function EtiquetasDetail() {
-    const { id }        = useParams();
+    const {  id }        = useParams();
     const navigate      = useNavigate();
     const { showToast } = useToast();
+    const dispatch      = useDispatch();
 
-    const [etiqueta,      setEtiqueta]      = useState(null);
-    const [cantClientes,  setCantClientes]  = useState(0);
-    const [isLoading,     setIsLoading]     = useState(true);
-    const [error,         setError]         = useState(null);
+    // Contexto de la Etiqueta (desde EtiquetaSlice)
+    const { 
+        etiquetaActual: etiqueta, 
+        loading: isEtiquetaLoading, 
+        error: etiquetaError 
+    } = useSelector(state => state.etiquetas);
 
+    // Contexto de los Clientes (desde ClienteEtiquetaSlice)
+    const { 
+        conteoClientesPorEtiqueta: cantClientes, 
+        loading: isClientesLoading 
+    } = useSelector(state => state.clienteEtiquetas);
+
+    // Unificamos las banderas de carga
+    const isLoading = isEtiquetaLoading || isClientesLoading;
+    const error = etiquetaError;
+
+    // Estados de UI
     const [modalEditar,   setModalEditar]   = useState(false);
     const [modalGestionar,setModalGestionar]= useState(false);
     const [modalEliminar, setModalEliminar] = useState(false);
 
     useEffect(() => {
         if (!id || id === "undefined") return;
-        const cargar = async () => {
-            setIsLoading(true);
-            setError(null);
+        
+        const cargarDetalle = async () => {
             try {
-                const [data, cant] = await Promise.all([
-                    obtenerEtiquetaPorId(id),
-                    contarClientesPorEtiqueta(id),
+                await Promise.all([
+                    dispatch(ObtenerEtiquetaPorIdThunk(id)).unwrap(),
+                    dispatch(ContarClientesPorEtiquetaThunk(id)).unwrap(),
                 ]);
-                setEtiqueta(data);
-                setCantClientes(cant);
             } catch (e) {
                 showToast("Etiqueta no encontrada", "warning");
                 navigate("/etiquetas", { replace: true });
-            } finally {
-                setIsLoading(false);
             }
         };
-        cargar();
-    }, [id]);
+        
+        cargarDetalle();
+
+        // Cleanup: Limpia el detalle actual al desmontar el componente
+        return () => { dispatch(limpiarEtiquetaActual()); };
+    }, [id, dispatch, navigate, showToast]);
+
+ 
 
     const handleEditar = async ({ nombre, descripcion }) => {
         try {
-            const updated = await modificarEtiqueta(id, {
-                nombreEtiqueta:      nombre,
-                colorEtiqueta:       etiqueta.colorEtiqueta,
-                descripcionEtiqueta: descripcion,
-            });
-            setEtiqueta(updated);
+            await dispatch(ModificarEtiquetaThunk({
+                etiquetaId: id, 
+                data: {
+                    nombreEtiqueta:      nombre,
+                    colorEtiqueta:       etiqueta.colorEtiqueta || etiqueta.color,
+                    descripcionEtiqueta: descripcion,
+                }
+            })).unwrap();
             showToast("Etiqueta actualizada correctamente", "success");
             setModalEditar(false);
         } catch (e) {
@@ -66,44 +92,48 @@ export default function EtiquetasDetail() {
 
     const handleCambiarColor = async (color) => {
         try {
-            const updated = await modificarEtiqueta(id, {
-                nombreEtiqueta:      etiqueta.nombreEtiqueta,
-                colorEtiqueta:       color,
-                descripcionEtiqueta: etiqueta.descripcionEtiqueta,
-            });
-            setEtiqueta(updated);
+            await dispatch(ModificarEtiquetaThunk({
+                etiquetaId: id, 
+                data: {
+                    nombreEtiqueta:      etiqueta.nombreEtiqueta || etiqueta.nombre,
+                    colorEtiqueta:       color,
+                    descripcionEtiqueta: etiqueta.descripcionEtiqueta || etiqueta.descripcion,
+                }
+            })).unwrap();
             showToast("Color actualizado correctamente", "success");
         } catch (e) {
             showToast(e?.mensajes?.[0] ?? "Error al cambiar color", "error");
         }
     };
-
     const handleAsignar = async (clienteId) => {
         try {
-            await asignarEtiqueta(clienteId, id);
+            await dispatch(AsignarEtiquetaThunk({ clienteId, etiquetaId: id })).unwrap();
             showToast(`Etiqueta asignada al cliente #${clienteId}`, "success");
             setModalGestionar(false);
-            const cant = await contarClientesPorEtiqueta(id);
-            setCantClientes(cant);
+            dispatch(ContarClientesPorEtiquetaThunk(id)); // Recalcula el contador
         } catch (e) {
             showToast(e?.mensajes?.[0] ?? "Error al asignar etiqueta", "error");
         }
     };
 
-
     const handleDesasignar = async (clienteId) => {
         try {
-            const data = await obtenerEtiquetaPorCliente(clienteId, { pagina: 0, tamanio: 50 });
+            const data = await dispatch(ObtenerEtiquetaPorClienteThunk({ 
+                clienteId, 
+                params: { pagina: 0, tamanio: 50 } 
+            })).unwrap();
+            
             const asignacion = data.contenido?.find(a => a.etiquetaId === Number(id));
+            
             if (!asignacion) {
                 showToast("Este cliente no tiene esta etiqueta asignada", "warning");
                 return;
             }
-            await eliminarAsignacion(asignacion.id);  // ← ahora sí existe
+            
+            await dispatch(EliminarAsignacionThunk(asignacion.id)).unwrap();
             showToast(`Etiqueta desasignada del cliente #${clienteId}`, "success");
             setModalGestionar(false);
-            const cant = await contarClientesPorEtiqueta(id);
-            setCantClientes(cant);  // ← actualiza contador
+            dispatch(ContarClientesPorEtiquetaThunk(id)); // Recalcula el contador
         } catch (e) {
             showToast(e?.mensajes?.[0] ?? "Error al desasignar etiqueta", "error");
         }
@@ -111,7 +141,7 @@ export default function EtiquetasDetail() {
 
     const handleEliminar = async () => {
         try {
-            await eliminarEtiqueta(id, true);
+            await dispatch(EliminarEtiquetaThunk(id)).unwrap();
             showToast("Etiqueta eliminada", "success");
             navigate("/etiquetas", { replace: true });
         } catch (e) {
@@ -127,11 +157,11 @@ export default function EtiquetasDetail() {
                 {etiqueta && (
                     <div className={styles.card}>
                         <div className={styles.filaData}>
-                            <DataField label="ID"     value={`#${etiqueta.etiquetaId}`} />
-                            <DataField label="Nombre" value={etiqueta.nombreEtiqueta}   />
+                            <DataField label="ID"     value={`#${etiqueta.etiquetaId || etiqueta.id}`} />
+                            <DataField label="Nombre" value={etiqueta.nombreEtiqueta || etiqueta.nombre} />
                             <DataField label="Descripción" value={
-                                etiqueta.descripcionEtiqueta?.trim()
-                                    ? etiqueta.descripcionEtiqueta
+                                etiqueta.descripcionEtiqueta?.trim() || etiqueta.descripcion?.trim()
+                                    ? (etiqueta.descripcionEtiqueta || etiqueta.descripcion)
                                     : <span style={{ color: "var(--text-muted)", fontStyle: "italic" }}>Sin descripción</span>
                             } />
                             <DataField label="Clientes asignados" value={cantClientes} />
@@ -141,7 +171,7 @@ export default function EtiquetasDetail() {
                             <DataField label="Color actual" value={
                                 <div style={{
                                     width: "28px", height: "28px",
-                                    backgroundColor: etiqueta.colorEtiqueta,
+                                    backgroundColor: etiqueta.colorEtiqueta || etiqueta.color,
                                     borderRadius: "50%",
                                     border: "1px solid rgba(0,0,0,0.15)",
                                     marginTop: "var(--space-1)",
@@ -156,16 +186,13 @@ export default function EtiquetasDetail() {
                         </div>
 
                         <div className={styles.acciones}>
-                            <Button icon="edit" variant="ghost" size="md"
-                                onClick={() => setModalEditar(true)}>
+                            <Button icon="edit" variant="ghost" size="md" onClick={() => setModalEditar(true)}>
                                 Editar etiqueta
                             </Button>
-                            <Button icon="user" variant="ghost" size="md"
-                                onClick={() => setModalGestionar(true)}>
+                            <Button icon="user" variant="ghost" size="md" onClick={() => setModalGestionar(true)}>
                                 Gestionar Asignaciones
                             </Button>
-                            <Button icon="trash" variant="danger" size="md"
-                                onClick={() => setModalEliminar(true)}>
+                            <Button icon="trash" variant="danger" size="md" onClick={() => setModalEliminar(true)}>
                                 Eliminar etiqueta
                             </Button>
                         </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "../../hooks/useToast";
 import LoadingWrapper from "../../components/common/LoadingWrapper";
 import DataField from "../../components/common/DataField";
@@ -7,10 +8,11 @@ import Button from "../../components/ui/Button";
 import ModalEditarUsuario from "../../components/usuarios/ModalEditarUsuario";
 import ModalAlterarEstado from "../../components/usuarios/ModalAlterarEstado";
 import ModalCambiarPassword from "../../components/usuarios/ModalCambiarPassword";
+import { fetchUsuarioByIdThunk, editarUsuarioThunk, cambiarEstadoUsuarioThunk, resetearPasswordThunk, clearUsuarioSeleccionado, } from "../../store/usuarioSlice";
 import { ICONS } from "../../utils/icontypes";
 import styles from "../PagesDetail.module.css";
 
-import { getUsuarioById, editarUsuario, cambiarEstadoUsuario, resetearPassword } from "../../api/usuarioApi";
+
 import { logout } from "../../api/authApi";
 
 
@@ -25,9 +27,8 @@ export default function UsuariosDetail() {
     const navigate = useNavigate();
     const { showToast } = useToast();
 
-    const [usuario,   setUsuario]   = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error,     setError]     = useState(null);
+    const dispatch = useDispatch();
+    const { usuarioSeleccionado: usuario, loading: isLoading, error } = useSelector(state => state.usuarios);
 
     const [modalEditar,   setModalEditar]   = useState(false);
     const [modalEstado,   setModalEstado]   = useState(false);
@@ -35,30 +36,22 @@ export default function UsuariosDetail() {
 
     useEffect(() => {
         if (!id || id === "undefined") return;
-        const cargar = async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const data = await getUsuarioById(id);
-                setUsuario(data);
-            } catch (e) {
+        dispatch(fetchUsuarioByIdThunk(id))
+            .unwrap()
+            .catch(() => {
                 showToast("Usuario no encontrado", "warning");
                 navigate("/usuarios", { replace: true });
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        cargar();
-    }, [id]);
+            });
+
+        return () => { dispatch(clearUsuarioSeleccionado()); };
+    }, [id, dispatch]);
 
     const handleEditarUsuario = async ({ nombre, rol }) => {
         try {
-            const updated = await editarUsuario(id, {
-                nombre,
-                rol,
-                estado: usuario.estado,
-            });
-            setUsuario(updated);
+            await dispatch(editarUsuarioThunk({
+                id,
+                data: { nombre, rol, estado: usuario.estado },
+            })).unwrap();
             showToast("Usuario actualizado correctamente", "success");
             setModalEditar(false);
         } catch (e) {
@@ -68,7 +61,7 @@ export default function UsuariosDetail() {
 
     const handleAlterarEstado = async () => {
         try {
-            await cambiarEstadoUsuario(id);
+            await dispatch(cambiarEstadoUsuarioThunk(id)).unwrap();
             const userActual = JSON.parse(localStorage.getItem("user") ?? "null");
 
             if (userActual?.id === usuario.id && usuario.estado) {
@@ -79,7 +72,6 @@ export default function UsuariosDetail() {
                 navigate("/login", { replace: true });
                 return;
             }
-            setUsuario(prev => ({ ...prev, estado: !prev.estado }));
             showToast(usuario.estado ? "Usuario desactivado" : "Usuario activado", "success");
             setModalEstado(false);
         } catch (e) {
@@ -89,7 +81,7 @@ export default function UsuariosDetail() {
 
     const handleCambiarPassword = async (password) => {
         try {
-            await resetearPassword(id, password);
+            await dispatch(resetearPasswordThunk({ id, password })).unwrap();
             showToast("Contraseña actualizada correctamente", "success");
             setModalPassword(false);
         } catch (e) {

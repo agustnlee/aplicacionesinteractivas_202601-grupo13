@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -47,24 +48,35 @@ public class CreditoService {
     
     // Consultas
     @Transactional(readOnly = true)
-    public CreditoResponse obtenerCredito(Long creditoId) {
-        return creditoCuotaMapper.creditoToResponse(getOrThrow(creditoId));
+    public CreditoResponse obtenerCredito(Long creditoId, Usuario usuarioAutenticado) {
+        Credito credito = getOrThrow(creditoId);
+        validarAccesoCredito(credito, usuarioAutenticado);
+        return creditoCuotaMapper.creditoToResponse(credito);
     }
 
     @Transactional(readOnly = true)
     public PaginatedResponse<CreditoResponse> listarConFiltros(
         Long id, EstadoCredito estado, Long clienteId,
         Long cobradorId, Long creadoPorId,
-        int pagina, int tamanio) {
+        int pagina, int tamanio, Usuario usuarioAutenticado) {
 
         Pageable pageable = buildPageable(pagina, tamanio);
+        ROL_USUARIO rol = usuarioAutenticado.getRol();
+        Page<Credito> page;
 
-        Page<Credito> page = creditoRepository.buscarConFiltros(
-            id, estado, clienteId, cobradorId, creadoPorId, pageable
-        );
+        if (rol == ROL_USUARIO.COBRADOR) {
+            page = creditoRepository.buscarConFiltros(id, estado, clienteId,
+                usuarioAutenticado.getId(), creadoPorId, pageable);
+        } else if (rol == ROL_USUARIO.ANALISTA) {
+            page = creditoRepository.buscarConFiltros(id, estado, clienteId,
+                cobradorId, usuarioAutenticado.getId(), pageable);
+        } else {
+            page = creditoRepository.buscarConFiltros(id, estado, clienteId,
+                cobradorId, creadoPorId, pageable);
+        }
 
-        return creditoCuotaMapper.creditoToPageResponse(page);
-    }
+    return creditoCuotaMapper.creditoToPageResponse(page);
+}
 
 
     // Crear
@@ -255,5 +267,21 @@ public class CreditoService {
                 interes.divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP));
         return monto.multiply(factor)
                 .divide(BigDecimal.valueOf(n), 2, RoundingMode.HALF_UP);
+    }
+
+    // validador acceso por autoriz
+    private void validarAccesoCredito(Credito credito, Usuario usuarioAutenticado) {
+        ROL_USUARIO rol = usuarioAutenticado.getRol();
+        if (rol == ROL_USUARIO.ADMIN) return;
+        if (rol == ROL_USUARIO.ANALISTA) {
+            if (credito.getCreadoPor() == null || !credito.getCreadoPor().getId().equals(usuarioAutenticado.getId())) {
+                throw new AccessDeniedException("No tenés acceso a este crédito.");
+            }
+        }   
+        if (rol == ROL_USUARIO.COBRADOR) {
+            if (credito.getCobrador() == null || !credito.getCobrador().getId().equals(usuarioAutenticado.getId())) {
+                throw new AccessDeniedException("No tenés acceso a este crédito.");
+            }
+        }
     }
 }

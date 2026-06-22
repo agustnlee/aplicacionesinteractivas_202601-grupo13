@@ -2,7 +2,6 @@ package com.uade.tp13.dto.request;
 
 import com.uade.tp13.enums.ROL_USUARIO;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

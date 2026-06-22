@@ -4,6 +4,7 @@ import com.uade.tp13.dto.response.CuotaResponse;
 import com.uade.tp13.service.CuotaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,18 +17,21 @@ public class CuotaController {
     private final CuotaService cuotaService;
 
     // GET /api/creditos/{creditoId}/cuotas
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')")
     @GetMapping
     public ResponseEntity<List<CuotaResponse>> todas(@PathVariable Long creditoId) {
         return ResponseEntity.ok(cuotaService.obtenerTodas(creditoId));
     }
 
     // GET /api/creditos/{creditoId}/cuotas/pendientes
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')")
     @GetMapping("/pendientes")
     public ResponseEntity<List<CuotaResponse>> pendientes(@PathVariable Long creditoId) {
         return ResponseEntity.ok(cuotaService.obtenerPendientes(creditoId));
     }
 
     // GET /api/creditos/{creditoId}/cuotas/vencidas
+    @PreAuthorize("hasAnyRole('ADMIN', 'ANALISTA', 'COBRADOR')")
     @GetMapping("/vencidas")
     public ResponseEntity<List<CuotaResponse>> vencidas(@PathVariable Long creditoId) {
         return ResponseEntity.ok(cuotaService.obtenerVencidas(creditoId));

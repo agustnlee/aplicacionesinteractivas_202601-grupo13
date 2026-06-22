@@ -4,6 +4,7 @@ import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import PrivateRoute from './components/layout/PrivateRoute';
+import AdminRoute from './components/layout/AdminRoute';
 
 // import paginas
 import Homepage from './pages/Homepage';
@@ -17,7 +18,6 @@ import EtiquetasDetail from './pages/etiquetas/EtiquetasDetail';
 import Usuarios from './pages/usuarios/Usuarios';
 import UsuariosDetail from './pages/usuarios/UsuariosDetail';
 
-import Test from './pages/Test';
 
 function Layout() {
   return (
@@ -45,22 +45,25 @@ function App() {
         {/* Públicas */}
         {/* Públicas (Mantenemos el /login oficial de develop) */}
         <Route path="/" element={<Homepage />} />
-        <Route path="/test" element={<Test />} />
         
 
         {/* Privadas protegidas con autenticación */}
         <Route element={<PrivateRoute />}>
+        
           <Route path="/clientes" element={<Clientes />} />
           <Route path="/clientes/:id" element={<ClientesDetail />} />
 
           <Route path="/creditos" element={<Creditos />} />
           <Route path="/creditos/:id" element={<CreditosDetail />} />
 
-          <Route path="/etiquetas" element={<Etiquetas />} />
-          <Route path="/etiquetas/:id" element={<EtiquetasDetail />} />
-
           <Route path="/usuarios" element={<Usuarios />} />
           <Route path="/usuarios/:id" element={<UsuariosDetail />} />
+
+          <Route element={<AdminRoute />}>
+            <Route path="/etiquetas" element={<Etiquetas />} />
+            <Route path="/etiquetas/:id" element={<EtiquetasDetail />} />
+          </Route>
+          
         </Route>
 
         {/* Cualquier otra ruta redirige al Home */}
